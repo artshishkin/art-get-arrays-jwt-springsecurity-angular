@@ -20,3 +20,6 @@ spring:
     url: jdbc:mysql://localhost:23306/support-portal
   jpa:
     show-sql: true
+logging:
+  level:
+    net.shyshkin: debug
