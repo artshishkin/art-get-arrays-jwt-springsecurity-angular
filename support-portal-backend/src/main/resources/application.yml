@@ -10,7 +10,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-
+app:
+  jwt:
+    secret: ${random.value}
 ---
 spring:
   config:
