@@ -25,7 +25,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User with username `" + username + "` not found"));
         user.setLastLoginDateDisplay(user.getLastLoginDate());
         user.setLastLoginDate(LocalDateTime.now());
-        userRepository.save(user);
         return new UserPrincipal(user);
     }
 }
