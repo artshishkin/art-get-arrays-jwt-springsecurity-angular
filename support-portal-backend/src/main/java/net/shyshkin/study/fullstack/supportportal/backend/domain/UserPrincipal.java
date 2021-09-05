@@ -1,6 +1,7 @@
 package net.shyshkin.study.fullstack.supportportal.backend.domain;
 
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RequiredArgsConstructor
+@ToString
 public class UserPrincipal implements UserDetails {
 
     private final User user;
