@@ -2,7 +2,6 @@ package net.shyshkin.study.fullstack.supportportal.backend.exception;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.extern.slf4j.Slf4j;
-import net.shyshkin.study.fullstack.supportportal.backend.controller.UserResource;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.HttpResponse;
 import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.EmailExistsException;
 import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.EmailNotFoundException;
@@ -18,6 +17,7 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.persistence.NoResultException;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.util.Objects;
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
-@RestControllerAdvice(basePackageClasses = {UserResource.class})
+@RestControllerAdvice
 public class ExceptionHandling {
     private static final String ACCOUNT_LOCKED = "Your account has been locked. Please contact administration";
     private static final String METHOD_IS_NOT_ALLOWED = "This request method is not allowed on this endpoint. Please send a '%s' request";
@@ -73,6 +73,11 @@ public class ExceptionHandling {
     public ResponseEntity<HttpResponse> methodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
         HttpMethod supportedMethod = Objects.requireNonNull(exception.getSupportedHttpMethods()).iterator().next();
         return createHttpResponse(METHOD_NOT_ALLOWED, String.format(METHOD_IS_NOT_ALLOWED, supportedMethod));
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<HttpResponse> noHandlerFoundException(NoHandlerFoundException exception) {
+        return createHttpResponse(BAD_REQUEST, "This page was not found");
     }
 
     @ExceptionHandler(Exception.class)

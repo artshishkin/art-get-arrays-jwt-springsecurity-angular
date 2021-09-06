@@ -10,6 +10,11 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
 app:
   public-urls: /user/login,/user/register,/user/image/**
   jwt:
