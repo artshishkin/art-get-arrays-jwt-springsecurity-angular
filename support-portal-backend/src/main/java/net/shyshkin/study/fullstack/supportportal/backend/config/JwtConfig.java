@@ -15,7 +15,7 @@ public class JwtConfig {
     @Bean
     public JWTVerifier jwtVerifier(@Value("${app.jwt.secret}") String secret) {
 
-        Algorithm algorithm = Algorithm.HMAC256(secret);
+        Algorithm algorithm = Algorithm.HMAC512(secret);
         return JWT.require(algorithm)
                 .withIssuer(GET_ARRAYS_LLC)
                 .build(); //Reusable verifier instance

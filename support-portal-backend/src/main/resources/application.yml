@@ -12,7 +12,8 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 app:
   jwt:
-    secret: ${random.value}
+    secret: VeRy_5ecretP@55W0rd!
+#    secret: ${random.value} #Does not work - every time generates new value
 ---
 spring:
   config:
