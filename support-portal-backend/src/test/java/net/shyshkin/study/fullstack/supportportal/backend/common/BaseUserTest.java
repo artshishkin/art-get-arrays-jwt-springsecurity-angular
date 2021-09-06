@@ -35,7 +35,7 @@ public abstract class BaseUserTest {
                 .profileImageUrl("http://url_to_profile_img")
                 .lastLoginDate(LocalDateTime.now())
                 .lastLoginDateDisplay(LocalDateTime.now())
-                .roles(new String[]{"ROLE_ADMIN", "ROLE_USER"})
+                .role("ROLE_ADMIN")
                 .authorities(new String[]{"user:delete", "user:read"})
                 .build();
     }

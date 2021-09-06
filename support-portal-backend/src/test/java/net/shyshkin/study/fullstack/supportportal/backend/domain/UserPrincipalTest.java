@@ -22,7 +22,7 @@ class UserPrincipalTest extends BaseUserTest {
     void displayUser() {
         //given
         Long id = user.getId();
-        int expectedAuthoritiesLength = user.getAuthorities().length + user.getRoles().length;
+        int expectedAuthoritiesLength = user.getAuthorities().length ;
 
         //when
         Optional<User> savedUserOptional = userRepository.findById(id);
