@@ -8,7 +8,6 @@ import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.Email
 import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.UserNotFoundException;
 import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.UsernameExistsException;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -17,12 +16,12 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.persistence.NoResultException;
 import java.io.IOException;
 import java.util.Objects;
 
+import static net.shyshkin.study.fullstack.supportportal.backend.utility.HttpResponseUtility.createHttpResponse;
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
@@ -75,10 +74,10 @@ public class ExceptionHandling {
         return createHttpResponse(METHOD_NOT_ALLOWED, String.format(METHOD_IS_NOT_ALLOWED, supportedMethod));
     }
 
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<HttpResponse> noHandlerFoundException(NoHandlerFoundException exception) {
-        return createHttpResponse(BAD_REQUEST, "This page was not found");
-    }
+//    @ExceptionHandler(NoHandlerFoundException.class)
+//    public ResponseEntity<HttpResponse> noHandlerFoundException(NoHandlerFoundException exception) {
+//        return createHttpResponse(BAD_REQUEST, "This page was not found");
+//    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpResponse> internalServerErrorException(Exception exception) {
@@ -96,15 +95,5 @@ public class ExceptionHandling {
     public ResponseEntity<HttpResponse> iOException(IOException exception) {
         log.error(exception.getMessage());
         return createHttpResponse(INTERNAL_SERVER_ERROR, ERROR_PROCESSING_FILE);
-    }
-
-    private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {
-        HttpResponse httpResponse = HttpResponse.builder()
-                .httpStatus(httpStatus)
-                .httpStatusCode(httpStatus.value())
-                .reason(httpStatus.getReasonPhrase().toUpperCase())
-                .message(message.toUpperCase())
-                .build();
-        return new ResponseEntity<>(httpResponse, httpStatus);
     }
 }

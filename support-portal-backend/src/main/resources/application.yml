@@ -1,7 +1,8 @@
 server:
   error:
-    whitelabel:
-      enabled: false
+    path: /error
+#    whitelabel:
+#      enabled: false
 
 spring:
   datasource:
