@@ -1,10 +1,10 @@
 package net.shyshkin.study.fullstack.supportportal.backend.config;
 
 import lombok.RequiredArgsConstructor;
-import net.shyshkin.study.fullstack.supportportal.backend.constant.SecurityConstants;
 import net.shyshkin.study.fullstack.supportportal.backend.filter.JwtAccessDeniedHandler;
 import net.shyshkin.study.fullstack.supportportal.backend.filter.JwtAuthenticationEntryPoint;
 import net.shyshkin.study.fullstack.supportportal.backend.filter.JwtAuthorizationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -34,6 +34,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
+    @Value("${app.public-urls}")
+    private String[] publicUrls;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -44,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests()
-                .antMatchers(SecurityConstants.PUBLIC_URLS).permitAll()
+                .antMatchers(publicUrls).permitAll()
                 .anyRequest().authenticated();
 
         http.exceptionHandling()

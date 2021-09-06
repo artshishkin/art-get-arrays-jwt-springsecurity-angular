@@ -11,6 +11,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
 app:
+  public-urls: /user/login,/user/register,/user/image/**
   jwt:
     secret: VeRy_5ecretP@55W0rd!
 #    secret: ${random.value} #Does not work - every time generates new value
