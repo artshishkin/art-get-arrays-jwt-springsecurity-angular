@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
@@ -30,8 +31,9 @@ public class JwtAuthenticationEntryPoint extends Http403ForbiddenEntryPoint {
                 .message(SecurityConstants.FORBIDDEN_MESSAGE)
                 .reason(FORBIDDEN.getReasonPhrase().toUpperCase())
                 .build();
-        String jsonString = objectMapper.writeValueAsString(httpResponse);
+        response.setStatus(FORBIDDEN.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.sendError(403, jsonString);
+        OutputStream outputStream = response.getOutputStream();
+        objectMapper.writeValue(outputStream, httpResponse);
     }
 }

@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
@@ -30,8 +31,9 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
                 .message(SecurityConstants.ACCESS_DENIED_MESSAGE)
                 .reason(UNAUTHORIZED.getReasonPhrase().toUpperCase())
                 .build();
-        String jsonString = objectMapper.writeValueAsString(httpResponse);
+        response.setStatus(UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.sendError(UNAUTHORIZED.value(), jsonString);
+        OutputStream outputStream = response.getOutputStream();
+        objectMapper.writeValue(outputStream, httpResponse);
     }
 }
