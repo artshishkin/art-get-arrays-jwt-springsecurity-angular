@@ -27,7 +27,7 @@ public abstract class BaseUserTest {
                 .firstName(FAKER.name().firstName())
                 .lastName(FAKER.name().lastName())
                 .username(FAKER.name().username())
-                .password("bad_password")
+                .password("{noop}bad_password")
                 .userId(UUID.randomUUID().toString())
                 .isActive(true)
                 .isNotLocked(true)
