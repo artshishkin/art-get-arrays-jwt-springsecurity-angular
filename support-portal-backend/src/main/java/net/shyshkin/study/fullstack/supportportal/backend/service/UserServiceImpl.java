@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository
                 .findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(String.format(USERNAME_NOT_FOUND_MSG, username)));
+                .orElseThrow(() -> new UsernameNotFoundException(String.format(USERNAME_NOT_FOUND_MSG, username)));
         user.setLastLoginDateDisplay(user.getLastLoginDate());
         user.setLastLoginDate(LocalDateTime.now());
         return new UserPrincipal(user);
