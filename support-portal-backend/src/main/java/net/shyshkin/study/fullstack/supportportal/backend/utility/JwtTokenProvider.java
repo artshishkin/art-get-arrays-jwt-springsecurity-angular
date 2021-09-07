@@ -5,13 +5,13 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
-import net.shyshkin.study.fullstack.supportportal.backend.domain.UserPrincipal;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
@@ -32,13 +32,13 @@ public class JwtTokenProvider {
     @Value("${app.jwt.secret}")
     private String secret;
 
-    public String generateJwtToken(UserPrincipal userPrincipal) {
-        String[] claims = getClaimsFromUser(userPrincipal);
+    public String generateJwtToken(UserDetails userDetails) {
+        String[] claims = getClaimsFromUser(userDetails);
         return JWT.create()
                 .withIssuer(GET_ARRAYS_LLC)
                 .withAudience(GET_ARRAYS_ADMINISTRATION)
                 .withIssuedAt(new Date())
-                .withSubject(userPrincipal.getUsername())
+                .withSubject(userDetails.getUsername())
                 .withArrayClaim(AUTHORITIES, claims)
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(secret));
@@ -81,8 +81,8 @@ public class JwtTokenProvider {
         }
     }
 
-    private String[] getClaimsFromUser(UserPrincipal userPrincipal) {
-        return userPrincipal.getAuthorities()
+    private String[] getClaimsFromUser(UserDetails userDetails) {
+        return userDetails.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .toArray(String[]::new);

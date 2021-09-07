@@ -1,9 +1,20 @@
 package net.shyshkin.study.fullstack.supportportal.backend.controller;
 
 import lombok.RequiredArgsConstructor;
+import net.shyshkin.study.fullstack.supportportal.backend.constant.SecurityConstants;
+import net.shyshkin.study.fullstack.supportportal.backend.domain.HttpResponse;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.service.UserService;
+import net.shyshkin.study.fullstack.supportportal.backend.utility.JwtTokenProvider;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.http.HttpStatus.OK;
+
 
 @RestController
 @RequestMapping("user")
@@ -11,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserResource {
 
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @GetMapping("home")
     public String showUser() {
@@ -21,4 +34,28 @@ public class UserResource {
     public User register(@RequestBody User user) {
         return userService.register(user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail());
     }
+
+    @PostMapping("login")
+    public ResponseEntity<HttpResponse> login(@RequestBody User user) {
+
+        authenticate(user.getUsername(), user.getPassword());
+        UserDetails userDetails = userService.loadUserByUsername(user.getUsername());
+
+        HttpResponse httpResponse = HttpResponse.builder()
+                .httpStatus(OK)
+                .reason(OK.getReasonPhrase().toUpperCase())
+                .message("User logged in successfully")
+                .httpStatusCode(OK.value())
+                .build();
+
+        return ResponseEntity.ok()
+                .header(SecurityConstants.JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(userDetails))
+                .body(httpResponse);
+    }
+
+    private void authenticate(String username, String password) {
+        Authentication auth = new UsernamePasswordAuthenticationToken(username, password);
+        authenticationManager.authenticate(auth);
+    }
+
 }
