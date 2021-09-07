@@ -134,10 +134,10 @@ public class UserServiceImpl implements UserService {
     }
 
     private void throwEmailExistsException(String email) {
-        throw new EmailExistsException("User with email `" + email + "` is already registered");
+        throw new EmailExistsException(String.format(EMAIL_EXISTS_MSG, email));
     }
 
     private void throwUsernameExistsException(String username) {
-        throw new UsernameExistsException("Username `" + username + "` is already taken. Please select another one");
+        throw new UsernameExistsException(String.format(USERNAME_EXISTS_MSG, username));
     }
 }
