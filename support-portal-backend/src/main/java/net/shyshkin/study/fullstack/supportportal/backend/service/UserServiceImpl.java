@@ -28,6 +28,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    public static final String DEFAULT_USER_IMG_PATH = "/user/image/profile/temp";
+    public static final String USERNAME_NOT_FOUND_MSG = "User with username `%s` not found";
+    public static final String USERNAME_EXISTS_MSG = "Username `%s` is already taken. Please select another one";
+    public static final String EMAIL_NOT_FOUND_MSG = "User with email `%s` not found";
+    public static final String EMAIL_EXISTS_MSG = "User with email `%s` is already registered";
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -36,7 +42,7 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository
                 .findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User with username `" + username + "` not found"));
+                .orElseThrow(() -> new UserNotFoundException(String.format(USERNAME_NOT_FOUND_MSG, username)));
         user.setLastLoginDateDisplay(user.getLastLoginDate());
         user.setLastLoginDate(LocalDateTime.now());
         return new UserPrincipal(user);
@@ -73,7 +79,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private String getTemporaryProfileImageUrl() {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/image/profile/temp").build().toString();
+        return ServletUriComponentsBuilder.fromCurrentContextPath().path(DEFAULT_USER_IMG_PATH).build().toString();
     }
 
     private String generatePassword() {
@@ -93,14 +99,14 @@ public class UserServiceImpl implements UserService {
     public User findByUsername(String username) {
         return userRepository
                 .findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User with username `" + username + "` not found"));
+                .orElseThrow(() -> new UserNotFoundException(String.format(USERNAME_NOT_FOUND_MSG, username)));
     }
 
     @Override
     public User findByEmail(String email) {
         return userRepository
                 .findByEmail(email)
-                .orElseThrow(() -> new EmailNotFoundException("User with email `" + email + "` not found"));
+                .orElseThrow(() -> new EmailNotFoundException(String.format(EMAIL_NOT_FOUND_MSG, email)));
     }
 
     private void validateNewUsernameAndEmail(String username, String email) {

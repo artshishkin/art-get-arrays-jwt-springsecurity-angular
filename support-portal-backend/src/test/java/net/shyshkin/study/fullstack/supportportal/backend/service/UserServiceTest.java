@@ -3,11 +3,11 @@ package net.shyshkin.study.fullstack.supportportal.backend.service;
 import lombok.extern.slf4j.Slf4j;
 import net.shyshkin.study.fullstack.supportportal.backend.common.BaseUserTest;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
+import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.UserNotFoundException;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -58,7 +58,7 @@ class UserServiceTest extends BaseUserTest {
 
         //then
         assertThatThrownBy(execution)
-                .isInstanceOf(UsernameNotFoundException.class)
+                .isInstanceOf(UserNotFoundException.class)
                 .hasMessage("User with username `" + username + "` not found");
     }
 }
