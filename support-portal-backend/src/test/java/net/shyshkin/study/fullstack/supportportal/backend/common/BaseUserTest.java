@@ -19,7 +19,7 @@ public abstract class BaseUserTest {
     @Autowired
     protected UserRepository userRepository;
 
-    protected User user;
+    protected static User user;
 
     protected User createRandomUser() {
         return User.builder()

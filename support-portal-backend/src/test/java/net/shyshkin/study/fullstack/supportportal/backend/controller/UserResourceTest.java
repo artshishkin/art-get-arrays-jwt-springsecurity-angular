@@ -6,20 +6,24 @@ import net.shyshkin.study.fullstack.supportportal.backend.domain.HttpResponse;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.UserPrincipal;
 import net.shyshkin.study.fullstack.supportportal.backend.utility.JwtTokenProvider;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
 class UserResourceTest extends BaseUserTest {
 
     @Autowired
@@ -29,6 +33,7 @@ class UserResourceTest extends BaseUserTest {
     JwtTokenProvider jwtTokenProvider;
 
     @Test
+    @Order(10)
     void showUserHome_forbidden() {
 
         //when
@@ -49,6 +54,7 @@ class UserResourceTest extends BaseUserTest {
     }
 
     @Test
+    @Order(20)
     void showUserHome_correctToken() {
 
         //given
@@ -70,5 +76,87 @@ class UserResourceTest extends BaseUserTest {
         assertThat(responseEntity.getBody())
                 .isNotNull()
                 .isEqualTo("Application works");
+    }
+
+    @Test
+    @Order(30)
+    void registerUser_new() {
+
+        //given
+        User fakeUser = createRandomUser();
+
+        //when
+        ResponseEntity<User> responseEntity = restTemplate.postForEntity("/user/register", fakeUser, User.class);
+
+        //then
+        log.debug("Response Entity: {}", responseEntity);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+        User registeredUser = responseEntity.getBody();
+        assertThat(registeredUser)
+                .isNotNull()
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay")
+                .hasFieldOrPropertyWithValue("username", fakeUser.getUsername())
+                .hasFieldOrPropertyWithValue("email", fakeUser.getEmail())
+                .hasFieldOrPropertyWithValue("firstName", fakeUser.getFirstName())
+                .hasFieldOrPropertyWithValue("lastName", fakeUser.getLastName())
+                .hasFieldOrPropertyWithValue("isActive", true)
+                .hasFieldOrPropertyWithValue("isNotLocked", true)
+                .hasFieldOrPropertyWithValue("role", "ROLE_USER")
+        ;
+        user = registeredUser;
+    }
+
+    @Test
+    @Order(40)
+    void registerUser_usernameExists() {
+
+        //given
+        User fakeUser = createRandomUser();
+        String username = user.getUsername();
+        fakeUser.setUsername(username);
+        String expectedMessage = ("Username `" + username + "` is already taken. Please select another one").toUpperCase();
+
+        //when
+        ResponseEntity<HttpResponse> responseEntity = restTemplate.postForEntity("/user/register", fakeUser, HttpResponse.class);
+
+        //then
+        log.debug("Response Entity: {}", responseEntity);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .hasNoNullFieldsOrProperties()
+                .satisfies(httpResponse -> assertAll(
+                        () -> assertThat(httpResponse.getHttpStatusCode()).isEqualTo(400),
+                        () -> assertThat(httpResponse.getHttpStatus()).isEqualTo(BAD_REQUEST),
+                        () -> assertThat(httpResponse.getReason()).isEqualTo("BAD REQUEST"),
+                        () -> assertThat(httpResponse.getMessage()).isEqualTo(expectedMessage)
+                ));
+    }
+
+    @Test
+    @Order(41)
+    void registerUser_emailExists() {
+
+        //given
+        User fakeUser = createRandomUser();
+        String email = user.getEmail();
+        fakeUser.setEmail(email);
+        String expectedMessage = ("User with email `" + email + "` is already registered").toUpperCase();
+
+        //when
+        ResponseEntity<HttpResponse> responseEntity = restTemplate.postForEntity("/user/register", fakeUser, HttpResponse.class);
+
+        //then
+        log.debug("Response Entity: {}", responseEntity);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .hasNoNullFieldsOrProperties()
+                .satisfies(httpResponse -> assertAll(
+                        () -> assertThat(httpResponse.getHttpStatusCode()).isEqualTo(400),
+                        () -> assertThat(httpResponse.getHttpStatus()).isEqualTo(BAD_REQUEST),
+                        () -> assertThat(httpResponse.getReason()).isEqualTo("BAD REQUEST"),
+                        () -> assertThat(httpResponse.getMessage()).isEqualTo(expectedMessage)
+                ));
     }
 }
