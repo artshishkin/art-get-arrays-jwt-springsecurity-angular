@@ -17,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -91,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             emailService.sendNewPasswordEmail(newUser.getFirstName(), rawPassword, newUser.getEmail());
-        } catch (MessagingException exception) {
+        } catch (Exception exception) {
             log.error("Can't send message", exception);
         }
 
