@@ -6,6 +6,7 @@ import net.shyshkin.study.fullstack.supportportal.backend.common.BaseUserTest;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.HttpResponse;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.UserPrincipal;
+import net.shyshkin.study.fullstack.supportportal.backend.service.LoginAttemptService;
 import net.shyshkin.study.fullstack.supportportal.backend.utility.JwtTokenProvider;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -265,5 +266,65 @@ class UserResourceTest extends BaseUserTest {
         String token = responseEntity.getHeaders().getFirst(JWT_TOKEN_HEADER);
         log.debug("Token: {}", token);
         assertThat(token).isNull();
+    }
+
+    @Test
+    @Order(60)
+    void loginUser_bruteForceDetectionTest() throws InterruptedException {
+
+        //given
+        User fakeUser = createRandomUser();
+        String correctPassword = fakeUser.getPassword().replace("{noop}", "");
+        String username = fakeUser.getUsername();
+        userRepository.save(fakeUser);
+        String wrongPassword = "wrongPass";
+
+        //when
+        User userLogin = User.builder()
+                .username(username)
+                .password(wrongPassword)
+                .build();
+
+        for (int i = 0; i < LoginAttemptService.MAX_ATTEMPTS; i++) {
+
+            var responseEntity = restTemplate.postForEntity("/user/login", userLogin, HttpResponse.class);
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasNoNullFieldsOrProperties()
+                    .hasFieldOrPropertyWithValue("httpStatusCode", 400)
+                    .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
+                    .hasFieldOrPropertyWithValue("reason", "BAD REQUEST")
+                    .hasFieldOrPropertyWithValue("message", "USERNAME / PASSWORD INCORRECT. PLEASE TRY AGAIN");
+        }
+
+        for (int i = 0; i < 5; i++) {
+
+            if (i > 3) {
+                // Even correct password should not allow access to locked account
+                userLogin = User.builder()
+                        .username(username)
+                        .password(correctPassword)
+                        .build();
+            }
+
+            var responseEntity = restTemplate.postForEntity("/user/login", userLogin, HttpResponse.class);
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(UNAUTHORIZED);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasNoNullFieldsOrProperties()
+                    .hasFieldOrPropertyWithValue("httpStatusCode", 401)
+                    .hasFieldOrPropertyWithValue("httpStatus", UNAUTHORIZED)
+                    .hasFieldOrPropertyWithValue("reason", "UNAUTHORIZED")
+                    .hasFieldOrPropertyWithValue("message", "YOUR ACCOUNT HAS BEEN LOCKED. PLEASE CONTACT ADMINISTRATION");
+        }
+
+
     }
 }
