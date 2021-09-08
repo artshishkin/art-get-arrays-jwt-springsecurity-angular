@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,6 +38,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final LoginAttemptService loginAttemptService;
+    private final EmailService emailService;
 
     @Override
     @Transactional
@@ -68,7 +70,6 @@ public class UserServiceImpl implements UserService {
 
         String rawPassword = generatePassword();
         String encodedPassword = passwordEncoder.encode(rawPassword);
-        log.debug("Raw password: {}. Encoded password: {}", rawPassword, encodedPassword);
 
         User newUser = User.builder()
                 .email(email)
@@ -86,7 +87,15 @@ public class UserServiceImpl implements UserService {
                 .role(defaultRole.name())
                 .authorities(defaultRole.getAuthorities())
                 .build();
-        return userRepository.save(newUser);
+        userRepository.save(newUser);
+
+        try {
+            emailService.sendNewPasswordEmail(newUser.getFirstName(), rawPassword, newUser.getEmail());
+        } catch (MessagingException exception) {
+            log.error("Can't send message", exception);
+        }
+
+        return newUser;
     }
 
     private String getTemporaryProfileImageUrl() {

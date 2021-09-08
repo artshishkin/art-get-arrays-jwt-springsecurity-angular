@@ -1,6 +1,8 @@
 package net.shyshkin.study.fullstack.supportportal.backend.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
@@ -16,12 +18,19 @@ import static net.shyshkin.study.fullstack.supportportal.backend.constant.EmailC
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class EmailService {
+
+    private final Environment environment;
 
     public void sendNewPasswordEmail(String firstName, String password, String email) throws MessagingException {
         Message message = createEmail(firstName, password, email);
         Transport transport = getEmailSession().getTransport(SIMPLE_MAIL_TRANSFER_PROTOCOL);
-        transport.connect(GMAIL_SMTP_SERVER, USERNAME, PASSWORD);
+
+        String mailUsername = environment.getProperty("PORTAL_MAIL_USERNAME", USERNAME);
+        String mailPassword = environment.getProperty("PORTAL_MAIL_PASSWORD", PASSWORD);
+
+        transport.connect(GMAIL_SMTP_SERVER, mailUsername, mailPassword);
         transport.sendMessage(message, message.getAllRecipients());
         transport.close();
     }
