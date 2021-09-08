@@ -31,12 +31,17 @@ public class GuavaCacheLoginAttemptService implements LoginAttemptService {
 
     @Override
     public void loginSucceeded(String username) {
-        loginAttemptsCache.invalidate(username);
+        evictUserFromCache(username);
     }
 
     @Override
     public boolean hasExceededMaxAttempts(String username) {
         return getAttempts(username) >= MAX_ATTEMPTS;
+    }
+
+    @Override
+    public void evictUserFromCache(String username) {
+        loginAttemptsCache.invalidate(username);
     }
 
     private int getAttempts(String username) {

@@ -36,6 +36,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final LoginAttemptService loginAttemptService;
 
     @Override
     @Transactional
@@ -43,9 +44,19 @@ public class UserServiceImpl implements UserService {
         User user = userRepository
                 .findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format(USERNAME_NOT_FOUND_MSG, username)));
+        validateLoginAttempts(user);
         user.setLastLoginDateDisplay(user.getLastLoginDate());
         user.setLastLoginDate(LocalDateTime.now());
         return new UserPrincipal(user);
+    }
+
+    private void validateLoginAttempts(User user) {
+        if (user.isNotLocked()) {
+            if (loginAttemptService.hasExceededMaxAttempts(user.getUsername()))
+                user.setNotLocked(false);
+        } else {
+            loginAttemptService.evictUserFromCache(user.getUsername());
+        }
     }
 
     @Override
