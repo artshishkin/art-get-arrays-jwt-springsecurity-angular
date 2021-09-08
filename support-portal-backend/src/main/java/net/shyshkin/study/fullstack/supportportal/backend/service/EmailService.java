@@ -1,10 +1,12 @@
 package net.shyshkin.study.fullstack.supportportal.backend.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Date;
@@ -12,8 +14,17 @@ import java.util.Properties;
 
 import static net.shyshkin.study.fullstack.supportportal.backend.constant.EmailConstant.*;
 
+@Slf4j
 @Service
 public class EmailService {
+
+    public void sendNewPasswordEmail(String firstName, String password, String email) throws MessagingException {
+        Message message = createEmail(firstName, password, email);
+        Transport transport = getEmailSession().getTransport(SIMPLE_MAIL_TRANSFER_PROTOCOL);
+        transport.connect(GMAIL_SMTP_SERVER, USERNAME, PASSWORD);
+        transport.sendMessage(message, message.getAllRecipients());
+        transport.close();
+    }
 
     private Message createEmail(String firstName, String password, String email) throws MessagingException {
         Message message = new MimeMessage(getEmailSession());
