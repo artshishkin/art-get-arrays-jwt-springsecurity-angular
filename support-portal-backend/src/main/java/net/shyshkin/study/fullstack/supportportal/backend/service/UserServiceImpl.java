@@ -11,6 +11,7 @@ import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.Email
 import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.EmailNotFoundException;
 import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.UserNotFoundException;
 import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.UsernameExistsException;
+import net.shyshkin.study.fullstack.supportportal.backend.mapper.UserMapper;
 import net.shyshkin.study.fullstack.supportportal.backend.repository.UserRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,6 +41,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final LoginAttemptService loginAttemptService;
     private final EmailService emailService;
+    private final UserMapper userMapper;
 
     @Override
     @Transactional
@@ -126,22 +128,14 @@ public class UserServiceImpl implements UserService {
 
         Role role = Role.valueOf(userDto.getRole());
 
-        User newUser = User.builder()
-                .email(email)
-                .firstName(userDto.getFirstName())
-                .lastName(userDto.getLastName())
-                .username(username)
-                .password(encodedPassword)
-                .userId(generateUserId())
-                .isActive(userDto.isActive())
-                .isNotLocked(userDto.isNonLocked())
-                .joinDate(LocalDateTime.now())
-                .profileImageUrl(getTemporaryProfileImageUrl(username))
-                .lastLoginDate(null)
-                .lastLoginDateDisplay(null)
-                .role(role.name())
-                .authorities(role.getAuthorities())
-                .build();
+        User newUser = userMapper.toEntity(userDto);
+
+        newUser.setPassword(encodedPassword);
+        newUser.setUserId(generateUserId());
+        newUser.setProfileImageUrl(getTemporaryProfileImageUrl(username));
+        newUser.setRole(role.name());
+        newUser.setAuthorities(role.getAuthorities());
+
         userRepository.save(newUser);
         saveProfileImage(newUser, userDto.getProfileImage());
 
