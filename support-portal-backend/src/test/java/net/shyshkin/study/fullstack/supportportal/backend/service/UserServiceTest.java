@@ -2,15 +2,21 @@ package net.shyshkin.study.fullstack.supportportal.backend.service;
 
 import lombok.extern.slf4j.Slf4j;
 import net.shyshkin.study.fullstack.supportportal.backend.common.BaseUserTest;
+import net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.Role;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
@@ -104,5 +110,24 @@ class UserServiceTest extends BaseUserTest {
         assertThatThrownBy(execution)
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("No enum constant net.shyshkin.study.fullstack.supportportal.backend.domain.Role.FAKE_ROLE");
+    }
+
+    @Test
+    void updateProfileImage() throws IOException {
+        //given
+        User fakeUser = createRandomUser();
+        user = userRepository.save(fakeUser);
+        String username = user.getUsername();
+
+        //when
+        MockMultipartFile multipartFile = new MockMultipartFile("file", "test.txt",
+                "text/plain", ("Spring Framework" + UUID.randomUUID()).getBytes());
+        userService.updateProfileImage(username, multipartFile);
+
+        //then
+        Path path = Path.of(FileConstant.USER_FOLDER, user.getUserId(), FileConstant.USER_IMAGE_FILENAME);
+        log.debug("Path of created file: {}", path);
+        assertThat(Files.exists(path)).isTrue();
+        assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(100, ChronoUnit.MILLIS));
     }
 }

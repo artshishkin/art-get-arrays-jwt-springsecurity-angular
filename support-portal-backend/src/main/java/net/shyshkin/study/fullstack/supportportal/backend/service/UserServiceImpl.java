@@ -2,7 +2,6 @@ package net.shyshkin.study.fullstack.supportportal.backend.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.Role;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.UserPrincipal;
@@ -22,10 +21,16 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import static net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant.*;
 
 @Slf4j
 @Service
@@ -81,10 +86,11 @@ public class UserServiceImpl implements UserService {
         return addNewUser(newUserDto);
     }
 
-    private String getTemporaryProfileImageUrl(String username) {
+    private String generateProfileImageUrl(String userId) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(FileConstant.DEFAULT_USER_IMAGE_PATH)
-                .pathSegment(username)
+                .path(DEFAULT_USER_IMAGE_PATH)
+                .pathSegment(userId)
+                .pathSegment(USER_IMAGE_FILENAME)
                 .toUriString();
     }
 
@@ -130,7 +136,7 @@ public class UserServiceImpl implements UserService {
 
         newUser.setPassword(encodedPassword);
         newUser.setUserId(generateUserId());
-        newUser.setProfileImageUrl(getTemporaryProfileImageUrl(username));
+        newUser.setProfileImageUrl(generateProfileImageUrl(newUser.getUserId()));
 
         userRepository.save(newUser);
         saveProfileImage(newUser, userDto.getProfileImage());
@@ -147,6 +153,18 @@ public class UserServiceImpl implements UserService {
 
     private void saveProfileImage(User user, MultipartFile profileImage) {
         if (profileImage == null) return;
+
+        Path userFolder = Paths.get(USER_FOLDER, user.getUserId());
+        try {
+            if (Files.notExists(userFolder)) {
+                Files.createDirectories(userFolder);
+                log.debug(DIRECTORY_CREATED);
+            }
+            profileImage.transferTo(userFolder.resolve(USER_IMAGE_FILENAME));
+            log.debug(FILE_SAVED_IN_FILE_SYSTEM + profileImage.getOriginalFilename());
+        } catch (IOException exception) {
+            log.error("Can't save to file", exception);
+        }
     }
 
     @Override
