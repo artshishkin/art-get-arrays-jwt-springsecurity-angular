@@ -15,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import static org.springframework.http.HttpStatus.OK;
 
 @Slf4j
@@ -56,7 +58,7 @@ public class UserResource {
     }
 
     @PostMapping("add")
-    public User addNewUser(UserDto userDto) {
+    public User addNewUser(@Valid UserDto userDto) {
         log.debug("User DTO: {}", userDto);
         return userService.addNewUser(userDto);
     }

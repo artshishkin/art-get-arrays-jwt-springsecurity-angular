@@ -13,6 +13,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.persistence.NoResultException;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static net.shyshkin.study.fullstack.supportportal.backend.utility.HttpResponseUtility.createHttpResponse;
 import static org.springframework.http.HttpStatus.*;
@@ -81,8 +83,17 @@ public class ExceptionHandling {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpResponse> internalServerErrorException(Exception exception) {
-        log.error(exception.getMessage());
+        log.error(exception.getMessage(), exception);
         return createHttpResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
+    }
+
+    @ExceptionHandler({BindException.class})
+    public ResponseEntity<HttpResponse> validationExceptionHandler(BindException exception) {
+        String fieldsWithErrors = exception.getFieldErrors().stream()
+                .map(fe -> fe.getField() + ":" + fe.getDefaultMessage())
+                .collect(Collectors.joining(","));
+        String message = "Error(s) in parameters: [" + fieldsWithErrors + "]";
+        return createHttpResponse(BAD_REQUEST, message);
     }
 
     @ExceptionHandler(NoResultException.class)
