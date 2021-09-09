@@ -91,6 +91,17 @@ public class UserResource {
                 .build();
     }
 
+    @DeleteMapping("{id}")
+    public HttpResponse deleteUser(@PathVariable long id){
+        userService.deleteUser(id);
+        return HttpResponse.builder()
+                .httpStatusCode(OK.value())
+                .httpStatus(OK)
+                .reason(OK.getReasonPhrase())
+                .message("User deleted successfully")
+                .build();
+    }
+
     private void authenticate(String username, String password) {
         Authentication auth = new UsernamePasswordAuthenticationToken(username, password);
         authenticationManager.authenticate(auth);
