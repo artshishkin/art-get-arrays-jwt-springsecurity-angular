@@ -2,6 +2,7 @@ package net.shyshkin.study.fullstack.supportportal.backend.service;
 
 import lombok.extern.slf4j.Slf4j;
 import net.shyshkin.study.fullstack.supportportal.backend.common.BaseUserTest;
+import net.shyshkin.study.fullstack.supportportal.backend.domain.Role;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
 import org.assertj.core.api.ThrowableAssert;
@@ -92,10 +93,10 @@ class UserServiceTest extends BaseUserTest {
 
         //given
         UserDto randomUserDto = createRandomUserDto();
-        randomUserDto.setRole("FAKE_ROLE");
 
         //when
         ThrowableAssert.ThrowingCallable execution = () -> {
+            randomUserDto.setRole(Role.valueOf("FAKE_ROLE"));
             User user = userService.addNewUser(randomUserDto);
         };
 

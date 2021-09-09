@@ -1,6 +1,7 @@
 package net.shyshkin.study.fullstack.supportportal.backend.common;
 
 import com.github.javafaker.Faker;
+import net.shyshkin.study.fullstack.supportportal.backend.domain.Role;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
 import net.shyshkin.study.fullstack.supportportal.backend.repository.UserRepository;
@@ -49,7 +50,7 @@ public abstract class BaseUserTest {
                 .username(FAKER.name().username())
                 .isActive(true)
                 .isNonLocked(true)
-                .role("ROLE_ADMIN")
+                .role(Role.ROLE_ADMIN)
                 .build();
     }
 

@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
                 .username(username)
                 .isActive(true)
                 .isNonLocked(true)
-                .role(defaultRole.name())
+                .role(defaultRole)
                 .build();
         return addNewUser(newUserDto);
     }
@@ -126,15 +126,11 @@ public class UserServiceImpl implements UserService {
         String rawPassword = generatePassword();
         String encodedPassword = passwordEncoder.encode(rawPassword);
 
-        Role role = Role.valueOf(userDto.getRole());
-
         User newUser = userMapper.toEntity(userDto);
 
         newUser.setPassword(encodedPassword);
         newUser.setUserId(generateUserId());
         newUser.setProfileImageUrl(getTemporaryProfileImageUrl(username));
-        newUser.setRole(role.name());
-        newUser.setAuthorities(role.getAuthorities());
 
         userRepository.save(newUser);
         saveProfileImage(newUser, userDto.getProfileImage());
