@@ -3,6 +3,7 @@ package net.shyshkin.study.fullstack.supportportal.backend.service;
 import lombok.extern.slf4j.Slf4j;
 import net.shyshkin.study.fullstack.supportportal.backend.common.BaseUserTest;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
+import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,5 +61,47 @@ class UserServiceTest extends BaseUserTest {
         assertThatThrownBy(execution)
                 .isInstanceOf(UsernameNotFoundException.class)
                 .hasMessage("User with username `" + username + "` not found");
+    }
+
+    @Test
+    void addNewUser_correct() {
+
+        //given
+        UserDto randomUserDto = createRandomUserDto();
+
+        //when
+        User newUser = userService.addNewUser(randomUserDto);
+
+        //then
+        log.debug("Added new user: {}", newUser);
+        assertThat(newUser)
+                .isNotNull()
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay")
+                .hasFieldOrPropertyWithValue("username", randomUserDto.getUsername())
+                .hasFieldOrPropertyWithValue("email", randomUserDto.getEmail())
+                .hasFieldOrPropertyWithValue("firstName", randomUserDto.getFirstName())
+                .hasFieldOrPropertyWithValue("lastName", randomUserDto.getLastName())
+                .hasFieldOrPropertyWithValue("isActive", randomUserDto.isActive())
+                .hasFieldOrPropertyWithValue("isNotLocked", randomUserDto.isNonLocked())
+                .hasFieldOrPropertyWithValue("role", "ROLE_ADMIN")
+        ;
+    }
+
+    @Test
+    void addNewUser_incorrectRole() {
+
+        //given
+        UserDto randomUserDto = createRandomUserDto();
+        randomUserDto.setRole("FAKE_ROLE");
+
+        //when
+        ThrowableAssert.ThrowingCallable execution = () -> {
+            User user = userService.addNewUser(randomUserDto);
+        };
+
+        //then
+        assertThatThrownBy(execution)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("No enum constant net.shyshkin.study.fullstack.supportportal.backend.domain.Role.FAKE_ROLE");
     }
 }

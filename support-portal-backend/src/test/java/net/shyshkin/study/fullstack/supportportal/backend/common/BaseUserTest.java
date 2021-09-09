@@ -2,6 +2,7 @@ package net.shyshkin.study.fullstack.supportportal.backend.common;
 
 import com.github.javafaker.Faker;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
+import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
 import net.shyshkin.study.fullstack.supportportal.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,4 +40,17 @@ public abstract class BaseUserTest {
                 .authorities(new String[]{"user:delete", "user:read"})
                 .build();
     }
+
+    protected UserDto createRandomUserDto() {
+        return UserDto.builder()
+                .email(FAKER.bothify("????##@example.com"))
+                .firstName(FAKER.name().firstName())
+                .lastName(FAKER.name().lastName())
+                .username(FAKER.name().username())
+                .isActive(true)
+                .isNonLocked(true)
+                .role("ROLE_ADMIN")
+                .build();
+    }
+
 }
