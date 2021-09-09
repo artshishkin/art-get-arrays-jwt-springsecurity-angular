@@ -12,10 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -467,4 +469,24 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", username).toUpperCase());
         }
     }
+
+    @Nested
+    class GetAllUsersTests {
+
+        @Test
+        void getAllUsers() {
+
+            //when
+            var responseEntity = restTemplate.exchange("/user", HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {
+            });
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasSizeGreaterThan(2);
+        }
+    }
+
 }

@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -72,6 +73,11 @@ public class UserResource {
     @GetMapping("{username}")
     public User findUser(@PathVariable String username) {
         return userService.findByUsername(username);
+    }
+
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userService.findAll();
     }
 
     private void authenticate(String username, String password) {
