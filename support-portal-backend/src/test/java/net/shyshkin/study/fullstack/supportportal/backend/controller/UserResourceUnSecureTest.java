@@ -489,4 +489,35 @@ class UserResourceUnSecureTest extends BaseUserTest {
         }
     }
 
+    @Nested
+    class ResetPasswordTests {
+
+        @BeforeEach
+        void setUp() {
+            user = userRepository
+                    .findAll()
+                    .stream()
+                    .findAny()
+                    .orElseGet(() -> userRepository.save(createRandomUser()));
+        }
+
+        @Test
+        void resetPassword() {
+
+            //given
+            String email = user.getEmail();
+
+            //when
+            var responseEntity = restTemplate.exchange("/user/resetPassword/{email}", HttpMethod.POST, null, HttpResponse.class, email);
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasNoNullFieldsOrProperties()
+                    .hasFieldOrPropertyWithValue("httpStatus", OK)
+                    .hasFieldOrPropertyWithValue("message", "Password reset successfully. Check your email for new password");
+        }
+    }
 }

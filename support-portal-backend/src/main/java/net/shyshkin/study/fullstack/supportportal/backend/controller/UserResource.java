@@ -80,6 +80,17 @@ public class UserResource {
         return userService.findAll();
     }
 
+    @PostMapping("/resetPassword/{email}")
+    public HttpResponse resetPassword(@PathVariable String email) {
+        userService.resetPassword(email);
+        return HttpResponse.builder()
+                .httpStatusCode(OK.value())
+                .httpStatus(OK)
+                .reason(OK.getReasonPhrase())
+                .message("Password reset successfully. Check your email for new password")
+                .build();
+    }
+
     private void authenticate(String username, String password) {
         Authentication auth = new UsernamePasswordAuthenticationToken(username, password);
         authenticationManager.authenticate(auth);
