@@ -1,9 +1,11 @@
 package net.shyshkin.study.fullstack.supportportal.backend.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.shyshkin.study.fullstack.supportportal.backend.constant.SecurityConstants;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.HttpResponse;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
+import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
 import net.shyshkin.study.fullstack.supportportal.backend.service.UserService;
 import net.shyshkin.study.fullstack.supportportal.backend.utility.JwtTokenProvider;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.OK;
 
-
+@Slf4j
 @RestController
 @RequestMapping("user")
 @RequiredArgsConstructor
@@ -51,6 +53,12 @@ public class UserResource {
         return ResponseEntity.ok()
                 .header(SecurityConstants.JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(userDetails))
                 .body(httpResponse);
+    }
+
+    @PostMapping("add")
+    public User addNewUser(UserDto userDto) {
+        log.debug("User DTO: {}", userDto);
+        return userService.addNewUser(userDto);
     }
 
     private void authenticate(String username, String password) {
