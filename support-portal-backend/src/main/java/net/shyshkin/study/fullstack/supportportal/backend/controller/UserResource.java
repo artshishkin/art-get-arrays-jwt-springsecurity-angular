@@ -69,6 +69,11 @@ public class UserResource {
         return userService.updateUser(currentUsername, userDto);
     }
 
+    @GetMapping("{username}")
+    public User findUser(@PathVariable String username) {
+        return userService.findByUsername(username);
+    }
+
     private void authenticate(String username, String password) {
         Authentication auth = new UsernamePasswordAuthenticationToken(username, password);
         authenticationManager.authenticate(auth);

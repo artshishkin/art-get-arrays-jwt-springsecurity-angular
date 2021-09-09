@@ -411,4 +411,60 @@ class UserResourceUnSecureTest extends BaseUserTest {
         }
 
     }
+
+    @Nested
+    class FindUserTests {
+
+        @BeforeEach
+        void setUp() {
+            user = userRepository
+                    .findAll()
+                    .stream()
+                    .findAny()
+                    .orElseGet(() -> userRepository.save(createRandomUser()));
+        }
+
+        @Test
+        void findUser_present() {
+
+            //given
+            String username = user.getUsername();
+
+            //when
+            var responseEntity = restTemplate.getForEntity("/user/{username}", User.class, username);
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay")
+                    .hasFieldOrPropertyWithValue("username", username)
+                    .hasFieldOrPropertyWithValue("email", user.getEmail())
+                    .hasFieldOrPropertyWithValue("firstName", user.getFirstName())
+                    .hasFieldOrPropertyWithValue("lastName", user.getLastName())
+                    .hasFieldOrPropertyWithValue("isActive", user.isActive())
+                    .hasFieldOrPropertyWithValue("isNotLocked", user.isNotLocked())
+                    .hasFieldOrPropertyWithValue("role", user.getRole());
+        }
+
+        @Test
+        void findUser_absent() {
+
+            //given
+            String username = FAKER.name().username();
+
+            //when
+            var responseEntity = restTemplate.getForEntity("/user/{username}", HttpResponse.class, username);
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasNoNullFieldsOrProperties()
+                    .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
+                    .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", username).toUpperCase());
+        }
+    }
 }
