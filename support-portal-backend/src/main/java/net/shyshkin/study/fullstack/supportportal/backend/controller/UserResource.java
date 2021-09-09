@@ -63,6 +63,12 @@ public class UserResource {
         return userService.addNewUser(userDto);
     }
 
+    @PutMapping("{currentUsername}")
+    public User updateUser(@PathVariable String currentUsername, @Valid UserDto userDto) {
+        log.debug("User DTO: {}", userDto);
+        return userService.updateUser(currentUsername, userDto);
+    }
+
     private void authenticate(String username, String password) {
         Authentication auth = new UsernamePasswordAuthenticationToken(username, password);
         authenticationManager.authenticate(auth);
