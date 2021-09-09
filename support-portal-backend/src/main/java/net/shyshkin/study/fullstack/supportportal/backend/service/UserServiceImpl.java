@@ -2,9 +2,11 @@ package net.shyshkin.study.fullstack.supportportal.backend.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.Role;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.UserPrincipal;
+import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
 import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.EmailExistsException;
 import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.EmailNotFoundException;
 import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.UserNotFoundException;
@@ -15,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.transaction.Transactional;
@@ -28,7 +31,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    public static final String DEFAULT_USER_IMG_PATH = "/user/image/profile/temp";
     public static final String USERNAME_NOT_FOUND_MSG = "User with username `%s` not found";
     public static final String USERNAME_EXISTS_MSG = "Username `%s` is already taken. Please select another one";
     public static final String EMAIL_NOT_FOUND_MSG = "User with email `%s` not found";
@@ -63,42 +65,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public User register(String firstName, String lastName, String username, String email) {
 
-        validateNewUsernameAndEmail(username, email);
-
         Role defaultRole = Role.ROLE_USER;
 
-        String rawPassword = generatePassword();
-        String encodedPassword = passwordEncoder.encode(rawPassword);
-
-        User newUser = User.builder()
+        UserDto newUserDto = UserDto.builder()
                 .email(email)
                 .firstName(firstName)
                 .lastName(lastName)
                 .username(username)
-                .password(encodedPassword)
-                .userId(generateUserId())
                 .isActive(true)
-                .isNotLocked(true)
-                .joinDate(LocalDateTime.now())
-                .profileImageUrl(getTemporaryProfileImageUrl())
-                .lastLoginDate(null)
-                .lastLoginDateDisplay(null)
+                .isNonLocked(true)
                 .role(defaultRole.name())
-                .authorities(defaultRole.getAuthorities())
                 .build();
-        userRepository.save(newUser);
-
-        try {
-            emailService.sendNewPasswordEmail(newUser.getFirstName(), rawPassword, newUser.getEmail());
-        } catch (Exception exception) {
-            log.error("Can't send message", exception);
-        }
-
-        return newUser;
+        return addNewUser(newUserDto);
     }
 
-    private String getTemporaryProfileImageUrl() {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().path(DEFAULT_USER_IMG_PATH).build().toString();
+    private String getTemporaryProfileImageUrl(String username) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(FileConstant.DEFAULT_USER_IMAGE_PATH)
+                .pathSegment(username)
+                .toUriString();
     }
 
     private String generatePassword() {
@@ -126,6 +111,71 @@ public class UserServiceImpl implements UserService {
         return userRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new EmailNotFoundException(String.format(EMAIL_NOT_FOUND_MSG, email)));
+    }
+
+    @Override
+    public User addNewUser(UserDto userDto) {
+
+        String username = userDto.getUsername();
+        String email = userDto.getEmail();
+
+        validateNewUsernameAndEmail(username, email);
+
+        String rawPassword = generatePassword();
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+
+        Role role = Role.valueOf(userDto.getRole());
+
+        User newUser = User.builder()
+                .email(email)
+                .firstName(userDto.getFirstName())
+                .lastName(userDto.getLastName())
+                .username(username)
+                .password(encodedPassword)
+                .userId(generateUserId())
+                .isActive(userDto.isActive())
+                .isNotLocked(userDto.isNonLocked())
+                .joinDate(LocalDateTime.now())
+                .profileImageUrl(getTemporaryProfileImageUrl(username))
+                .lastLoginDate(null)
+                .lastLoginDateDisplay(null)
+                .role(role.name())
+                .authorities(role.getAuthorities())
+                .build();
+        userRepository.save(newUser);
+        saveProfileImage(newUser, userDto.getProfileImage());
+
+        try {
+            emailService.sendNewPasswordEmail(newUser.getFirstName(), rawPassword, newUser.getEmail());
+        } catch (Exception exception) {
+            log.error("Can't send message", exception);
+        }
+
+        return newUser;
+    }
+
+    private void saveProfileImage(User user, MultipartFile profileImage) {
+        if (profileImage == null) return;
+    }
+
+    @Override
+    public User updateUser(String username, UserDto userDto) {
+        return null;
+    }
+
+    @Override
+    public void deleteUser(long id) {
+
+    }
+
+    @Override
+    public void resetPassword(String email) {
+
+    }
+
+    @Override
+    public User updateProfileImage(String username, MultipartFile profileImage) {
+        return null;
     }
 
     private void validateNewUsernameAndEmail(String username, String email) {
