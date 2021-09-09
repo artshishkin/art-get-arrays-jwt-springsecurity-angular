@@ -138,7 +138,8 @@ public class UserServiceImpl implements UserService {
         try {
             emailService.sendNewPasswordEmail(newUser.getFirstName(), rawPassword, newUser.getEmail());
         } catch (Exception exception) {
-            log.error("Can't send message", exception);
+//            log.error("Can't send message", exception);
+            log.debug("Can't send message. Error: {} ", exception.getMessage());
         }
 
         return newUser;
@@ -150,22 +151,52 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(String username, UserDto userDto) {
-        return null;
+
+        String newUsername = userDto.getUsername();
+        String email = userDto.getEmail();
+
+        User user = validateUpdateUsernameAndEmail(username, newUsername, email);
+
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setUsername(userDto.getUsername());
+        user.setEmail(userDto.getEmail());
+        user.setRole(userDto.getRole().name());
+        user.setAuthorities(userDto.getRole().getAuthorities());
+        user.setNotLocked(userDto.isNonLocked());
+        user.setActive(userDto.isActive());
+
+        userRepository.save(user);
+        saveProfileImage(user, userDto.getProfileImage());
+
+        return user;
     }
 
     @Override
     public void deleteUser(long id) {
-
+        userRepository.deleteById(id);
     }
 
     @Override
     public void resetPassword(String email) {
+        User user = findByEmail(email);
+        String rawPassword = generatePassword();
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
 
+        try {
+            emailService.sendNewPasswordEmail(user.getFirstName(), rawPassword, user.getEmail());
+        } catch (Exception exception) {
+            log.debug("Can't send message. Error: {} ", exception.getMessage());
+        }
     }
 
     @Override
     public User updateProfileImage(String username, MultipartFile profileImage) {
-        return null;
+        User user = findByUsername(username);
+        saveProfileImage(user, profileImage);
+        return user;
     }
 
     private void validateNewUsernameAndEmail(String username, String email) {
