@@ -575,4 +575,62 @@ class UserResourceTest extends BaseUserTest {
         assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(1, ChronoUnit.SECONDS));
     }
 
+    @Test
+    @Order(90)
+    void updateUser_throughFormData_correct() throws IOException {
+
+        //given
+        User user = createRandomUser();
+        userRepository.save(user);
+        String currentUsername = user.getUsername();
+
+        UserDto userDto = createRandomUserDto();
+
+        MultipartFile profileImage = new MockMultipartFile("profileImage", "test.txt",
+                "text/plain", ("Spring Framework" + UUID.randomUUID()).getBytes());
+
+        MultiValueMap<String, Object> body
+                = new LinkedMultiValueMap<>();
+
+        body.add("firstName", userDto.getFirstName());
+        body.add("lastName", userDto.getLastName());
+        body.add("username", userDto.getUsername());
+        body.add("email", userDto.getEmail());
+        body.add("role", userDto.getRole().name());
+        body.add("active", userDto.isActive());
+        body.add("nonLocked", userDto.isNonLocked());
+        body.add("profileImage", profileImage.getResource());
+
+        //when
+        var requestEntity = RequestEntity
+                .put("/user/{currentUsername}", currentUsername)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(correctToken))
+                .body(body);
+
+        ResponseEntity<User> responseEntity = restTemplate
+                .exchange(requestEntity, User.class);
+
+        //then
+        log.debug("Response Entity: {}", responseEntity);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay")
+                .hasFieldOrPropertyWithValue("username", userDto.getUsername())
+                .hasFieldOrPropertyWithValue("email", userDto.getEmail())
+                .hasFieldOrPropertyWithValue("firstName", userDto.getFirstName())
+                .hasFieldOrPropertyWithValue("lastName", userDto.getLastName())
+                .hasFieldOrPropertyWithValue("isActive", true)
+                .hasFieldOrPropertyWithValue("isNotLocked", true)
+                .hasFieldOrPropertyWithValue("role", "ROLE_ADMIN")
+                .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s/avatar.jpg", u.getUserId())));
+
+        User createdUser = responseEntity.getBody();
+        Path path = Path.of(FileConstant.USER_FOLDER, createdUser.getUserId(), FileConstant.USER_IMAGE_FILENAME);
+        log.debug("Path of created file: {}", path);
+        assertThat(Files.exists(path)).isTrue();
+        assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(1, ChronoUnit.SECONDS));
+    }
+
 }
