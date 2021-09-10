@@ -752,6 +752,26 @@ class UserResourceUnSecureTest extends BaseUserTest {
             assertThat(responseEntity.getBody()).hasSize(52);
         }
 
+
+        @Test
+        void getDefaultProfileImage_correct() throws IOException {
+
+            //given
+            String userId = user.getUserId();
+
+            //when
+            RequestEntity<Void> requestEntity = RequestEntity.get("/user/image/profile/{userId}",userId)
+                    .accept(MediaType.IMAGE_JPEG)
+                    .build();
+            var responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<byte[]>() {
+            });
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+            assertThat(responseEntity.getBody()).hasSizeGreaterThan(52);
+        }
+
         private void uploadProfileImage(String username) throws IOException {
 
             MultipartFile profileImage = new MockMultipartFile("profileImage", "test.txt",

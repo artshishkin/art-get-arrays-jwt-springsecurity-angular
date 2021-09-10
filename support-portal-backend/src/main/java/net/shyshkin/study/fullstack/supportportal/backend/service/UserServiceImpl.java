@@ -13,13 +13,19 @@ import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.Usern
 import net.shyshkin.study.fullstack.supportportal.backend.mapper.UserMapper;
 import net.shyshkin.study.fullstack.supportportal.backend.repository.UserRepository;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,6 +53,16 @@ public class UserServiceImpl implements UserService {
     private final LoginAttemptService loginAttemptService;
     private final EmailService emailService;
     private final UserMapper userMapper;
+    private final RestTemplateBuilder restTemplateBuilder;
+
+    private RestTemplate restTemplate;
+
+    @PostConstruct
+    void init() {
+        restTemplate = restTemplateBuilder
+                .rootUri(TEMP_PROFILE_IMAGE_BASE_URL)
+                .build();
+    }
 
     @Override
     @Transactional
@@ -228,6 +244,18 @@ public class UserServiceImpl implements UserService {
         Path userProfileImagePath = Paths
                 .get(USER_FOLDER, userId, filename);
         return Files.readAllBytes(userProfileImagePath);
+    }
+
+    @Override
+    public byte[] getDefaultProfileImage(String userId) {
+//        "https://robohash.org/11951691-d373-4126-bef2-84d157a6546b"
+        RequestEntity<Void> requestEntity = RequestEntity
+                .get("/{userId}", userId)
+                .accept(MediaType.IMAGE_JPEG)
+                .build();
+        var responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<byte[]>() {
+        });
+        return responseEntity.getBody();
     }
 
     private void validateNewUsernameAndEmail(String username, String email) {

@@ -124,6 +124,13 @@ public class UserResource {
         return profileImage;
     }
 
+    @GetMapping(path = "image/profile/{userId}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public byte[] getDefaultProfileImage(@PathVariable String userId) {
+        byte[] profileImage = userService.getDefaultProfileImage(userId);
+        log.debug("File size: {}", profileImage.length);
+        return profileImage;
+    }
+
     private void authenticate(String username, String password) {
         Authentication auth = new UsernamePasswordAuthenticationToken(username, password);
         authenticationManager.authenticate(auth);
