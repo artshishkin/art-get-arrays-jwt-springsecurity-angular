@@ -15,6 +15,7 @@ import net.shyshkin.study.fullstack.supportportal.backend.repository.UserReposit
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -126,8 +127,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable).getContent();
     }
 
     @Override

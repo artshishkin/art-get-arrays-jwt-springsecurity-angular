@@ -8,6 +8,7 @@ import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
 import net.shyshkin.study.fullstack.supportportal.backend.service.UserService;
 import net.shyshkin.study.fullstack.supportportal.backend.utility.JwtTokenProvider;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -79,8 +80,8 @@ public class UserResource {
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.findAll();
+    public List<User> getAllUsers(Pageable pageable) {
+        return userService.findAll(pageable);
     }
 
     @PostMapping("/resetPassword/{email}")
