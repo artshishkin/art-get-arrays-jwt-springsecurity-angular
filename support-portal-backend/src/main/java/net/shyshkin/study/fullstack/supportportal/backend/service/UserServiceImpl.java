@@ -15,6 +15,7 @@ import net.shyshkin.study.fullstack.supportportal.backend.repository.UserReposit
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -33,7 +34,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -127,8 +127,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable).getContent();
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Override

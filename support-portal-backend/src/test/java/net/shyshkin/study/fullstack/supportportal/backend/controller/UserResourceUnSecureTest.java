@@ -1,5 +1,6 @@
 package net.shyshkin.study.fullstack.supportportal.backend.controller;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import net.shyshkin.study.fullstack.supportportal.backend.common.BaseUserTest;
 import net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant;
@@ -490,16 +491,28 @@ class UserResourceUnSecureTest extends BaseUserTest {
         void getAllUsers() {
 
             //when
-            var responseEntity = restTemplate.exchange("/user", HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {
-            });
+            var responseEntity = restTemplate.exchange("/user", HttpMethod.GET, null, UserPage.class);
 
             //then
             log.debug("Response Entity: {}", responseEntity);
             assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
             assertThat(responseEntity.getBody())
-                    .isNotNull()
+                    .isNotNull();
+            assertThat(responseEntity.getBody().getContent())
                     .hasSizeGreaterThan(2);
         }
+    }
+
+    @Data
+    static class UserPage {
+        private List<User> content;
+        private boolean last;
+        private boolean first;
+        private int totalElements;
+        private int size;
+        private int numberOfElements;
+        private int number;
+        private boolean empty;
     }
 
     @Nested

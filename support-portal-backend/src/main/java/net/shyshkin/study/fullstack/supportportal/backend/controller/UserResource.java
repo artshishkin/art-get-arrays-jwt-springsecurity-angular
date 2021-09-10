@@ -8,6 +8,7 @@ import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
 import net.shyshkin.study.fullstack.supportportal.backend.service.UserService;
 import net.shyshkin.study.fullstack.supportportal.backend.utility.JwtTokenProvider;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -80,7 +80,7 @@ public class UserResource {
     }
 
     @GetMapping
-    public List<User> getAllUsers(Pageable pageable) {
+    public Page<User> getAllUsers(Pageable pageable) {
         return userService.findAll(pageable);
     }
 
