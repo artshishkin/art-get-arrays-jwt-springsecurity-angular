@@ -217,6 +217,14 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Override
+    public byte[] getProfileImage(String username) throws IOException {
+        User user = findByUsername(username);
+        Path userFolder = Paths
+                .get(USER_FOLDER, user.getUserId(), USER_IMAGE_FILENAME);
+        return Files.readAllBytes(userFolder);
+    }
+
     private void validateNewUsernameAndEmail(String username, String email) {
 
         if (userRepository.existsByUsername(username))

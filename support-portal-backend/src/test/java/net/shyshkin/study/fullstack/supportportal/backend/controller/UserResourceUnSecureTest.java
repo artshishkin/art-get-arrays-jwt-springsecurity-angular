@@ -35,8 +35,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -650,4 +649,121 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", username).toUpperCase());
         }
     }
+
+    @Nested
+    class GetProfileImageTests {
+
+        @BeforeEach
+        void setUp() {
+            user = userRepository
+                    .findAll()
+                    .stream()
+                    .findAny()
+                    .orElseGet(() -> userRepository.save(createRandomUser()));
+        }
+
+        @Test
+        void getProfileImage_correct() throws IOException {
+
+            //given
+            String username = user.getUsername();
+            uploadProfileImage(username);
+
+            //when
+            RequestEntity<Void> requestEntity = RequestEntity.get("/user/{username}/image/profile", username)
+                    .accept(MediaType.IMAGE_JPEG)
+                    .build();
+            var responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<byte[]>() {
+            });
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+            assertThat(responseEntity.getBody()).hasSize(52);
+        }
+
+        @Test
+        void getProfileImage_absentUser() throws IOException {
+
+            //given
+            String username = user.getUsername();
+            uploadProfileImage(username);
+            String absentUsername = FAKER.name().username();
+
+            //when
+            RequestEntity<Void> requestEntity = RequestEntity.get("/user/{username}/image/profile", absentUsername)
+                    .accept(MediaType.IMAGE_JPEG, MediaType.APPLICATION_JSON)
+                    .build();
+            var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasNoNullFieldsOrProperties()
+                    .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
+                    .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", absentUsername).toUpperCase());
+        }
+
+        @Test
+        void getProfileImage_absentImage() {
+
+            //given
+            user = userRepository.save(createRandomUser());
+            String username = user.getUsername();
+
+            //when
+            RequestEntity<Void> requestEntity = RequestEntity.get("/user/{username}/image/profile", username)
+                    .accept(MediaType.IMAGE_JPEG, MediaType.APPLICATION_JSON)
+                    .build();
+            var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(INTERNAL_SERVER_ERROR);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasNoNullFieldsOrProperties()
+                    .hasFieldOrPropertyWithValue("httpStatus", INTERNAL_SERVER_ERROR)
+                    .hasFieldOrPropertyWithValue("message", "Error occurred while processing file".toUpperCase());
+        }
+
+        private void uploadProfileImage(String username) throws IOException {
+
+            MultipartFile profileImage = new MockMultipartFile("profileImage", "test.txt",
+                    "text/plain", ("Spring Framework" + UUID.randomUUID()).getBytes());
+
+            MultiValueMap<String, Object> body
+                    = new LinkedMultiValueMap<>();
+            body.add("profileImage", profileImage.getResource());
+
+            //when
+            var requestEntity = RequestEntity.put("/user/{username}/profileImage", username)
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .body(body);
+            var responseEntity = restTemplate
+                    .exchange(requestEntity, User.class);
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay")
+                    .hasFieldOrPropertyWithValue("username", username)
+                    .hasFieldOrPropertyWithValue("email", user.getEmail())
+                    .hasFieldOrPropertyWithValue("firstName", user.getFirstName())
+                    .hasFieldOrPropertyWithValue("lastName", user.getLastName())
+                    .hasFieldOrPropertyWithValue("isActive", user.isActive())
+                    .hasFieldOrPropertyWithValue("isNotLocked", user.isNotLocked())
+                    .hasFieldOrPropertyWithValue("role", user.getRole());
+
+            Path path = Path.of(FileConstant.USER_FOLDER, user.getUserId(), FileConstant.USER_IMAGE_FILENAME);
+            log.debug("Path of created file: {}", path);
+            assertThat(Files.exists(path)).isTrue();
+            assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(200, ChronoUnit.MILLIS));
+        }
+    }
+
 }

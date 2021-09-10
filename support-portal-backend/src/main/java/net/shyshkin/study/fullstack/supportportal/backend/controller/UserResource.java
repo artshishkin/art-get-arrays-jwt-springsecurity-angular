@@ -8,6 +8,7 @@ import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
 import net.shyshkin.study.fullstack.supportportal.backend.service.UserService;
 import net.shyshkin.study.fullstack.supportportal.backend.utility.JwtTokenProvider;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -106,6 +108,13 @@ public class UserResource {
     @PutMapping("{username}/profileImage")
     public User updateUser(@PathVariable String username, MultipartFile profileImage) {
         return userService.updateProfileImage(username, profileImage);
+    }
+
+    @GetMapping(path = "{username}/image/profile", produces = MediaType.IMAGE_JPEG_VALUE)
+    public byte[] getProfileImage(@PathVariable String username) throws IOException {
+        byte[] profileImage = userService.getProfileImage(username);
+        log.debug("File size: {}", profileImage.length);
+        return profileImage;
     }
 
     private void authenticate(String username, String password) {
