@@ -220,9 +220,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public byte[] getProfileImage(String username) throws IOException {
         User user = findByUsername(username);
-        Path userFolder = Paths
-                .get(USER_FOLDER, user.getUserId(), USER_IMAGE_FILENAME);
-        return Files.readAllBytes(userFolder);
+        return getImageByUserId(user.getUserId(), USER_IMAGE_FILENAME);
+    }
+
+    @Override
+    public byte[] getImageByUserId(String userId, String filename) throws IOException {
+        Path userProfileImagePath = Paths
+                .get(USER_FOLDER, userId, filename);
+        return Files.readAllBytes(userProfileImagePath);
     }
 
     private void validateNewUsernameAndEmail(String username, String email) {

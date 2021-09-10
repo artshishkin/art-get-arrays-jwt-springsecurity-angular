@@ -729,6 +729,29 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .hasFieldOrPropertyWithValue("message", "Error occurred while processing file".toUpperCase());
         }
 
+        @Test
+        void getImageById_correct() throws IOException {
+
+            //given
+            String username = user.getUsername();
+            uploadProfileImage(username);
+            String profileImageUrlFull = user.getProfileImageUrl();
+            String profileImageUrl = profileImageUrlFull.substring(profileImageUrlFull.indexOf("/user/image/profile"));
+            log.debug("Image URL: {}", profileImageUrl);
+
+            //when
+            RequestEntity<Void> requestEntity = RequestEntity.get(profileImageUrl)
+                    .accept(MediaType.IMAGE_JPEG)
+                    .build();
+            var responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<byte[]>() {
+            });
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+            assertThat(responseEntity.getBody()).hasSize(52);
+        }
+
         private void uploadProfileImage(String username) throws IOException {
 
             MultipartFile profileImage = new MockMultipartFile("profileImage", "test.txt",

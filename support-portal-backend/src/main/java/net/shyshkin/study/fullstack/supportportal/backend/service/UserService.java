@@ -30,4 +30,6 @@ public interface UserService extends UserDetailsService {
 
     byte[] getProfileImage(String username) throws IOException;
 
+    byte[] getImageByUserId(String userId, String filename) throws IOException;
+
 }
