@@ -102,6 +102,13 @@ public class UserServiceImpl implements UserService {
         return addNewUser(newUserDto);
     }
 
+    private String generateDefaultProfileImageUrl(String userId) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(DEFAULT_USER_IMAGE_PATH)
+                .pathSegment(userId)
+                .toUriString();
+    }
+
     private String generateProfileImageUrl(String userId) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(DEFAULT_USER_IMAGE_PATH)
@@ -152,7 +159,7 @@ public class UserServiceImpl implements UserService {
 
         newUser.setPassword(encodedPassword);
         newUser.setUserId(generateUserId());
-        newUser.setProfileImageUrl(generateProfileImageUrl(newUser.getUserId()));
+        newUser.setProfileImageUrl(generateDefaultProfileImageUrl(newUser.getUserId()));
 
         userRepository.save(newUser);
         saveProfileImage(newUser, userDto.getProfileImage());
@@ -178,6 +185,9 @@ public class UserServiceImpl implements UserService {
             }
             profileImage.transferTo(userFolder.resolve(USER_IMAGE_FILENAME));
             log.debug(FILE_SAVED_IN_FILE_SYSTEM + profileImage.getOriginalFilename());
+            user.setProfileImageUrl(generateProfileImageUrl(user.getUserId()));
+            userRepository.save(user);
+
         } catch (IOException exception) {
             log.error("Can't save to file", exception);
         }

@@ -610,7 +610,8 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .hasFieldOrPropertyWithValue("lastName", user.getLastName())
                     .hasFieldOrPropertyWithValue("isActive", user.isActive())
                     .hasFieldOrPropertyWithValue("isNotLocked", user.isNotLocked())
-                    .hasFieldOrPropertyWithValue("role", user.getRole());
+                    .hasFieldOrPropertyWithValue("role", user.getRole())
+                    .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s/avatar.jpg", user.getUserId())));
 
             Path path = Path.of(FileConstant.USER_FOLDER, user.getUserId(), FileConstant.USER_IMAGE_FILENAME);
             log.debug("Path of created file: {}", path);
@@ -760,7 +761,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             String userId = user.getUserId();
 
             //when
-            RequestEntity<Void> requestEntity = RequestEntity.get("/user/image/profile/{userId}",userId)
+            RequestEntity<Void> requestEntity = RequestEntity.get("/user/image/profile/{userId}", userId)
                     .accept(MediaType.IMAGE_JPEG)
                     .build();
             var responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<byte[]>() {
@@ -800,7 +801,8 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .hasFieldOrPropertyWithValue("lastName", user.getLastName())
                     .hasFieldOrPropertyWithValue("isActive", user.isActive())
                     .hasFieldOrPropertyWithValue("isNotLocked", user.isNotLocked())
-                    .hasFieldOrPropertyWithValue("role", user.getRole());
+                    .hasFieldOrPropertyWithValue("role", user.getRole())
+                    .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s/avatar.jpg", user.getUserId())));
 
             Path path = Path.of(FileConstant.USER_FOLDER, user.getUserId(), FileConstant.USER_IMAGE_FILENAME);
             log.debug("Path of created file: {}", path);
