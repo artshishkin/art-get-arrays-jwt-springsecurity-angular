@@ -6,18 +6,18 @@ import net.shyshkin.study.fullstack.supportportal.backend.common.BaseUserTest;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.HttpResponse;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.UserPrincipal;
+import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
 import net.shyshkin.study.fullstack.supportportal.backend.service.LoginAttemptService;
 import net.shyshkin.study.fullstack.supportportal.backend.utility.JwtTokenProvider;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+
+import java.util.Map;
 
 import static net.shyshkin.study.fullstack.supportportal.backend.constant.SecurityConstants.JWT_TOKEN_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,6 +37,8 @@ class UserResourceTest extends BaseUserTest {
 
     @Autowired
     JWTVerifier jwtVerifier;
+
+    private static String correctToken;
 
     @Test
     @Order(10)
@@ -200,6 +202,7 @@ class UserResourceTest extends BaseUserTest {
         log.debug("Token: {}", token);
         assertThat(token).isNotBlank();
         assertThat(jwtVerifier.verify(token).getSubject()).isEqualTo(username);
+        correctToken = token;
     }
 
     @Test
@@ -326,5 +329,182 @@ class UserResourceTest extends BaseUserTest {
         }
 
 
+    }
+
+    @Test
+    @Order(70)
+    void addNewUser_correct() {
+
+        //given
+        UserDto userDto = createRandomUserDto();
+        Map<String, ?> paramMap = Map.of(
+                "firstName", userDto.getFirstName(),
+                "lastName", userDto.getLastName(),
+                "username", userDto.getUsername(),
+                "email", userDto.getEmail(),
+                "role", userDto.getRole().name(),
+                "isActive", String.valueOf(userDto.isActive()),
+                "isNonLocked", String.valueOf(userDto.isNonLocked())
+        );
+
+        //when
+        var requestEntity = RequestEntity
+                .post("/user/add")
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(correctToken))
+                .build();
+        ResponseEntity<User> responseEntity = restTemplate
+                .postForEntity(
+                        "/user/add?username={username}&email={email}" +
+                                "&firstName={firstName}&lastName={lastName}" +
+                                "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                        requestEntity,
+                        User.class,
+                        paramMap
+                );
+
+        //then
+        log.debug("Response Entity: {}", responseEntity);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay")
+                .hasFieldOrPropertyWithValue("username", userDto.getUsername())
+                .hasFieldOrPropertyWithValue("email", userDto.getEmail())
+                .hasFieldOrPropertyWithValue("firstName", userDto.getFirstName())
+                .hasFieldOrPropertyWithValue("lastName", userDto.getLastName())
+                .hasFieldOrPropertyWithValue("isActive", true)
+                .hasFieldOrPropertyWithValue("isNotLocked", true)
+                .hasFieldOrPropertyWithValue("role", "ROLE_ADMIN");
+    }
+
+    @Test
+    @Order(71)
+    void addNewUser_withoutToken() {
+
+        //given
+        UserDto userDto = createRandomUserDto();
+        Map<String, ?> paramMap = Map.of(
+                "firstName", userDto.getFirstName(),
+                "lastName", userDto.getLastName(),
+                "username", userDto.getUsername(),
+                "email", userDto.getEmail(),
+                "role", userDto.getRole().name(),
+                "isActive", userDto.isActive(),
+                "isNonLocked", userDto.isNonLocked()
+        );
+
+        //when
+        var responseEntity = restTemplate
+                .postForEntity(
+                        "/user/add?username={username}&email={email}" +
+                                "&firstName={firstName}&lastName={lastName}" +
+                                "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                        null,
+                        HttpResponse.class,
+                        paramMap
+                );
+
+        //then
+        log.debug("Response Entity: {}", responseEntity);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(FORBIDDEN);
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .hasNoNullFieldsOrProperties()
+                .hasFieldOrPropertyWithValue("httpStatus", FORBIDDEN)
+                .hasFieldOrPropertyWithValue("message", "You need to log in to access this page");
+    }
+
+    @Test
+    @Order(72)
+    @DisplayName("When trying to use token of non existing user (or already deleted/blocked user) but token is correct then should allow access")
+    void addNewUser_tokenOfNonExistingUser() {
+
+        //given
+        User nonExistingUser = createRandomUser();
+        log.debug("Non existing user: {}", nonExistingUser);
+        String token = jwtTokenProvider.generateJwtToken(new UserPrincipal(nonExistingUser));
+
+        UserDto userDto = createRandomUserDto();
+        Map<String, ?> paramMap = Map.of(
+                "firstName", userDto.getFirstName(),
+                "lastName", userDto.getLastName(),
+                "username", userDto.getUsername(),
+                "email", userDto.getEmail(),
+                "role", userDto.getRole().name(),
+                "isActive", userDto.isActive(),
+                "isNonLocked", userDto.isNonLocked()
+        );
+
+        //when
+        var requestEntity = RequestEntity
+                .post("/user/add")
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(token))
+                .build();
+        ResponseEntity<User> responseEntity = restTemplate
+                .postForEntity(
+                        "/user/add?username={username}&email={email}" +
+                                "&firstName={firstName}&lastName={lastName}" +
+                                "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                        requestEntity,
+                        User.class,
+                        paramMap
+                );
+
+        //then
+        log.debug("Response Entity: {}", responseEntity);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay")
+                .hasFieldOrPropertyWithValue("username", userDto.getUsername())
+                .hasFieldOrPropertyWithValue("email", userDto.getEmail())
+                .hasFieldOrPropertyWithValue("firstName", userDto.getFirstName())
+                .hasFieldOrPropertyWithValue("lastName", userDto.getLastName())
+                .hasFieldOrPropertyWithValue("isActive", true)
+                .hasFieldOrPropertyWithValue("isNotLocked", true)
+                .hasFieldOrPropertyWithValue("role", "ROLE_ADMIN");
+    }
+
+    @Test
+    @Order(72)
+    @DisplayName("When trying to use totally invalid - 403 Forbidden")
+    void addNewUser_invalidToken() {
+
+        //given
+        String token = "fake-token";
+
+        UserDto userDto = createRandomUserDto();
+        Map<String, ?> paramMap = Map.of(
+                "firstName", userDto.getFirstName(),
+                "lastName", userDto.getLastName(),
+                "username", userDto.getUsername(),
+                "email", userDto.getEmail(),
+                "role", userDto.getRole().name(),
+                "isActive", userDto.isActive(),
+                "isNonLocked", userDto.isNonLocked()
+        );
+
+        //when
+        var requestEntity = RequestEntity
+                .post("/user/add")
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(token))
+                .build();
+        var responseEntity = restTemplate
+                .postForEntity(
+                        "/user/add?username={username}&email={email}" +
+                                "&firstName={firstName}&lastName={lastName}" +
+                                "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                        requestEntity,
+                        HttpResponse.class,
+                        paramMap
+                );
+
+        //then
+        log.debug("Response Entity: {}", responseEntity);
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .hasNoNullFieldsOrProperties()
+                .hasFieldOrPropertyWithValue("httpStatus", FORBIDDEN)
+                .hasFieldOrPropertyWithValue("message", "You need to log in to access this page");
     }
 }
