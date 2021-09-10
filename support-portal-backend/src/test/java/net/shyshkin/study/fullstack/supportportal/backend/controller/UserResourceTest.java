@@ -3,6 +3,7 @@ package net.shyshkin.study.fullstack.supportportal.backend.controller;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import lombok.extern.slf4j.Slf4j;
 import net.shyshkin.study.fullstack.supportportal.backend.common.BaseUserTest;
+import net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.HttpResponse;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.UserPrincipal;
@@ -14,13 +15,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
+import java.util.UUID;
 
 import static net.shyshkin.study.fullstack.supportportal.backend.constant.SecurityConstants.JWT_TOKEN_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.http.HttpStatus.*;
 
@@ -333,7 +346,7 @@ class UserResourceTest extends BaseUserTest {
 
     @Test
     @Order(70)
-    void addNewUser_correct() {
+    void addNewUser_throughRequestParam_correct() {
 
         //given
         UserDto userDto = createRandomUserDto();
@@ -507,4 +520,59 @@ class UserResourceTest extends BaseUserTest {
                 .hasFieldOrPropertyWithValue("httpStatus", FORBIDDEN)
                 .hasFieldOrPropertyWithValue("message", "You need to log in to access this page");
     }
+
+    @Test
+    @Order(80)
+    void addNewUser_throughFormData_correct() throws IOException {
+
+        //given
+        UserDto userDto = createRandomUserDto();
+
+        MultipartFile profileImage = new MockMultipartFile("profileImage", "test.txt",
+                "text/plain", ("Spring Framework" + UUID.randomUUID()).getBytes());
+
+        MultiValueMap<String, Object> body
+                = new LinkedMultiValueMap<>();
+
+        body.add("firstName", userDto.getFirstName());
+        body.add("lastName", userDto.getLastName());
+        body.add("username", userDto.getUsername());
+        body.add("email", userDto.getEmail());
+        body.add("role", userDto.getRole().name());
+        body.add("active", userDto.isActive());
+        body.add("nonLocked", userDto.isNonLocked());
+        body.add("profileImage", profileImage.getResource());
+
+        //when
+        var requestEntity = RequestEntity
+                .post("/user/add")
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(correctToken))
+                .body(body);
+
+        ResponseEntity<User> responseEntity = restTemplate
+                .exchange(requestEntity, User.class);
+
+        //then
+        log.debug("Response Entity: {}", responseEntity);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+        assertThat(responseEntity.getBody())
+                .isNotNull()
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay")
+                .hasFieldOrPropertyWithValue("username", userDto.getUsername())
+                .hasFieldOrPropertyWithValue("email", userDto.getEmail())
+                .hasFieldOrPropertyWithValue("firstName", userDto.getFirstName())
+                .hasFieldOrPropertyWithValue("lastName", userDto.getLastName())
+                .hasFieldOrPropertyWithValue("isActive", true)
+                .hasFieldOrPropertyWithValue("isNotLocked", true)
+                .hasFieldOrPropertyWithValue("role", "ROLE_ADMIN")
+                .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s/avatar.jpg", u.getUserId())));
+
+        User createdUser = responseEntity.getBody();
+        Path path = Path.of(FileConstant.USER_FOLDER, createdUser.getUserId(), FileConstant.USER_IMAGE_FILENAME);
+        log.debug("Path of created file: {}", path);
+        assertThat(Files.exists(path)).isTrue();
+        assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(1, ChronoUnit.SECONDS));
+    }
+
 }
