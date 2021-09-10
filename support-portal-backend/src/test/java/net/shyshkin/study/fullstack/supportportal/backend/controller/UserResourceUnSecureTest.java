@@ -2,6 +2,7 @@ package net.shyshkin.study.fullstack.supportportal.backend.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import net.shyshkin.study.fullstack.supportportal.backend.common.BaseUserTest;
+import net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.HttpResponse;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.Role;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
@@ -14,13 +15,26 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -553,4 +567,87 @@ class UserResourceUnSecureTest extends BaseUserTest {
         }
     }
 
+    @Nested
+    class UpdateProfileImageTests {
+
+        @BeforeEach
+        void setUp() {
+            user = userRepository
+                    .findAll()
+                    .stream()
+                    .findAny()
+                    .orElseGet(() -> userRepository.save(createRandomUser()));
+        }
+
+        @Test
+        void updateProfileImage_correct() throws IOException {
+
+            //given
+            String username = user.getUsername();
+
+            MultipartFile profileImage = new MockMultipartFile("profileImage", "test.txt",
+                    "text/plain", ("Spring Framework" + UUID.randomUUID()).getBytes());
+
+            MultiValueMap<String, Object> body
+                    = new LinkedMultiValueMap<>();
+            body.add("profileImage", profileImage.getResource());
+
+            //when
+            var requestEntity = RequestEntity.put("/user/{username}/profileImage", username)
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .body(body);
+            var responseEntity = restTemplate
+                    .exchange(requestEntity, User.class);
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay")
+                    .hasFieldOrPropertyWithValue("username", username)
+                    .hasFieldOrPropertyWithValue("email", user.getEmail())
+                    .hasFieldOrPropertyWithValue("firstName", user.getFirstName())
+                    .hasFieldOrPropertyWithValue("lastName", user.getLastName())
+                    .hasFieldOrPropertyWithValue("isActive", user.isActive())
+                    .hasFieldOrPropertyWithValue("isNotLocked", user.isNotLocked())
+                    .hasFieldOrPropertyWithValue("role", user.getRole());
+
+            Path path = Path.of(FileConstant.USER_FOLDER, user.getUserId(), FileConstant.USER_IMAGE_FILENAME);
+            log.debug("Path of created file: {}", path);
+            assertThat(Files.exists(path)).isTrue();
+            assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(100, ChronoUnit.MILLIS));
+        }
+
+        @Test
+        void updateProfileImage_absentUser() {
+
+            //given
+            String username = FAKER.name().username();
+
+
+            MultipartFile profileImage = new MockMultipartFile("profileImage", "test.txt",
+                    "text/plain", ("Spring Framework" + UUID.randomUUID()).getBytes());
+
+            MultiValueMap<String, Object> body
+                    = new LinkedMultiValueMap<>();
+            body.add("profileImage", profileImage.getResource());
+
+            //when
+            var requestEntity = RequestEntity.put("/user/{username}/profileImage", username)
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .body(body);
+            var responseEntity = restTemplate
+                    .exchange(requestEntity, HttpResponse.class);
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasNoNullFieldsOrProperties()
+                    .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
+                    .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", username).toUpperCase());
+        }
+    }
 }

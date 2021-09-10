@@ -45,7 +45,7 @@ class ErrorControllerTest {
                         () -> assertThat(httpResponse.getHttpStatusCode()).isEqualTo(NOT_FOUND.value()),
                         () -> assertThat(httpResponse.getMessage()).isEqualTo("RESOURCE NOT FOUND"),
                         () -> assertThat(httpResponse.getReason()).isEqualTo(NOT_FOUND.getReasonPhrase().toUpperCase()),
-                        () -> assertThat(httpResponse.getTimestamp()).isCloseTo(LocalDateTime.now(), within(200, ChronoUnit.MILLIS))
+                        () -> assertThat(httpResponse.getTimestamp()).isCloseTo(LocalDateTime.now(), within(300, ChronoUnit.MILLIS))
                 ));
     }
 }

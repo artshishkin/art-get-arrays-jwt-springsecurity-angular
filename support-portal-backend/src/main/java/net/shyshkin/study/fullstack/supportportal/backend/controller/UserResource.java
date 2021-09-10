@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -92,7 +93,7 @@ public class UserResource {
     }
 
     @DeleteMapping("{id}")
-    public HttpResponse deleteUser(@PathVariable long id){
+    public HttpResponse deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
         return HttpResponse.builder()
                 .httpStatusCode(OK.value())
@@ -100,6 +101,11 @@ public class UserResource {
                 .reason(OK.getReasonPhrase())
                 .message("User deleted successfully")
                 .build();
+    }
+
+    @PutMapping("{username}/profileImage")
+    public User updateUser(@PathVariable String username, MultipartFile profileImage) {
+        return userService.updateProfileImage(username, profileImage);
     }
 
     private void authenticate(String username, String password) {
