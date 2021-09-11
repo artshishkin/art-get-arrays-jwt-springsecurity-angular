@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -96,13 +97,14 @@ public class UserResource {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('user:delete')")
     public HttpResponse deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
         return HttpResponse.builder()
                 .httpStatusCode(OK.value())
                 .httpStatus(OK)
                 .reason(OK.getReasonPhrase())
-                .message("User deleted successfully")
+                .message("User deleted successfully".toUpperCase())
                 .build();
     }
 

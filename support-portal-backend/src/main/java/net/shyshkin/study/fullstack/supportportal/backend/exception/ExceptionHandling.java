@@ -7,6 +7,7 @@ import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.Email
 import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.EmailNotFoundException;
 import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.UserNotFoundException;
 import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.UsernameExistsException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -68,6 +69,13 @@ public class ExceptionHandling {
     })
     public ResponseEntity<HttpResponse> badRequestExceptionHandler(Exception exception) {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler({
+            EmptyResultDataAccessException.class
+    })
+    public ResponseEntity<HttpResponse> emptyResultDataAccessExceptionHandler(EmptyResultDataAccessException exception) {
+        return createHttpResponse(BAD_REQUEST, "" + exception.getMessage());
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.shyshkin.study.fullstack.supportportal.backend.common.BaseUserTest;
 import net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.HttpResponse;
+import net.shyshkin.study.fullstack.supportportal.backend.domain.Role;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.UserPrincipal;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
@@ -633,4 +634,91 @@ class UserResourceTest extends BaseUserTest {
         assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(1, ChronoUnit.SECONDS));
     }
 
+    @Nested
+    class DeleteUserTests {
+
+        @BeforeEach
+        void setUp() {
+            user = userRepository.save(createRandomUser());
+        }
+
+        @Test
+        void deleteUser_ok_hasAuthority() {
+
+            //given
+            User superAdmin = createRandomUser();
+            superAdmin.setRole(Role.ROLE_SUPER_ADMIN.name());
+            superAdmin.setAuthorities(Role.ROLE_SUPER_ADMIN.getAuthorities());
+            String token = jwtTokenProvider.generateJwtToken(new UserPrincipal(superAdmin));
+
+            long id = user.getId();
+
+            //when
+            var requestEntity = RequestEntity.delete("/user/{id}", id)
+                    .headers(headers -> headers.setBearerAuth(token))
+                    .build();
+            var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasNoNullFieldsOrProperties()
+                    .hasFieldOrPropertyWithValue("httpStatus", OK)
+                    .hasFieldOrPropertyWithValue("message", "USER DELETED SUCCESSFULLY");
+        }
+
+        @Test
+        void deleteUser_unauthorized_has_NO_Authority() {
+
+            //given
+            User roleUser = createRandomUser();
+            String token = jwtTokenProvider.generateJwtToken(new UserPrincipal(roleUser));
+
+            long id = user.getId();
+
+            //when
+            var requestEntity = RequestEntity.delete("/user/{id}", id)
+                    .headers(headers -> headers.setBearerAuth(token))
+                    .build();
+            var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(FORBIDDEN);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasNoNullFieldsOrProperties()
+                    .hasFieldOrPropertyWithValue("httpStatus", FORBIDDEN)
+                    .hasFieldOrPropertyWithValue("message", "YOU DO NOT HAVE ENOUGH PERMISSION");
+        }
+
+        @Test
+        void deleteUser_badRequest_absentId() {
+
+            //given
+            User superAdmin = createRandomUser();
+            superAdmin.setRole(Role.ROLE_SUPER_ADMIN.name());
+            superAdmin.setAuthorities(Role.ROLE_SUPER_ADMIN.getAuthorities());
+            String token = jwtTokenProvider.generateJwtToken(new UserPrincipal(superAdmin));
+
+            long id = Integer.MAX_VALUE;
+
+            //when
+            var requestEntity = RequestEntity.delete("/user/{id}", id)
+                    .headers(headers -> headers.setBearerAuth(token))
+                    .build();
+            var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasNoNullFieldsOrProperties()
+                    .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
+                    .hasFieldOrPropertyWithValue("message", "NO CLASS NET.SHYSHKIN.STUDY.FULLSTACK.SUPPORTPORTAL.BACKEND.DOMAIN.USER ENTITY WITH ID 2147483647 EXISTS!");
+        }
+    }
 }

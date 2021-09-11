@@ -548,38 +548,6 @@ class UserResourceUnSecureTest extends BaseUserTest {
     }
 
     @Nested
-    class DeleteUserTests {
-
-        @BeforeEach
-        void setUp() {
-            user = userRepository
-                    .findAll()
-                    .stream()
-                    .findAny()
-                    .orElseGet(() -> userRepository.save(createRandomUser()));
-        }
-
-        @Test
-        void deleteUser() {
-
-            //given
-            long id = user.getId();
-
-            //when
-            var responseEntity = restTemplate.exchange("/user/{id}", HttpMethod.DELETE, null, HttpResponse.class, id);
-
-            //then
-            log.debug("Response Entity: {}", responseEntity);
-            assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
-            assertThat(responseEntity.getBody())
-                    .isNotNull()
-                    .hasNoNullFieldsOrProperties()
-                    .hasFieldOrPropertyWithValue("httpStatus", OK)
-                    .hasFieldOrPropertyWithValue("message", "User deleted successfully");
-        }
-    }
-
-    @Nested
     class UpdateProfileImageTests {
 
         @BeforeEach

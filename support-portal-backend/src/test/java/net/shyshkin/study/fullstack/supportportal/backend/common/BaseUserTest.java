@@ -1,7 +1,6 @@
 package net.shyshkin.study.fullstack.supportportal.backend.common;
 
 import com.github.javafaker.Faker;
-import net.shyshkin.study.fullstack.supportportal.backend.domain.Role;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
 import net.shyshkin.study.fullstack.supportportal.backend.repository.UserRepository;
@@ -15,6 +14,7 @@ import java.util.UUID;
 
 import static net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant.DEFAULT_USER_IMAGE_PATH;
 import static net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant.USER_IMAGE_FILENAME;
+import static net.shyshkin.study.fullstack.supportportal.backend.domain.Role.ROLE_ADMIN;
 
 @SpringBootTest
 @ActiveProfiles("local")
@@ -43,7 +43,7 @@ public abstract class BaseUserTest {
                 .lastLoginDate(LocalDateTime.now())
                 .lastLoginDateDisplay(LocalDateTime.now())
                 .role("ROLE_ADMIN")
-                .authorities(new String[]{"user:delete", "user:read"})
+                .authorities(ROLE_ADMIN.getAuthorities())
                 .build();
     }
 
@@ -55,7 +55,7 @@ public abstract class BaseUserTest {
                 .username(FAKER.name().username())
                 .isActive(true)
                 .isNonLocked(true)
-                .role(Role.ROLE_ADMIN)
+                .role(ROLE_ADMIN)
                 .build();
     }
 
