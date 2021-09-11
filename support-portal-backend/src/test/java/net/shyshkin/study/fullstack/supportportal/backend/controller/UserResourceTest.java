@@ -651,10 +651,10 @@ class UserResourceTest extends BaseUserTest {
             superAdmin.setAuthorities(Role.ROLE_SUPER_ADMIN.getAuthorities());
             String token = jwtTokenProvider.generateJwtToken(new UserPrincipal(superAdmin));
 
-            long id = user.getId();
+            String userId = user.getUserId();
 
             //when
-            var requestEntity = RequestEntity.delete("/user/{id}", id)
+            var requestEntity = RequestEntity.delete("/user/{userId}", userId)
                     .headers(headers -> headers.setBearerAuth(token))
                     .build();
             var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
@@ -676,10 +676,10 @@ class UserResourceTest extends BaseUserTest {
             User roleUser = createRandomUser();
             String token = jwtTokenProvider.generateJwtToken(new UserPrincipal(roleUser));
 
-            long id = user.getId();
+            String userId = user.getUserId();
 
             //when
-            var requestEntity = RequestEntity.delete("/user/{id}", id)
+            var requestEntity = RequestEntity.delete("/user/{userId}", userId)
                     .headers(headers -> headers.setBearerAuth(token))
                     .build();
             var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
@@ -703,10 +703,10 @@ class UserResourceTest extends BaseUserTest {
             superAdmin.setAuthorities(Role.ROLE_SUPER_ADMIN.getAuthorities());
             String token = jwtTokenProvider.generateJwtToken(new UserPrincipal(superAdmin));
 
-            long id = Integer.MAX_VALUE;
+            String userId = UUID.randomUUID().toString();
 
             //when
-            var requestEntity = RequestEntity.delete("/user/{id}", id)
+            var requestEntity = RequestEntity.delete("/user/{userId}", userId)
                     .headers(headers -> headers.setBearerAuth(token))
                     .build();
             var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
@@ -718,7 +718,7 @@ class UserResourceTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
-                    .hasFieldOrPropertyWithValue("message", "NO CLASS NET.SHYSHKIN.STUDY.FULLSTACK.SUPPORTPORTAL.BACKEND.DOMAIN.USER ENTITY WITH ID 2147483647 EXISTS!");
+                    .hasFieldOrPropertyWithValue("message", "USER WAS NOT FOUND");
         }
     }
 }

@@ -23,7 +23,7 @@ public interface UserService extends UserDetailsService {
 
     User updateUser(String username, UserDto userDto);
 
-    void deleteUser(long id);
+    void deleteUser(String userId);
 
     void resetPassword(String email);
 

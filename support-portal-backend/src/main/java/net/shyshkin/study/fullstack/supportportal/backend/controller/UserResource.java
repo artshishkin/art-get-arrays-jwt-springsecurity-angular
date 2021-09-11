@@ -96,10 +96,10 @@ public class UserResource {
                 .build();
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("{userId}")
     @PreAuthorize("hasAuthority('user:delete')")
-    public HttpResponse deleteUser(@PathVariable long id) {
-        userService.deleteUser(id);
+    public HttpResponse deleteUser(@PathVariable String userId) {
+        userService.deleteUser(userId);
         return HttpResponse.builder()
                 .httpStatusCode(OK.value())
                 .httpStatus(OK)
