@@ -57,4 +57,8 @@ export class AuthenticationService {
     return JSON.parse(userJson!);
   }
 
+  public getToken(): string | null {
+    return this.token;
+  }
+
 }
