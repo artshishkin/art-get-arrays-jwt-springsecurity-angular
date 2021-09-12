@@ -10,6 +10,7 @@ import {User} from "../model/user";
 export class UserService {
 
   private host: string = environment.apiUrl;
+  private storage = localStorage;
 
   constructor(private httpClient: HttpClient) {
   }
@@ -47,6 +48,10 @@ export class UserService {
   public deleteUser(userId: string): Observable<HttpResponse | HttpErrorResponse> {
     return this.httpClient
       .delete<HttpResponse | HttpErrorResponse>(`${this.host}/user/${userId}`);
+  }
+
+  public addUsersToLocalStorage(users: User[]) {
+    this.storage.setItem('users', JSON.stringify(users));
   }
 
 }
