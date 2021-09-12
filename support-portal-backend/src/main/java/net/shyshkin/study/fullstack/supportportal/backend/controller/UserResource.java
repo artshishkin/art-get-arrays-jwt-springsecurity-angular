@@ -109,7 +109,7 @@ public class UserResource {
     }
 
     @PutMapping("{username}/profileImage")
-    public User updateUser(@PathVariable String username, MultipartFile profileImage) {
+    public User updateProfileImage(@PathVariable String username, MultipartFile profileImage) {
         return userService.updateProfileImage(username, profileImage);
     }
 

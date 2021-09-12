@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {environment} from "../../environments/environment";
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse, HttpEvent} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {User} from "../model/user";
 
@@ -33,6 +33,15 @@ export class UserService {
   public resetPassword(email: string): Observable<HttpResponse> {
     return this.httpClient
       .post<HttpResponse>(`${this.host}/user/resetPassword/${email}`, null);
+  }
+
+  public updateProfileImage(username: string, formData: FormData): Observable<HttpEvent<User | HttpErrorResponse>> {
+    return this.httpClient
+      .put<User | HttpErrorResponse>(`${this.host}/user/${username}/profileImage`, formData,
+        {
+          reportProgress: true,
+          observe: 'events'
+        });
   }
 
 }
