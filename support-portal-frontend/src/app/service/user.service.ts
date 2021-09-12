@@ -23,6 +23,13 @@ export class UserService {
     return this.httpClient
       .post<User | HttpErrorResponse>(`${this.host}/user/add`, formData);
   }
+
+  public updateUser(formData: FormData): Observable<User | HttpErrorResponse> {
+    let currentUsername = formData.get(`currentUsername`);
+    return this.httpClient
+      .put<User | HttpErrorResponse>(`${this.host}/user/${currentUsername}`, formData);
+  }
+
 }
 
 export interface UserPage {
