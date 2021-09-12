@@ -44,6 +44,11 @@ export class UserService {
         });
   }
 
+  public deleteUser(userId: string): Observable<HttpResponse | HttpErrorResponse> {
+    return this.httpClient
+      .delete<HttpResponse | HttpErrorResponse>(`${this.host}/user/${userId}`);
+  }
+
 }
 
 export interface UserPage {
