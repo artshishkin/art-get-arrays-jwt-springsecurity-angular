@@ -18,6 +18,11 @@ export class UserService {
     return this.httpClient
       .get<UserPage>(`${this.host}/user`);
   }
+
+  public addUser(formData: FormData): Observable<User | HttpErrorResponse> {
+    return this.httpClient
+      .post<User | HttpErrorResponse>(`${this.host}/user/add`, formData);
+  }
 }
 
 export interface UserPage {
