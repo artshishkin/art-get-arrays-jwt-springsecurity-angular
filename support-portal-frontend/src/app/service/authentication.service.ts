@@ -4,6 +4,7 @@ import {HttpClient, HttpErrorResponse, HttpResponse} from "@angular/common/http"
 import {UserLogin} from "../dto/user-login";
 import {Observable} from "rxjs";
 import {User} from "../model/user";
+import {JwtHelperService} from "@auth0/angular-jwt";
 
 const USER_STORAGE_KEY = "user";
 const JWT_TOKEN_STORAGE_KEY = "jwt-token";
@@ -17,6 +18,9 @@ export class AuthenticationService {
   private token: string | null;
   private loggedInUser: string | null;
   private storage = localStorage;
+
+  //first install this module: `npm install @auth0/angular-jwt`
+  private jwtHelper: JwtHelperService = new JwtHelperService();
 
   constructor(private httpClient: HttpClient) {
   }
@@ -59,6 +63,21 @@ export class AuthenticationService {
 
   public getToken(): string | null {
     return this.token;
+  }
+
+  public isLoggedIn(): boolean {
+    this.loadToken();
+    if (this.token != null && this.token !== '') {
+      let subject = this.jwtHelper.decodeToken(this.token).sub;
+      if (subject != null || '') {
+        if (!this.jwtHelper.isTokenExpired(this.token!)) {
+          this.loggedInUser = subject;
+          return true;
+        }
+      }
+    }
+    this.logout()
+    return false;
   }
 
 }
