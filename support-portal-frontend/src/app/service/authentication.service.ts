@@ -11,6 +11,9 @@ import {User} from "../model/user";
 export class AuthenticationService {
 
   private host: string = environment.apiUrl;
+  private token: string | null;
+  private loggedInUser: string | null;
+  private storage = localStorage;
 
   constructor(private httpClient: HttpClient) {
   }
@@ -25,4 +28,11 @@ export class AuthenticationService {
       .post<User | HttpErrorResponse>(`${this.host}/user/register`, user);
   }
 
+  public logout(): void {
+    this.token = null;
+    this.loggedInUser = null;
+    this.storage.removeItem("jwt-token");
+    this.storage.removeItem("user");
+    this.storage.removeItem("users");
+  }
 }
