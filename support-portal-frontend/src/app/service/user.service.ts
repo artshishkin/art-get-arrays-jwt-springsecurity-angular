@@ -54,6 +54,14 @@ export class UserService {
     this.storage.setItem('users', JSON.stringify(users));
   }
 
+  public getUsersFromLocalStorage(): User[] {
+    let users = this.storage.getItem('users');
+    if (users) {
+      return JSON.parse(users);
+    }
+    return [];
+  }
+
 }
 
 export interface UserPage {
