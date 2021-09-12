@@ -10,6 +10,8 @@ import {User} from "../model/user";
 })
 export class AuthenticationService {
 
+  private readonly JWT_TOKEN_STORAGE_KEY = "jwt-token";
+
   private host: string = environment.apiUrl;
   private token: string | null;
   private loggedInUser: string | null;
@@ -31,8 +33,14 @@ export class AuthenticationService {
   public logout(): void {
     this.token = null;
     this.loggedInUser = null;
-    this.storage.removeItem("jwt-token");
+    this.storage.removeItem(this.JWT_TOKEN_STORAGE_KEY);
     this.storage.removeItem("user");
     this.storage.removeItem("users");
   }
+
+  public saveToken(token: string): void {
+    this.token = token;
+    this.storage.setItem(this.JWT_TOKEN_STORAGE_KEY, token);
+  }
+
 }
