@@ -15,7 +15,8 @@ export class AuthenticationService {
   }
 
   public login(userDto: UserLogin): Observable<HttpResponse<any> | HttpErrorResponse> {
-    return this.httpClient.post<HttpResponse<any> | HttpErrorResponse>(`${this.host}/user/login`, userDto, {observe: 'response'});
+    return this.httpClient.post<HttpResponse<any> | HttpErrorResponse>
+    (`${this.host}/user/login`, userDto, {observe: 'response'});
   }
 
 
