@@ -43,4 +43,7 @@ export class AuthenticationService {
     this.storage.setItem(this.JWT_TOKEN_STORAGE_KEY, token);
   }
 
+  public addUserToLocalStorage(user: User) {
+    this.storage.setItem("user", JSON.stringify(user));
+  }
 }
