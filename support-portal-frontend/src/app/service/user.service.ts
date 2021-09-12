@@ -30,6 +30,11 @@ export class UserService {
       .put<User | HttpErrorResponse>(`${this.host}/user/${currentUsername}`, formData);
   }
 
+  public resetPassword(email: string): Observable<HttpResponse> {
+    return this.httpClient
+      .post<HttpResponse>(`${this.host}/user/resetPassword/${email}`, null);
+  }
+
 }
 
 export interface UserPage {
@@ -44,3 +49,12 @@ export interface UserPage {
   empty: boolean;
 
 }
+
+export interface HttpResponse {
+  timestamp: Date;
+  httpStatusCode: number;
+  httpStatus: string;
+  reason: string;
+  message: string;
+}
+
