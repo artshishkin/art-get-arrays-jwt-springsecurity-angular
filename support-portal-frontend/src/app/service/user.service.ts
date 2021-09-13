@@ -32,9 +32,9 @@ export class UserService {
       .put<User | HttpErrorResponse>(`${this.host}/user/${currentUsername}`, formData);
   }
 
-  public resetPassword(email: string): Observable<HttpResponse> {
+  public resetPassword(email: string): Observable<CustomHttpResponse> {
     return this.httpClient
-      .post<HttpResponse>(`${this.host}/user/resetPassword/${email}`, null);
+      .post<CustomHttpResponse>(`${this.host}/user/resetPassword/${email}`, null);
   }
 
   public updateProfileImage(username: string, formData: FormData): Observable<HttpEvent<User | HttpErrorResponse>> {
@@ -46,9 +46,9 @@ export class UserService {
         });
   }
 
-  public deleteUser(userId: string): Observable<HttpResponse | HttpErrorResponse> {
+  public deleteUser(userId: string): Observable<CustomHttpResponse | HttpErrorResponse> {
     return this.httpClient
-      .delete<HttpResponse | HttpErrorResponse>(`${this.host}/user/${userId}`);
+      .delete<CustomHttpResponse | HttpErrorResponse>(`${this.host}/user/${userId}`);
   }
 
   public addUsersToLocalStorage(users: User[]) {
@@ -95,11 +95,5 @@ export interface UserPage {
 
 }
 
-export interface HttpResponse {
-  timestamp: Date;
-  httpStatusCode: number;
-  httpStatus: string;
-  reason: string;
-  message: string;
-}
+
 
