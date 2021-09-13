@@ -6,13 +6,13 @@ import {Observable} from "rxjs";
 import {User} from "../model/user";
 import {JwtHelperService} from "@auth0/angular-jwt";
 
-const USER_STORAGE_KEY = "user";
-const JWT_TOKEN_STORAGE_KEY = "jwt-token";
-
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
+
+  public USER_STORAGE_KEY = "user";
+  public JWT_TOKEN_STORAGE_KEY = "jwt-token";
 
   private host: string = environment.apiUrl;
   private token: string | null;
@@ -38,26 +38,26 @@ export class AuthenticationService {
   public logout(): void {
     this.token = null;
     this.loggedInUser = null;
-    this.storage.removeItem(JWT_TOKEN_STORAGE_KEY);
-    this.storage.removeItem(USER_STORAGE_KEY);
+    this.storage.removeItem(this.JWT_TOKEN_STORAGE_KEY);
+    this.storage.removeItem(this.USER_STORAGE_KEY);
     this.storage.removeItem("users");
   }
 
   public saveToken(token: string): void {
     this.token = token;
-    this.storage.setItem(JWT_TOKEN_STORAGE_KEY, token);
+    this.storage.setItem(this.JWT_TOKEN_STORAGE_KEY, token);
   }
 
   public loadToken(): void {
-    this.token = this.storage.getItem(JWT_TOKEN_STORAGE_KEY);
+    this.token = this.storage.getItem(this.JWT_TOKEN_STORAGE_KEY);
   }
 
   public addUserToLocalStorage(user: User) {
-    this.storage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+    this.storage.setItem(this.USER_STORAGE_KEY, JSON.stringify(user));
   }
 
   public getUserFromLocalStorage(): User {
-    let userJson = this.storage.getItem(USER_STORAGE_KEY);
+    let userJson = this.storage.getItem(this.USER_STORAGE_KEY);
     return JSON.parse(userJson!);
   }
 
