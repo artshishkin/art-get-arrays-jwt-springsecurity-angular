@@ -3,6 +3,7 @@ import {environment} from "../../environments/environment";
 import {HttpClient, HttpErrorResponse, HttpEvent} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {User} from "../model/user";
+import {CustomHttpResponse} from "../dto/custom-http-response";
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +61,23 @@ export class UserService {
       return JSON.parse(users);
     }
     return [];
+  }
+
+  public createUserFormData(loggedInUsername: string, user: User, profileImage: File): FormData {
+
+    const formData = new FormData();
+
+    formData.append('currentUsername', loggedInUsername);
+    formData.append('firstName', user.firstName);
+    formData.append('lastName', user.lastName);
+    formData.append("username", user.username);
+    formData.append("email", user.email);
+    formData.append("role", user.role);
+    formData.append("active", String(user.active));
+    formData.append("notLocked", String(user.notLocked));
+    formData.append("profileImage", profileImage);
+
+    return formData;
   }
 
 }
