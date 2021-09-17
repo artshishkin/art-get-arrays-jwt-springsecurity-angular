@@ -5,7 +5,8 @@ import {NotificationService} from "../../service/notification.service";
 import {NotificationType} from "../../notification/notification-type";
 import {Subscription} from "rxjs";
 import {UserLogin} from "../../dto/user-login";
-import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
+import {HttpResponse} from "@angular/common/http";
+import {User} from "../../model/user";
 
 @Component({
   selector: 'app-login',
@@ -36,9 +37,17 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     let subscription = this.authenticationService
       .login(userLogin)
-      .subscribe((response: HttpResponse<any> | HttpErrorResponse) => {
-        const token = response.headers.get("Jwt-Token");
-      });
+      .subscribe((response: HttpResponse<User>) => {
+
+          const token = response.headers.get("Jwt-Token");
+          this.authenticationService.saveToken(token!);
+
+          this.authenticationService.addUserToLocalStorage(response.body!);
+
+          this.router.navigateByUrl('/user/management');
+          this.showLoading = false;
+        }
+      );
 
     this.subscriptions.push(subscription);
   }
