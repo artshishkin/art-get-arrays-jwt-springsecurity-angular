@@ -9,4 +9,4 @@
 
 -  Generate AppRoutingModule
     -  `ng generate module app-routing --flat --module=app`
-
+-  Modify `app-routing.module.ts`
