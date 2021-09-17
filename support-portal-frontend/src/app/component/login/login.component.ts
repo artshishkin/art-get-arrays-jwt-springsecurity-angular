@@ -5,7 +5,7 @@ import {NotificationService} from "../../service/notification.service";
 import {NotificationType} from "../../notification/notification-type";
 import {Subscription} from "rxjs";
 import {UserLogin} from "../../dto/user-login";
-import {HttpResponse} from "@angular/common/http";
+import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {User} from "../../model/user";
 
 @Component({
@@ -46,6 +46,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 
           this.router.navigateByUrl('/user/management');
           this.showLoading = false;
+        },
+        (errorResponse: HttpErrorResponse) => {
+          console.log(errorResponse);
+          this.sendErrorNotification(errorResponse.error.message);
+          this.showLoading = false;
         }
       );
 
@@ -55,4 +60,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
   }
 
+  private sendErrorNotification(message: string) {
+    this.notificationService.notify(NotificationType.ERROR, message ? message : 'AN ERROR OCCURRED. PLEASE TRY AGAIN')
+  }
 }
