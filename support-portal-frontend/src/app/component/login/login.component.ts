@@ -7,6 +7,7 @@ import {Subscription} from "rxjs";
 import {UserLogin} from "../../dto/user-login";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {User} from "../../model/user";
+import {HeaderType} from "../../enum/header-type.enum";
 
 @Component({
   selector: 'app-login',
@@ -39,7 +40,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       .login(userLogin)
       .subscribe((response: HttpResponse<User>) => {
 
-          const token = response.headers.get("Jwt-Token");
+          const token = response.headers.get(HeaderType.JWT_TOKEN);
           this.authenticationService.saveToken(token!);
 
           this.authenticationService.addUserToLocalStorage(response.body!);
