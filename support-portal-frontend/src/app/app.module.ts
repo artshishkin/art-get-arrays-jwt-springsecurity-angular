@@ -12,6 +12,7 @@ import {LoginComponent} from './component/login/login.component';
 import {RegisterComponent} from './component/register/register.component';
 import {UserComponent} from './component/user/user.component';
 import {AppRoutingModule} from './app-routing.module';
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import {AppRoutingModule} from './app-routing.module';
     BrowserModule,
     HttpClientModule,
     NotificationModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule
   ],
   providers: [AuthenticationGuard, AuthenticationService, UserService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}

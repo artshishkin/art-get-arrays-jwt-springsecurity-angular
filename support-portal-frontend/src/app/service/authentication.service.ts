@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {environment} from "../../environments/environment";
-import {HttpClient, HttpErrorResponse, HttpResponse} from "@angular/common/http";
+import {HttpClient, HttpResponse} from "@angular/common/http";
 import {UserLogin} from "../dto/user-login";
 import {Observable} from "rxjs";
 import {User} from "../model/user";
@@ -30,9 +30,9 @@ export class AuthenticationService {
     (`${this.host}/user/login`, userDto, {observe: 'response'});
   }
 
-  public register(user: User): Observable<User | HttpErrorResponse> {
+  public register(user: User): Observable<User> {
     return this.httpClient
-      .post<User | HttpErrorResponse>(`${this.host}/user/register`, user);
+      .post<User>(`${this.host}/user/register`, user);
   }
 
   public logout(): void {
