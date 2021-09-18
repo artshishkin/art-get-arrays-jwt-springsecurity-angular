@@ -1,6 +1,10 @@
 package net.shyshkin.study.fullstack.supportportal.backend.controller;
 
 import com.auth0.jwt.interfaces.JWTVerifier;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.shyshkin.study.fullstack.supportportal.backend.common.BaseUserTest;
 import net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant;
@@ -116,7 +120,7 @@ class UserResourceTest extends BaseUserTest {
         User registeredUser = responseEntity.getBody();
         assertThat(registeredUser)
                 .isNotNull()
-                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay")
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
                 .hasFieldOrPropertyWithValue("username", fakeUser.getUsername())
                 .hasFieldOrPropertyWithValue("email", fakeUser.getEmail())
                 .hasFieldOrPropertyWithValue("firstName", fakeUser.getFirstName())
@@ -191,10 +195,9 @@ class UserResourceTest extends BaseUserTest {
         String password = fakeUser.getPassword().replace("{noop}", "");
         String username = fakeUser.getUsername();
         userRepository.save(fakeUser);
-        String expectedMessage = "User logged in successfully";
 
         //when
-        User userLogin = User.builder()
+        var userLogin = UserLoginDto.builder()
                 .username(username)
                 .password(password)
                 .build();
@@ -232,7 +235,7 @@ class UserResourceTest extends BaseUserTest {
         String expectedMessage = "USERNAME / PASSWORD INCORRECT. PLEASE TRY AGAIN";
 
         //when
-        User userLogin = User.builder()
+        var userLogin = UserLoginDto.builder()
                 .username(username)
                 .password(password)
                 .build();
@@ -265,7 +268,7 @@ class UserResourceTest extends BaseUserTest {
         String expectedMessage = "USERNAME / PASSWORD INCORRECT. PLEASE TRY AGAIN";
 
         //when
-        User userLogin = User.builder()
+        var userLogin = UserLoginDto.builder()
                 .username(username)
                 .password(password)
                 .build();
@@ -290,7 +293,7 @@ class UserResourceTest extends BaseUserTest {
 
     @Test
     @Order(60)
-    void loginUser_bruteForceDetectionTest() throws InterruptedException {
+    void loginUser_bruteForceDetectionTest() {
 
         //given
         User fakeUser = createRandomUser();
@@ -300,7 +303,7 @@ class UserResourceTest extends BaseUserTest {
         String wrongPassword = "wrongPass";
 
         //when
-        User userLogin = User.builder()
+        var userLogin = UserLoginDto.builder()
                 .username(username)
                 .password(wrongPassword)
                 .build();
@@ -325,7 +328,7 @@ class UserResourceTest extends BaseUserTest {
 
             if (i > 3) {
                 // Even correct password should not allow access to locked account
-                userLogin = User.builder()
+                userLogin = UserLoginDto.builder()
                         .username(username)
                         .password(correctPassword)
                         .build();
@@ -384,7 +387,7 @@ class UserResourceTest extends BaseUserTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
         assertThat(responseEntity.getBody())
                 .isNotNull()
-                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay")
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
                 .hasFieldOrPropertyWithValue("username", userDto.getUsername())
                 .hasFieldOrPropertyWithValue("email", userDto.getEmail())
                 .hasFieldOrPropertyWithValue("firstName", userDto.getFirstName())
@@ -472,7 +475,7 @@ class UserResourceTest extends BaseUserTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
         assertThat(responseEntity.getBody())
                 .isNotNull()
-                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay")
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
                 .hasFieldOrPropertyWithValue("username", userDto.getUsername())
                 .hasFieldOrPropertyWithValue("email", userDto.getEmail())
                 .hasFieldOrPropertyWithValue("firstName", userDto.getFirstName())
@@ -562,7 +565,7 @@ class UserResourceTest extends BaseUserTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
         assertThat(responseEntity.getBody())
                 .isNotNull()
-                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay")
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
                 .hasFieldOrPropertyWithValue("username", userDto.getUsername())
                 .hasFieldOrPropertyWithValue("email", userDto.getEmail())
                 .hasFieldOrPropertyWithValue("firstName", userDto.getFirstName())
@@ -620,7 +623,7 @@ class UserResourceTest extends BaseUserTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
         assertThat(responseEntity.getBody())
                 .isNotNull()
-                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay")
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
                 .hasFieldOrPropertyWithValue("username", userDto.getUsername())
                 .hasFieldOrPropertyWithValue("email", userDto.getEmail())
                 .hasFieldOrPropertyWithValue("firstName", userDto.getFirstName())
@@ -723,5 +726,14 @@ class UserResourceTest extends BaseUserTest {
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
                     .hasFieldOrPropertyWithValue("message", "USER WAS NOT FOUND");
         }
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    static class UserLoginDto {
+        private String username;
+        private String password;
     }
 }
