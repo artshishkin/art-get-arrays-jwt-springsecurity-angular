@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.shyshkin.study.fullstack.supportportal.backend.constant.SecurityConstants;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.HttpResponse;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
+import net.shyshkin.study.fullstack.supportportal.backend.domain.UserPrincipal;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
 import net.shyshkin.study.fullstack.supportportal.backend.service.UserService;
 import net.shyshkin.study.fullstack.supportportal.backend.utility.JwtTokenProvider;
@@ -49,8 +50,8 @@ public class UserResource {
     public ResponseEntity<User> login(@RequestBody User user) {
 
         authenticate(user.getUsername(), user.getPassword());
-        UserDetails userDetails = userService.loadUserByUsername(user.getUsername());
         User byUsername = userService.findByUsername(user.getUsername());
+        UserDetails userDetails = new UserPrincipal(byUsername);
 
         return ResponseEntity.ok()
                 .header(SecurityConstants.JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(userDetails))
