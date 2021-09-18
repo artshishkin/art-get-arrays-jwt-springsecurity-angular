@@ -120,7 +120,7 @@ class UserResourceTest extends BaseUserTest {
         User registeredUser = responseEntity.getBody();
         assertThat(registeredUser)
                 .isNotNull()
-                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password", "id")
                 .hasFieldOrPropertyWithValue("username", fakeUser.getUsername())
                 .hasFieldOrPropertyWithValue("email", fakeUser.getEmail())
                 .hasFieldOrPropertyWithValue("firstName", fakeUser.getFirstName())
@@ -208,7 +208,7 @@ class UserResourceTest extends BaseUserTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
         assertThat(responseEntity.getBody())
                 .isNotNull()
-                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password", "id")
                 .hasFieldOrPropertyWithValue("username", fakeUser.getUsername())
                 .hasFieldOrPropertyWithValue("email", fakeUser.getEmail())
                 .hasFieldOrPropertyWithValue("firstName", fakeUser.getFirstName())
@@ -387,7 +387,7 @@ class UserResourceTest extends BaseUserTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
         assertThat(responseEntity.getBody())
                 .isNotNull()
-                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password", "id")
                 .hasFieldOrPropertyWithValue("username", userDto.getUsername())
                 .hasFieldOrPropertyWithValue("email", userDto.getEmail())
                 .hasFieldOrPropertyWithValue("firstName", userDto.getFirstName())
@@ -475,7 +475,7 @@ class UserResourceTest extends BaseUserTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
         assertThat(responseEntity.getBody())
                 .isNotNull()
-                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password", "id")
                 .hasFieldOrPropertyWithValue("username", userDto.getUsername())
                 .hasFieldOrPropertyWithValue("email", userDto.getEmail())
                 .hasFieldOrPropertyWithValue("firstName", userDto.getFirstName())
@@ -565,7 +565,7 @@ class UserResourceTest extends BaseUserTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
         assertThat(responseEntity.getBody())
                 .isNotNull()
-                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password", "id")
                 .hasFieldOrPropertyWithValue("username", userDto.getUsername())
                 .hasFieldOrPropertyWithValue("email", userDto.getEmail())
                 .hasFieldOrPropertyWithValue("firstName", userDto.getFirstName())
@@ -623,7 +623,7 @@ class UserResourceTest extends BaseUserTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
         assertThat(responseEntity.getBody())
                 .isNotNull()
-                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password", "id")
                 .hasFieldOrPropertyWithValue("username", userDto.getUsername())
                 .hasFieldOrPropertyWithValue("email", userDto.getEmail())
                 .hasFieldOrPropertyWithValue("firstName", userDto.getFirstName())

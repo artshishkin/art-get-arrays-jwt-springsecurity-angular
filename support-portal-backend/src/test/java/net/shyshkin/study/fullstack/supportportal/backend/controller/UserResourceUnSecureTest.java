@@ -82,7 +82,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
             assertThat(responseEntity.getBody())
                     .isNotNull()
-                    .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
+                    .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password", "id")
                     .hasFieldOrPropertyWithValue("username", userDto.getUsername())
                     .hasFieldOrPropertyWithValue("email", userDto.getEmail())
                     .hasFieldOrPropertyWithValue("firstName", userDto.getFirstName())
@@ -285,7 +285,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
             assertThat(responseEntity.getBody())
                     .isNotNull()
-                    .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
+                    .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password", "id")
                     .hasFieldOrPropertyWithValue("username", userDto.getUsername())
                     .hasFieldOrPropertyWithValue("email", userDto.getEmail())
                     .hasFieldOrPropertyWithValue("firstName", userDto.getFirstName())
@@ -332,7 +332,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
             assertThat(responseEntity.getBody())
                     .isNotNull()
-                    .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
+                    .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password", "id")
                     .hasFieldOrPropertyWithValue("username", userDto.getUsername())
                     .hasFieldOrPropertyWithValue("email", userDto.getEmail())
                     .hasFieldOrPropertyWithValue("firstName", userDto.getFirstName())
@@ -454,7 +454,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
             assertThat(responseEntity.getBody())
                     .isNotNull()
-                    .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
+                    .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password", "id")
                     .hasFieldOrPropertyWithValue("username", username)
                     .hasFieldOrPropertyWithValue("email", user.getEmail())
                     .hasFieldOrPropertyWithValue("firstName", user.getFirstName())
@@ -584,7 +584,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
             assertThat(responseEntity.getBody())
                     .isNotNull()
-                    .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
+                    .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password", "id")
                     .hasFieldOrPropertyWithValue("username", username)
                     .hasFieldOrPropertyWithValue("email", user.getEmail())
                     .hasFieldOrPropertyWithValue("firstName", user.getFirstName())
@@ -775,7 +775,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
             assertThat(responseEntity.getBody())
                     .isNotNull()
-                    .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
+                    .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password", "id")
                     .hasFieldOrPropertyWithValue("username", username)
                     .hasFieldOrPropertyWithValue("email", user.getEmail())
                     .hasFieldOrPropertyWithValue("firstName", user.getFirstName())
