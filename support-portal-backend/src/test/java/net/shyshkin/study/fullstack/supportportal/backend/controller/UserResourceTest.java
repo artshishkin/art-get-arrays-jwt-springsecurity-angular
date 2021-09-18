@@ -198,20 +198,23 @@ class UserResourceTest extends BaseUserTest {
                 .username(username)
                 .password(password)
                 .build();
-        var responseEntity = restTemplate.postForEntity("/user/login", userLogin, HttpResponse.class);
+        var responseEntity = restTemplate.postForEntity("/user/login", userLogin, User.class);
 
         //then
         log.debug("Response Entity: {}", responseEntity);
         assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
         assertThat(responseEntity.getBody())
                 .isNotNull()
-                .hasNoNullFieldsOrProperties()
-                .satisfies(httpResponse -> assertAll(
-                        () -> assertThat(httpResponse.getHttpStatusCode()).isEqualTo(200),
-                        () -> assertThat(httpResponse.getHttpStatus()).isEqualTo(OK),
-                        () -> assertThat(httpResponse.getReason()).isEqualTo("OK"),
-                        () -> assertThat(httpResponse.getMessage()).isEqualTo(expectedMessage)
-                ));
+                .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password")
+                .hasFieldOrPropertyWithValue("username", fakeUser.getUsername())
+                .hasFieldOrPropertyWithValue("email", fakeUser.getEmail())
+                .hasFieldOrPropertyWithValue("firstName", fakeUser.getFirstName())
+                .hasFieldOrPropertyWithValue("lastName", fakeUser.getLastName())
+                .hasFieldOrPropertyWithValue("isActive", true)
+                .hasFieldOrPropertyWithValue("isNotLocked", true)
+                .hasFieldOrPropertyWithValue("role", "ROLE_ADMIN")
+                .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s/avatar.jpg", u.getUserId())));
+
         String token = responseEntity.getHeaders().getFirst(JWT_TOKEN_HEADER);
         log.debug("Token: {}", token);
         assertThat(token).isNotBlank();

@@ -46,21 +46,15 @@ public class UserResource {
     }
 
     @PostMapping("login")
-    public ResponseEntity<HttpResponse> login(@RequestBody User user) {
+    public ResponseEntity<User> login(@RequestBody User user) {
 
         authenticate(user.getUsername(), user.getPassword());
         UserDetails userDetails = userService.loadUserByUsername(user.getUsername());
-
-        HttpResponse httpResponse = HttpResponse.builder()
-                .httpStatus(OK)
-                .reason(OK.getReasonPhrase().toUpperCase())
-                .message("User logged in successfully")
-                .httpStatusCode(OK.value())
-                .build();
+        User byUsername = userService.findByUsername(user.getUsername());
 
         return ResponseEntity.ok()
                 .header(SecurityConstants.JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(userDetails))
-                .body(httpResponse);
+                .body(byUsername);
     }
 
     @PostMapping("add")
