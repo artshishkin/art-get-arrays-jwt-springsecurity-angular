@@ -1,6 +1,7 @@
 package net.shyshkin.study.fullstack.supportportal.backend.config;
 
 import lombok.RequiredArgsConstructor;
+import net.shyshkin.study.fullstack.supportportal.backend.constant.SecurityConstants;
 import net.shyshkin.study.fullstack.supportportal.backend.filter.JwtAccessDeniedHandler;
 import net.shyshkin.study.fullstack.supportportal.backend.filter.JwtAuthenticationEntryPoint;
 import net.shyshkin.study.fullstack.supportportal.backend.filter.JwtAuthorizationFilter;
@@ -16,6 +17,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -62,6 +65,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer(@Value("${app.cors.allowed-origins}") String[] allowedOrigins) {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/user/login")
+                        .allowedOrigins(allowedOrigins)
+                        .exposedHeaders(SecurityConstants.JWT_TOKEN_HEADER);
+                registry.addMapping("/**").allowedOrigins(allowedOrigins);
+            }
+        };
     }
 
 }
