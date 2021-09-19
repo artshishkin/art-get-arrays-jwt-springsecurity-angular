@@ -30,6 +30,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("user")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:4200")
 public class UserResource {
 
     private final UserService userService;
@@ -47,6 +48,7 @@ public class UserResource {
     }
 
     @PostMapping("login")
+    @CrossOrigin(value = "http://localhost:4200", exposedHeaders = {SecurityConstants.JWT_TOKEN_HEADER})
     public ResponseEntity<User> login(@RequestBody User user) {
 
         authenticate(user.getUsername(), user.getPassword());

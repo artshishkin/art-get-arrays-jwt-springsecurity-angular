@@ -2,6 +2,7 @@ package net.shyshkin.study.fullstack.supportportal.backend.controller;
 
 import net.shyshkin.study.fullstack.supportportal.backend.domain.HttpResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -9,6 +10,7 @@ import static net.shyshkin.study.fullstack.supportportal.backend.utility.HttpRes
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
+@CrossOrigin("http://localhost:4200")
 public class ErrorController {
 
     @GetMapping("/error")
