@@ -44,8 +44,9 @@
           </button>
         </div>
         <div class="btn-group">
-          <button type="button" class="btn btn-info">
-            <i class="fas fa-sync fa-spin"></i><i class="fas fa-sync"></i>
+          <button type="button" class="btn btn-info" (click)="getUsers(true)">
+            <i *ngIf="refreshing" class="fas fa-sync fa-spin"></i>
+            <i *ngIf="!refreshing" class="fas fa-sync"></i>
           </button>
         </div>
       </div>
@@ -63,18 +64,19 @@
         </tr>
         </thead>
         <tbody>
-        <tr class="text-center">
+        <tr class="text-center" *ngFor="let appUser of users">
           <td>
-            <img height="40" width="40" src="" class="rounded-circle img-fluid img-thumbnail" alt=""/>
+            <img height="40" width="40" src="{{appUser?.profileImageUrl}}"
+                 class="rounded-circle img-fluid img-thumbnail" alt=""/>
           </td>
-          <td>123456</td>
-          <td>Art</td>
-          <td>Shyshkin</td>
-          <td>art.shyshkin</td>
-          <td>art.shyshkin@example.com</td>
+          <td>{{appUser?.userId}}</td>
+          <td>{{appUser?.firstName}}</td>
+          <td>{{appUser?.lastName}}</td>
+          <td>{{appUser?.username}}</td>
+          <td>{{appUser?.email}}</td>
           <td>
-            <span class="badge bg-success">Active</span>
-            <span class="badge bg-danger">Inactive</span>
+            <span class="badge bg-success" [hidden]="!appUser?.active">Active</span>
+            <span class="badge bg-danger" [hidden]="appUser?.active">Inactive</span>
           </td>
           <td class="">
             <div class="btn-group">
