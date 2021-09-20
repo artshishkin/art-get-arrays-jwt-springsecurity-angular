@@ -4,7 +4,7 @@
     </div>
     <div class="col-md-4">
       <h5>User Management Portal</h5>
-      <small></small>
+      <small *ngIf="titleAction$ | async as title">{{title}}</small>
     </div>
     <div class="col-md-4">
     </div>
@@ -14,15 +14,15 @@
   <nav class="navbar navbar-expand-md breadcrumb">
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <div class="nav nav-pills">
-        <a class="nav-item nav-link active ml-1" data-toggle="tab" href="#users">
+        <a class="nav-item nav-link active ml-1" (click)="changeTitle('Users')" data-toggle="tab" >
           <i class="fa fa-users"></i>
           Users
         </a>
-        <a class="nav-item nav-link ml-3" data-toggle="tab" href="#reset-password">
+        <a class="nav-item nav-link ml-3" (click)="changeTitle('Settings')" data-toggle="tab">
           <i class="fa fa-cogs"></i>
           Settings
         </a>
-        <a class="nav-item nav-link move-right mr-3" data-toggle="tab" href="#profile">
+        <a class="nav-item nav-link move-right mr-3" (click)="changeTitle('Profile')" data-toggle="tab">
           Welcome,
           <i class="fa fa-user"></i>
         </a>
