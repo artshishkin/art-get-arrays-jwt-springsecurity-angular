@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant.DEFAULT_USER_IMAGE_PATH;
-import static net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant.USER_IMAGE_FILENAME;
 import static net.shyshkin.study.fullstack.supportportal.backend.domain.Role.ROLE_ADMIN;
 
 @SpringBootTest
@@ -64,7 +63,7 @@ public abstract class BaseUserTest {
                 .fromUriString("http://localhost:8080")
                 .path(DEFAULT_USER_IMAGE_PATH)
                 .pathSegment(userId)
-                .pathSegment(USER_IMAGE_FILENAME)
+//                .pathSegment(USER_IMAGE_FILENAME)
                 .toUriString();
     }
 }

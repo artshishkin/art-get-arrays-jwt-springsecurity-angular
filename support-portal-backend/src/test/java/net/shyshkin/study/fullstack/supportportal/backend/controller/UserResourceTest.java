@@ -216,7 +216,7 @@ class UserResourceTest extends BaseUserTest {
                 .hasFieldOrPropertyWithValue("isActive", true)
                 .hasFieldOrPropertyWithValue("isNotLocked", true)
                 .hasFieldOrPropertyWithValue("role", "ROLE_ADMIN")
-                .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s/avatar.jpg", u.getUserId())));
+                .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s", u.getUserId())));
 
         String token = responseEntity.getHeaders().getFirst(JWT_TOKEN_HEADER);
         log.debug("Token: {}", token);
