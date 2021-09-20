@@ -28,8 +28,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.authenticationService.isUserLoggedIn()) {
       this.router.navigateByUrl("/user/management");
       this.notificationService.notify(NotificationType.INFO, "You are already logged in");
-    } else {
-      // this.router.navigateByUrl("/login");
     }
   }
 
@@ -49,7 +47,6 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.showLoading = false;
         },
         (errorResponse: HttpErrorResponse) => {
-          console.log(errorResponse);
           this.sendErrorNotification(errorResponse.error.message);
           this.showLoading = false;
         }

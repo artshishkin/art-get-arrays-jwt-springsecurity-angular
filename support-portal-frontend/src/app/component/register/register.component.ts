@@ -41,7 +41,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
           this.showLoading = false;
         },
         (errorResponse: HttpErrorResponse) => {
-          console.log(errorResponse);
           this.sendErrorNotification(errorResponse.error.message);
           this.showLoading = false;
         }
