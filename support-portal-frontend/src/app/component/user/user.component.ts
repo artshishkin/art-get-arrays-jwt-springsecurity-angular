@@ -5,6 +5,7 @@ import {UserService} from "../../service/user.service";
 import {NotificationService} from "../../service/notification.service";
 import {NotificationType} from "../../notification/notification-type";
 import {HttpErrorResponse} from "@angular/common/http";
+import {NgForm} from "@angular/forms";
 
 @Component({
   selector: 'app-user',
@@ -20,8 +21,8 @@ export class UserComponent implements OnInit, OnDestroy {
   public refreshing: boolean;
   private subscriptions: Subscription[] = [];
   public selectedUser: User;
-  public profileImageFileName: string;
-  public profileImage: File;
+  public profileImageFileName: string | null;
+  public profileImage: File | null;
 
   constructor(private userService: UserService,
               private notificationService: NotificationService) {
@@ -73,6 +74,30 @@ export class UserComponent implements OnInit, OnDestroy {
 
   private sendErrorNotification(message: string) {
     this.notificationService.notify(NotificationType.ERROR, message ? message : 'An error occurred. Please try again')
+  }
+
+  public onAddNewUser(userForm: NgForm): void {
+    // TODO: test if profileImage is null (we are not passing it)
+    let formData = this.userService.createUserFormData('', userForm.value, this.profileImage!);
+    let subscription = this.userService.addUser(formData)
+      .subscribe(
+        (user: User) => {
+          document.getElementById('new-user-close')?.click();
+          this.getUsers(false);
+          this.invalidateVariables();
+          userForm.reset();
+          this.notificationService.notify(NotificationType.SUCCESS, `User ${user.username} added successfully`);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendErrorNotification(errorResponse.error.message);
+        }
+      );
+    this.subscriptions.push(subscription);
+  }
+
+  private invalidateVariables(): void {
+    this.profileImage = null;
+    this.profileImageFileName = null;
   }
 
   public saveNewUser(): void {

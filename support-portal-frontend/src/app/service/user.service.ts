@@ -21,9 +21,9 @@ export class UserService {
       .get<UserPage>(`${this.host}/user?size=2147483647`);
   }
 
-  public addUser(formData: FormData): Observable<User | HttpErrorResponse> {
+  public addUser(formData: FormData): Observable<User> {
     return this.httpClient
-      .post<User | HttpErrorResponse>(`${this.host}/user/add`, formData);
+      .post<User>(`${this.host}/user/add`, formData);
   }
 
   public updateUser(formData: FormData): Observable<User | HttpErrorResponse> {
