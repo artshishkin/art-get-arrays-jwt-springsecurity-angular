@@ -364,7 +364,7 @@ class UserResourceTest extends BaseUserTest {
                 "email", userDto.getEmail(),
                 "role", userDto.getRole().name(),
                 "isActive", String.valueOf(userDto.isActive()),
-                "isNonLocked", String.valueOf(userDto.isNonLocked())
+                "isNotLocked", String.valueOf(userDto.isNotLocked())
         );
 
         //when
@@ -376,7 +376,7 @@ class UserResourceTest extends BaseUserTest {
                 .postForEntity(
                         "/user/add?username={username}&email={email}" +
                                 "&firstName={firstName}&lastName={lastName}" +
-                                "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                                "&role={role}&active={isActive}&notLocked={isNotLocked}",
                         requestEntity,
                         User.class,
                         paramMap
@@ -410,7 +410,7 @@ class UserResourceTest extends BaseUserTest {
                 "email", userDto.getEmail(),
                 "role", userDto.getRole().name(),
                 "isActive", userDto.isActive(),
-                "isNonLocked", userDto.isNonLocked()
+                "isNotLocked", userDto.isNotLocked()
         );
 
         //when
@@ -418,7 +418,7 @@ class UserResourceTest extends BaseUserTest {
                 .postForEntity(
                         "/user/add?username={username}&email={email}" +
                                 "&firstName={firstName}&lastName={lastName}" +
-                                "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                                "&role={role}&active={isActive}&notLocked={isNotLocked}",
                         null,
                         HttpResponse.class,
                         paramMap
@@ -452,7 +452,7 @@ class UserResourceTest extends BaseUserTest {
                 "email", userDto.getEmail(),
                 "role", userDto.getRole().name(),
                 "isActive", userDto.isActive(),
-                "isNonLocked", userDto.isNonLocked()
+                "isNotLocked", userDto.isNotLocked()
         );
 
         //when
@@ -464,7 +464,7 @@ class UserResourceTest extends BaseUserTest {
                 .postForEntity(
                         "/user/add?username={username}&email={email}" +
                                 "&firstName={firstName}&lastName={lastName}" +
-                                "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                                "&role={role}&active={isActive}&notLocked={isNotLocked}",
                         requestEntity,
                         User.class,
                         paramMap
@@ -501,7 +501,7 @@ class UserResourceTest extends BaseUserTest {
                 "email", userDto.getEmail(),
                 "role", userDto.getRole().name(),
                 "isActive", userDto.isActive(),
-                "isNonLocked", userDto.isNonLocked()
+                "isNotLocked", userDto.isNotLocked()
         );
 
         //when
@@ -513,7 +513,7 @@ class UserResourceTest extends BaseUserTest {
                 .postForEntity(
                         "/user/add?username={username}&email={email}" +
                                 "&firstName={firstName}&lastName={lastName}" +
-                                "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                                "&role={role}&active={isActive}&notLocked={isNotLocked}",
                         requestEntity,
                         HttpResponse.class,
                         paramMap
@@ -547,7 +547,7 @@ class UserResourceTest extends BaseUserTest {
         body.add("email", userDto.getEmail());
         body.add("role", userDto.getRole().name());
         body.add("active", userDto.isActive());
-        body.add("nonLocked", userDto.isNonLocked());
+        body.add("notLocked", userDto.isNotLocked());
         body.add("profileImage", profileImage.getResource());
 
         //when
@@ -605,7 +605,7 @@ class UserResourceTest extends BaseUserTest {
         body.add("email", userDto.getEmail());
         body.add("role", userDto.getRole().name());
         body.add("active", userDto.isActive());
-        body.add("nonLocked", userDto.isNonLocked());
+        body.add("notLocked", userDto.isNotLocked());
         body.add("profileImage", profileImage.getResource());
 
         //when

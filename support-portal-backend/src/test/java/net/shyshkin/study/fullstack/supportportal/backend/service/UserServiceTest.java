@@ -89,7 +89,7 @@ class UserServiceTest extends BaseUserTest {
                 .hasFieldOrPropertyWithValue("firstName", randomUserDto.getFirstName())
                 .hasFieldOrPropertyWithValue("lastName", randomUserDto.getLastName())
                 .hasFieldOrPropertyWithValue("isActive", randomUserDto.isActive())
-                .hasFieldOrPropertyWithValue("isNotLocked", randomUserDto.isNonLocked())
+                .hasFieldOrPropertyWithValue("isNotLocked", randomUserDto.isNotLocked())
                 .hasFieldOrPropertyWithValue("role", "ROLE_ADMIN")
         ;
     }

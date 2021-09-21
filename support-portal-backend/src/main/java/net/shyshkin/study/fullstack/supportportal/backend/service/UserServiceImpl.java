@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
                 .lastName(lastName)
                 .username(username)
                 .isActive(true)
-                .isNonLocked(true)
+                .isNotLocked(true)
                 .role(defaultRole)
                 .build();
         return addNewUser(newUserDto);
@@ -208,7 +208,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDto.getEmail());
         user.setRole(userDto.getRole().name());
         user.setAuthorities(userDto.getRole().getAuthorities());
-        user.setNotLocked(userDto.isNonLocked());
+        user.setNotLocked(userDto.isNotLocked());
         user.setActive(userDto.isActive());
 
         userRepository.save(user);

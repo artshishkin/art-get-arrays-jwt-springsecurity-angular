@@ -53,7 +53,7 @@ public abstract class BaseUserTest {
                 .lastName(FAKER.name().lastName())
                 .username(FAKER.name().username())
                 .isActive(true)
-                .isNonLocked(true)
+                .isNotLocked(true)
                 .role(ROLE_ADMIN)
                 .build();
     }

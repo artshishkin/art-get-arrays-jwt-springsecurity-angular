@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Mapper(imports = {LocalDateTime.class})
 public interface UserMapper {
 
-    @Mapping(target = "isNotLocked", source = "nonLocked")
+    @Mapping(target = "isNotLocked", source = "notLocked")
     @Mapping(target = "isActive", source = "active")
     @Mapping(target = "joinDate", expression = "java( LocalDateTime.now() )")
     @Mapping(target = "role", source = "role", resultType = String.class)

@@ -63,7 +63,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     "email", userDto.getEmail(),
                     "role", userDto.getRole().name(),
                     "isActive", String.valueOf(userDto.isActive()),
-                    "isNonLocked", String.valueOf(userDto.isNonLocked())
+                    "isNotLocked", String.valueOf(userDto.isNotLocked())
             );
 
             //when
@@ -71,7 +71,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .postForEntity(
                             "/user/add?username={username}&email={email}" +
                                     "&firstName={firstName}&lastName={lastName}" +
-                                    "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                                    "&role={role}&active={isActive}&notLocked={isNotLocked}",
                             null,
                             User.class,
                             paramMap
@@ -103,7 +103,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     "email", userDto.getEmail(),
                     "role", userDto.getRole().name(),
                     "isActive", String.valueOf(userDto.isActive()),
-                    "isNonLocked", String.valueOf(userDto.isNonLocked())
+                    "isNotLocked", String.valueOf(userDto.isNotLocked())
             );
 
             //when
@@ -111,7 +111,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .postForEntity(
                             "/user/add?username={username}&email={email}" +
                                     "&lastName={lastName}" +
-                                    "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                                    "&role={role}&active={isActive}&notLocked={isNotLocked}",
                             null,
                             HttpResponse.class,
                             paramMap
@@ -139,7 +139,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     "email", userDto.getEmail(),
                     "role", "ROLE_FAKE",
                     "isActive", String.valueOf(userDto.isActive()),
-                    "isNonLocked", String.valueOf(userDto.isNonLocked())
+                    "isNotLocked", String.valueOf(userDto.isNotLocked())
             );
 
             //when
@@ -147,7 +147,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .postForEntity(
                             "/user/add?username={username}&email={email}" +
                                     "&firstName={firstName}&lastName={lastName}" +
-                                    "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                                    "&role={role}&active={isActive}&notLocked={isNotLocked}",
                             null,
                             HttpResponse.class,
                             paramMap
@@ -175,7 +175,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     "email", "not_an_email",
                     "role", userDto.getRole().name(),
                     "isActive", String.valueOf(userDto.isActive()),
-                    "isNonLocked", String.valueOf(userDto.isNonLocked())
+                    "isNotLocked", String.valueOf(userDto.isNotLocked())
             );
 
             //when
@@ -183,7 +183,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .postForEntity(
                             "/user/add?username={username}&email={email}" +
                                     "&firstName={firstName}&lastName={lastName}" +
-                                    "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                                    "&role={role}&active={isActive}&notLocked={isNotLocked}",
                             null,
                             HttpResponse.class,
                             paramMap
@@ -211,7 +211,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     "email", userDto.getEmail(),
                     "role", userDto.getRole().name(),
                     "isActive", "yes",
-                    "isNonLocked", "not_a_boolean"
+                    "isNotLocked", "not_a_boolean"
             );
 
             //when
@@ -219,7 +219,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .postForEntity(
                             "/user/add?username={username}&email={email}" +
                                     "&firstName={firstName}&lastName={lastName}" +
-                                    "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                                    "&role={role}&active={isActive}&notLocked={isNotLocked}",
                             null,
                             HttpResponse.class,
                             paramMap
@@ -232,7 +232,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
-                    .hasFieldOrPropertyWithValue("message", "ERROR(S) IN PARAMETERS: [NONLOCKED:FAILED TO CONVERT PROPERTY VALUE OF TYPE 'JAVA.LANG.STRING' TO REQUIRED TYPE 'BOOLEAN' FOR PROPERTY 'NONLOCKED'; NESTED EXCEPTION IS JAVA.LANG.ILLEGALARGUMENTEXCEPTION: INVALID BOOLEAN VALUE [NOT_A_BOOLEAN]]");
+                    .hasFieldOrPropertyWithValue("message", "ERROR(S) IN PARAMETERS: [NOTLOCKED:FAILED TO CONVERT PROPERTY VALUE OF TYPE 'JAVA.LANG.STRING' TO REQUIRED TYPE 'BOOLEAN' FOR PROPERTY 'NOTLOCKED'; NESTED EXCEPTION IS JAVA.LANG.ILLEGALARGUMENTEXCEPTION: INVALID BOOLEAN VALUE [NOT_A_BOOLEAN]]");
         }
     }
 
@@ -265,7 +265,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     "email", userDto.getEmail(),
                     "role", userDto.getRole().name(),
                     "isActive", String.valueOf(userDto.isActive()),
-                    "isNonLocked", String.valueOf(userDto.isNonLocked())
+                    "isNotLocked", String.valueOf(userDto.isNotLocked())
             );
 
             //when
@@ -273,7 +273,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .exchange(
                             "/user/{currentUsername}?username={username}&email={email}" +
                                     "&firstName={firstName}&lastName={lastName}" +
-                                    "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                                    "&role={role}&active={isActive}&notLocked={isNotLocked}",
                             HttpMethod.PUT,
                             null,
                             User.class,
@@ -312,7 +312,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     "email", userDto.getEmail(),
                     "role", userDto.getRole().name(),
                     "isActive", userDto.isActive(),
-                    "isNonLocked", userDto.isNonLocked()
+                    "isNotLocked", userDto.isNotLocked()
             );
 
             //when
@@ -320,7 +320,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .exchange(
                             "/user/{currentUsername}?username={username}&email={email}" +
                                     "&firstName={firstName}&lastName={lastName}" +
-                                    "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                                    "&role={role}&active={isActive}&notLocked={isNotLocked}",
                             HttpMethod.PUT,
                             null,
                             User.class,
@@ -359,7 +359,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     "email", userDto.getEmail(),
                     "role", userDto.getRole().name(),
                     "isActive", userDto.isActive(),
-                    "isNonLocked", userDto.isNonLocked()
+                    "isNotLocked", userDto.isNotLocked()
             );
 
             //when
@@ -367,7 +367,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .exchange(
                             "/user/{currentUsername}?username={username}&email={email}" +
                                     "&firstName={firstName}" +
-                                    "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                                    "&role={role}&active={isActive}&notLocked={isNotLocked}",
                             HttpMethod.PUT,
                             null,
                             HttpResponse.class,
@@ -401,7 +401,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     "email", userDto.getEmail(),
                     "role", userDto.getRole().name(),
                     "isActive", String.valueOf(userDto.isActive()),
-                    "isNonLocked", String.valueOf(userDto.isNonLocked())
+                    "isNotLocked", String.valueOf(userDto.isNotLocked())
             );
 
             //when
@@ -409,7 +409,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .exchange(
                             "/user/{currentUsername}?username={username}&email={email}" +
                                     "&firstName={firstName}&lastName={lastName}" +
-                                    "&role={role}&active={isActive}&nonLocked={isNonLocked}",
+                                    "&role={role}&active={isActive}&notLocked={isNotLocked}",
                             HttpMethod.PUT,
                             null,
                             HttpResponse.class,

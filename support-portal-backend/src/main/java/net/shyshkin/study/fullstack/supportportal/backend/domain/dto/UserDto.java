@@ -28,7 +28,7 @@ public class UserDto {
     private String email;
     @NotNull(message = "Role is mandatory")
     private Role role;
-    private boolean isNonLocked;
+    private boolean isNotLocked;
     private boolean isActive;
     private MultipartFile profileImage;
 }
