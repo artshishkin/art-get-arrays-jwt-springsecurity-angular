@@ -64,6 +64,10 @@ export class UserComponent implements OnInit, OnDestroy {
     document.getElementById('openUserInfo')?.click();
   }
 
+  public onProfileImageChange(event: any): void {
+    console.log(event);
+  }
+
   private sendErrorNotification(message: string) {
     this.notificationService.notify(NotificationType.ERROR, message ? message : 'An error occurred. Please try again')
   }

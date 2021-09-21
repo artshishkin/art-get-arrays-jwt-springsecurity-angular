@@ -219,7 +219,8 @@
                   </div>
                   <div class="custom-file">
                     <input type="file" accept="image/*" name="profileImage"
-                           class="custom-file-input">
+                           (change)="onProfileImageChange($event)"
+                           class="custom-file-input" >
                     <label class="custom-file-label">
                       <span [hidden]="true"> fileName </span>
                       <span [hidden]="false">Choose File</span>
