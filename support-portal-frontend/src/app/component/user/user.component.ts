@@ -103,6 +103,28 @@ export class UserComponent implements OnInit, OnDestroy {
     this.clickButton('new-user-save');
   }
 
+  public searchUsers(searchTerm: string): void {
+
+    if (!searchTerm) {
+      this.users = this.userService.getUsersFromLocalStorage();
+      return;
+    }
+
+    const matchUsers: User[] = [];
+    searchTerm = searchTerm.toLowerCase();
+    for (const user of this.userService.getUsersFromLocalStorage()) {
+      if (user.username.toLowerCase().includes(searchTerm)
+        || user.userId.toLowerCase().includes(searchTerm)
+        || user.firstName.toLowerCase().includes(searchTerm)
+        || user.lastName.toLowerCase().includes(searchTerm)
+        || user.email.toLowerCase().includes(searchTerm)) {
+        matchUsers.push(user);
+      }
+    }
+    this.users = matchUsers;
+
+  }
+
   private clickButton(buttonId: string): void {
     document.getElementById(buttonId)?.click();
   }
