@@ -6,6 +6,7 @@ import {NotificationService} from "../../service/notification.service";
 import {NotificationType} from "../../notification/notification-type";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NgForm} from "@angular/forms";
+import {CustomHttpResponse} from "../../dto/custom-http-response";
 
 @Component({
   selector: 'app-user',
@@ -146,6 +147,21 @@ export class UserComponent implements OnInit, OnDestroy {
           this.getUsers(false);
           this.invalidateVariables();
           this.notificationService.notify(NotificationType.SUCCESS, `User ${user.username} updated successfully`);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendErrorNotification(errorResponse.error.message);
+        }
+      );
+    this.subscriptions.push(subscription);
+  }
+
+  onDeleteUser(user: User) {
+    const subscription = this.userService.deleteUser(user.userId)
+      .subscribe(
+        (response: CustomHttpResponse) => {
+          this.getUsers(false);
+          this.invalidateVariables();
+          this.notificationService.notify(NotificationType.SUCCESS, response.message);
         },
         (errorResponse: HttpErrorResponse) => {
           this.sendErrorNotification(errorResponse.error.message);
