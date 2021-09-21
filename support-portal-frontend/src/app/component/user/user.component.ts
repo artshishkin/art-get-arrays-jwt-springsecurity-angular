@@ -76,7 +76,11 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   private sendErrorNotification(message: string) {
-    this.notificationService.notify(NotificationType.ERROR, message ? message : 'An error occurred. Please try again')
+    this, this.sendNotification(NotificationType.ERROR, message);
+  }
+
+  private sendNotification(type: NotificationType, message: string) {
+    this.notificationService.notify(type, message ? message : 'An error occurred. Please try again')
   }
 
   public onAddNewUser(userForm: NgForm): void {
@@ -172,14 +176,15 @@ export class UserComponent implements OnInit, OnDestroy {
 
   public onResetPassword(emailForm: NgForm): void {
     this.refreshing = true;
-    let email = emailForm.value[''];
+    let email = emailForm.value['reset-password-email'];
     let subscription = this.userService.resetPassword(email)
       .subscribe(
         (response: CustomHttpResponse) => {
           this.notificationService.notify(NotificationType.SUCCESS, response.message);
         },
         (errorResponse: HttpErrorResponse) => {
-          this.sendErrorNotification(errorResponse.error.message);
+          this.sendNotification(NotificationType.WARNING, errorResponse.error.message);
+          this.refreshing = false;
         },
         () => {
           this.refreshing = false;
