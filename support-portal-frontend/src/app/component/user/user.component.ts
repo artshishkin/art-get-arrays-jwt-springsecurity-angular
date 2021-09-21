@@ -77,8 +77,7 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   public onAddNewUser(userForm: NgForm): void {
-    // TODO: test if profileImage is null (we are not passing it)
-    let formData = this.userService.createUserFormData('', userForm.value, this.profileImage!);
+    let formData = this.userService.createUserFormData(null, userForm.value, this.profileImage);
     let subscription = this.userService.addUser(formData)
       .subscribe(
         (user: User) => {

@@ -63,19 +63,21 @@ export class UserService {
     return [];
   }
 
-  public createUserFormData(loggedInUsername: string, user: User, profileImage: File): FormData {
+  public createUserFormData(loggedInUsername: string | null, user: User, profileImage: File | null): FormData {
 
     const formData = new FormData();
 
-    formData.append('currentUsername', loggedInUsername);
+    if (loggedInUsername)
+      formData.append('currentUsername', loggedInUsername);
     formData.append('firstName', user.firstName);
     formData.append('lastName', user.lastName);
     formData.append("username", user.username);
     formData.append("email", user.email);
     formData.append("role", user.role);
-    formData.append("active", String(user.active));
-    formData.append("notLocked", String(user.notLocked));
-    formData.append("profileImage", profileImage);
+    formData.append("active", user.active ? 'true' : 'false');
+    formData.append("notLocked", user.notLocked ? 'true' : 'false');
+    if (profileImage)
+      formData.append("profileImage", profileImage);
 
     return formData;
   }
