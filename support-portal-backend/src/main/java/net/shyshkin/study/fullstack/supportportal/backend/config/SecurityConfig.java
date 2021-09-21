@@ -20,6 +20,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.List;
+
+import static org.springframework.http.HttpMethod.*;
+
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
@@ -75,7 +79,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 registry.addMapping("/user/login")
                         .allowedOrigins(allowedOrigins)
                         .exposedHeaders(SecurityConstants.JWT_TOKEN_HEADER);
-                registry.addMapping("/**").allowedOrigins(allowedOrigins);
+
+                String[] allowedMethods = List.of(GET, POST, PUT, DELETE)
+                        .stream()
+                        .map(Enum::name)
+                        .toArray(String[]::new);
+
+                registry.addMapping("/**")
+                        .allowedMethods(allowedMethods)
+                        .allowedOrigins(allowedOrigins);
             }
         };
     }
