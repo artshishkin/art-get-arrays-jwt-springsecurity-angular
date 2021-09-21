@@ -122,18 +122,19 @@
                     </div>
                     <div class="col d-flex flex-column flex-sm-row justify-content-between">
                       <div class="text-center text-sm-left mb-sm-0">
-                        <h6 class="pt-sm-2 pb-1 mb-0 text-nowrap">{{selectedUser.firstName}} {{selectedUser.lastName}}</h6>
+                        <h6
+                          class="pt-sm-2 pb-1 mb-0 text-nowrap">{{selectedUser.firstName}} {{selectedUser.lastName}}</h6>
                         <p class="mb-1">{{selectedUser.username}}</p>
                         <div class="">Status:
                           <span *ngIf="selectedUser.active" class="badge bg-success">Active</span>
                           <span *ngIf="!selectedUser.active" class="badge bg-danger">Inactive</span>
                         </div>
-                        <div class="text-muted"><small>Last
-                          Login: {{selectedUser.lastLoginDateDisplay}}</small>
+                        <div *ngIf="selectedUser.lastLoginDateDisplay" class="text-muted">
+                          <small>Last Login: {{selectedUser.lastLoginDateDisplay | date: 'medium' }}</small>
                         </div>
                       </div>
                       <div class="text-center text-sm-right">
-                        <div class="text-muted"><small>Joined {{selectedUser?.joinDate}}</small>
+                        <div class="text-muted"><small>Joined {{selectedUser.joinDate | date: 'medium' }}</small>
                         </div>
                       </div>
                     </div>
@@ -141,15 +142,15 @@
                 </div>
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item"></li>
-                  <li class="list-group-item"><i class="fa fa-id-badge float-end"></i>{{selectedUser?.userId}}
+                  <li class="list-group-item"><i class="fa fa-id-badge float-end"></i>{{selectedUser.userId}}
                   </li>
-                  <li class="list-group-item"><i class="fa fa-envelope float-end"></i>{{selectedUser?.email}}
+                  <li class="list-group-item"><i class="fa fa-envelope float-end"></i>{{selectedUser.email}}
                   </li>
-                  <li class="list-group-item"><i
-                    class="fas fa-shield-alt float-end"></i>
-                    {{selectedUser?.role}}
-                  <li class="list-group-item"><i
-                    class="fas fa-sign-in-alt float-end"></i>12.03.2222
+                  <li class="list-group-item"><i class="fas fa-shield-alt float-end"></i>
+                    {{selectedUser?.role?.substring(5)}}
+                  <li *ngIf="selectedUser.lastLoginDateDisplay" class="list-group-item">
+                    <i class="fas fa-sign-in-alt float-end"></i>
+                    {{ selectedUser.lastLoginDateDisplay | date: 'medium' }}
                   </li>
                   <li class="list-group-item">
                     <span *ngIf="!selectedUser?.notLocked">
