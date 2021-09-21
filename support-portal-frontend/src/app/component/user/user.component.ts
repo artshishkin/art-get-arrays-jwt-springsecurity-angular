@@ -19,6 +19,7 @@ export class UserComponent implements OnInit, OnDestroy {
   public users: User[] = [];
   public refreshing: boolean;
   private subscriptions: Subscription[] = [];
+  public selectedUser: User;
 
   constructor(private userService: UserService,
               private notificationService: NotificationService) {
@@ -56,6 +57,11 @@ export class UserComponent implements OnInit, OnDestroy {
       );
     this.subscriptions.push(subscription);
 
+  }
+
+  public onSelectUser(selectedUser: User): void {
+    this.selectedUser = selectedUser;
+    document.getElementById('openUserInfo')?.click();
   }
 
   private sendErrorNotification(message: string) {

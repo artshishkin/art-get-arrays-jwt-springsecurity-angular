@@ -64,7 +64,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr class="text-center" *ngFor="let appUser of users">
+        <tr class="text-center" *ngFor="let appUser of users" (click)="onSelectUser(appUser)">
           <td>
             <img height="40" width="40" src="{{appUser?.profileImageUrl}}"
                  class="rounded-circle img-fluid img-thumbnail" alt=""/>
@@ -86,16 +86,91 @@
           </td>
         </tr>
         </tbody>
-
-        <button [hidden]="true" type="button" id="openUserInfo" data-toggle="modal" data-target="#viewUserModal">
-        </button>
-        <button [hidden]="true" type="button" id="openUserEdit" data-toggle="modal" data-target="#editUserModal">
-        </button>
-
       </table>
     </div>
 
+    <button [hidden]="true" type="button" id="openUserInfo" data-bs-toggle="modal" data-bs-target="#viewUserModal">
+    </button>
+    <button [hidden]="true" type="button" id="openUserEdit" data-toggle="modal" data-target="#editUserModal">
+    </button>
+
+    <!-- modal user info -->
+    <div *ngIf="selectedUser" class="modal fade bd-example-modal-lg" id="viewUserModal" tabindex="-1" role="dialog"
+         aria-labelledby=""
+         aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-center"
+                id="exampleModalLongTitle">{{selectedUser.firstName}} {{selectedUser.lastName}}</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div>
+              <div class="card">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-12 col-sm-auto">
+                      <div class="mx-auto" style="width: 120px;">
+                        <div class="d-flex justify-content-center align-items-center rounded">
+                          <img class="rounded" height="120" width="120" src="{{selectedUser.profileImageUrl}}"
+                               alt="{{selectedUser.username}}">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col d-flex flex-column flex-sm-row justify-content-between">
+                      <div class="text-center text-sm-left mb-sm-0">
+                        <h6 class="pt-sm-2 pb-1 mb-0 text-nowrap">{{selectedUser.firstName}} {{selectedUser.lastName}}</h6>
+                        <p class="mb-1">{{selectedUser.username}}</p>
+                        <div class="">Status:
+                          <span *ngIf="selectedUser.active" class="badge bg-success">Active</span>
+                          <span *ngIf="!selectedUser.active" class="badge bg-danger">Inactive</span>
+                        </div>
+                        <div class="text-muted"><small>Last
+                          Login: {{selectedUser.lastLoginDateDisplay}}</small>
+                        </div>
+                      </div>
+                      <div class="text-center text-sm-right">
+                        <div class="text-muted"><small>Joined {{selectedUser?.joinDate}}</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item"></li>
+                  <li class="list-group-item"><i class="fa fa-id-badge float-end"></i>{{selectedUser?.userId}}
+                  </li>
+                  <li class="list-group-item"><i class="fa fa-envelope float-end"></i>{{selectedUser?.email}}
+                  </li>
+                  <li class="list-group-item"><i
+                    class="fas fa-shield-alt float-end"></i>
+                    {{selectedUser?.role}}
+                  <li class="list-group-item"><i
+                    class="fas fa-sign-in-alt float-end"></i>12.03.2222
+                  </li>
+                  <li class="list-group-item">
+                    <span *ngIf="!selectedUser?.notLocked">
+                      <i class="fa fa-lock float-end" style="color: red;"></i>
+                      Account Locked
+                    </span>
+                    <span *ngIf="selectedUser?.notLocked">
+                      <i class="fa fa-unlock float-end" style="color: green;"></i>
+                      Account Unlocked
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
-
-
 </div>
