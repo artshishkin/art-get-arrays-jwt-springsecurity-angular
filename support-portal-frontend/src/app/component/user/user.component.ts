@@ -20,6 +20,8 @@ export class UserComponent implements OnInit, OnDestroy {
   public refreshing: boolean;
   private subscriptions: Subscription[] = [];
   public selectedUser: User;
+  public profileImageFileName: string;
+  public profileImage: File;
 
   constructor(private userService: UserService,
               private notificationService: NotificationService) {
@@ -64,11 +66,16 @@ export class UserComponent implements OnInit, OnDestroy {
     document.getElementById('openUserInfo')?.click();
   }
 
-  public onProfileImageChange(event: any): void {
-    console.log(event);
+  public onProfileImageChange(fileList: FileList): void {
+    this.profileImageFileName = fileList[0].name;
+    this.profileImage = fileList[0];
   }
 
   private sendErrorNotification(message: string) {
     this.notificationService.notify(NotificationType.ERROR, message ? message : 'An error occurred. Please try again')
+  }
+
+  public saveNewUser(): void {
+    document.getElementById('new-user-save')?.click();
   }
 }

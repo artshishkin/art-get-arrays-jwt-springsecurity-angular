@@ -219,8 +219,8 @@
                   </div>
                   <div class="custom-file">
                     <input type="file" accept="image/*" name="profileImage"
-                           (change)="onProfileImageChange($event)"
-                           class="custom-file-input" >
+                           (change)="onProfileImageChange($any($event).target.files)"
+                           class="custom-file-input">
                     <label class="custom-file-label">
                       <span [hidden]="true"> fileName </span>
                       <span [hidden]="false">Choose File</span>
@@ -247,7 +247,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="new-user-close">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-primary" (click)="saveNewUser()">Save changes</button>
           </div>
         </div>
       </div>
