@@ -64,7 +64,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
   public onSelectUser(selectedUser: User): void {
     this.selectedUser = selectedUser;
-    document.getElementById('openUserInfo')?.click();
+    this.clickButton('openUserInfo');
   }
 
   public onProfileImageChange(fileList: FileList): void {
@@ -82,7 +82,7 @@ export class UserComponent implements OnInit, OnDestroy {
     let subscription = this.userService.addUser(formData)
       .subscribe(
         (user: User) => {
-          document.getElementById('new-user-close')?.click();
+          this.clickButton('new-user-close');
           this.getUsers(false);
           this.invalidateVariables();
           userForm.reset();
@@ -101,6 +101,10 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   public saveNewUser(): void {
-    document.getElementById('new-user-save')?.click();
+    this.clickButton('new-user-save');
+  }
+
+  private clickButton(buttonId: string): void {
+    document.getElementById(buttonId)?.click();
   }
 }

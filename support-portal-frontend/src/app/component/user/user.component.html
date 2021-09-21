@@ -186,7 +186,7 @@
           </div>
           <div class="modal-body">
             <div>
-              <form>
+              <form #newUserForm="ngForm" (ngSubmit)="onAddNewUser(newUserForm)" >
                 <div class="form-group">
                   <label for="firstName">First Name</label>
                   <input type="text" name="firstName" required ngModel class="form-control">
@@ -222,8 +222,8 @@
                            (change)="onProfileImageChange($any($event).target.files)"
                            class="custom-file-input">
                     <label class="custom-file-label">
-                      <span [hidden]="true"> fileName </span>
-                      <span [hidden]="false">Choose File</span>
+                      <span [hidden]="!profileImageFileName">{{profileImageFileName}}</span>
+                      <span [hidden]="profileImageFileName">Choose File</span>
                     </label>
                   </div>
                 </div>
@@ -247,7 +247,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="new-user-close">Close</button>
-            <button type="button" class="btn btn-primary" (click)="saveNewUser()">Save changes</button>
+            <button type="button" class="btn btn-primary" (click)="saveNewUser()" [disabled]="newUserForm.invalid">Save changes</button>
           </div>
         </div>
       </div>
