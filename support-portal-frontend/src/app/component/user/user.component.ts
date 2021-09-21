@@ -23,6 +23,8 @@ export class UserComponent implements OnInit, OnDestroy {
   public selectedUser: User;
   public profileImageFileName: string | null;
   public profileImage: File | null;
+  public editUser: User = new User();
+  private currentUsername: string;
 
   constructor(private userService: UserService,
               private notificationService: NotificationService) {
@@ -127,5 +129,11 @@ export class UserComponent implements OnInit, OnDestroy {
 
   private clickButton(buttonId: string): void {
     document.getElementById(buttonId)?.click();
+  }
+
+  public onEditUser(user: User): void {
+    this.editUser = user;
+    this.currentUsername = user.username;
+    this.clickButton('openUserEdit');
   }
 }
