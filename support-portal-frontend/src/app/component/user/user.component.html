@@ -264,33 +264,33 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title text-center">Edit User</h5>
+            <h5 class="modal-title text-center">Edit {{editUser.firstName}} {{editUser.lastName}}</h5>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
             <div>
-              <form #editUserForm="ngForm" (ngSubmit)="onAddNewUser(editUserForm)">
+              <form #editUserForm="ngForm">
                 <div class="form-group">
                   <label for="firstName">First Name</label>
-                  <input type="text" name="firstName" required ngModel="{{editUser.firstName}}" class="form-control">
+                  <input type="text" name="firstName" required [(ngModel)]="editUser.firstName" class="form-control">
                 </div>
                 <div class="form-group">
                   <label for="lastName">Last Name</label>
-                  <input type="text" name="lastName" required ngModel class="form-control">
+                  <input type="text" name="lastName" required [(ngModel)]="editUser.lastName" class="form-control">
                 </div>
                 <div class="form-group">
                   <label for="username">Username</label>
-                  <input type="text" name="username" required ngModel class="form-control">
+                  <input type="text" name="username" required [(ngModel)]="editUser.username" class="form-control">
                 </div>
                 <div class="form-group">
                   <label for="email">Email</label>
-                  <input type="email" name="email" required ngModel class="form-control">
+                  <input type="email" name="email" required [(ngModel)]="editUser.email" class="form-control">
                 </div>
                 <div class="form-group">
                   <label for="authority">Role</label>
-                  <select name="role" required ngModel="ROLE_USER" class="form-control">
+                  <select name="role" required [(ngModel)]="editUser.role" class="form-control">
                     <option value="ROLE_USER">USER</option>
                     <option value="ROLE_HR">HR</option>
                     <option value="ROLE_MANAGER">MANAGER</option>
@@ -315,24 +315,23 @@
                 <fieldset class="form-group">
                   <div class="form-check">
                     <label class="form-check-label">
-                      <input type="checkbox" name="active" ngModel class="form-check-input">
+                      <input type="checkbox" name="active" [(ngModel)]="editUser.active" class="form-check-input">
                       Active
                     </label>
                   </div>
                   <div class="form-check disabled">
                     <label class="form-check-label">
-                      <input type="checkbox" name="notLocked" ngModel class="form-check-input">
+                      <input type="checkbox" name="notLocked" [(ngModel)]="editUser.notLocked" class="form-check-input">
                       Unlocked
                     </label>
                   </div>
                 </fieldset>
-                <button type="submit" style="display: none;" id="new-user-save"></button>
               </form>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="new-user-close">Close</button>
-            <button type="button" class="btn btn-primary" (click)="saveNewUser()" [disabled]="newUserForm.invalid">Save
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeEditUserButton">Close</button>
+            <button type="button" class="btn btn-primary" (click)="onUpdateUser()" [disabled]="editUserForm.invalid">Save
               changes
             </button>
           </div>

@@ -136,4 +136,21 @@ export class UserComponent implements OnInit, OnDestroy {
     this.currentUsername = user.username;
     this.clickButton('openUserEdit');
   }
+
+  public onUpdateUser(): void {
+    const formData = this.userService.createUserFormData(this.currentUsername, this.editUser, this.profileImage);
+    let subscription = this.userService.updateUser(formData)
+      .subscribe(
+        (user: User) => {
+          this.clickButton('closeEditUserButton');
+          this.getUsers(false);
+          this.invalidateVariables();
+          this.notificationService.notify(NotificationType.SUCCESS, `User ${user.username} updated successfully`);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendErrorNotification(errorResponse.error.message);
+        }
+      );
+    this.subscriptions.push(subscription);
+  }
 }

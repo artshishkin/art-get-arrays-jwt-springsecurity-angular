@@ -26,10 +26,10 @@ export class UserService {
       .post<User>(`${this.host}/user/add`, formData);
   }
 
-  public updateUser(formData: FormData): Observable<User | HttpErrorResponse> {
+  public updateUser(formData: FormData): Observable<User> {
     let currentUsername = formData.get(`currentUsername`);
     return this.httpClient
-      .put<User | HttpErrorResponse>(`${this.host}/user/${currentUsername}`, formData);
+      .put<User>(`${this.host}/user/${currentUsername}`, formData);
   }
 
   public resetPassword(email: string): Observable<CustomHttpResponse> {
