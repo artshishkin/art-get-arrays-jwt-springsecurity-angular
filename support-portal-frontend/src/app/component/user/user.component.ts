@@ -250,6 +250,7 @@ export class UserComponent implements OnInit, OnDestroy {
         (errorResponse: HttpErrorResponse) => {
           this.sendErrorNotification(errorResponse.error.message);
           this.refreshing = false;
+          this.fileUploadStatus.status = 'error';
         },
         () => {
           this.refreshing = false;
@@ -276,6 +277,9 @@ export class UserComponent implements OnInit, OnDestroy {
           this.sendErrorNotification('Unable to upload image. Please try again');
         }
         break;
+      default:
+        this.fileUploadStatus.status='default';
+
     }
   }
 }
