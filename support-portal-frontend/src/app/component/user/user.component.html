@@ -26,7 +26,7 @@
 <!--        document.getElementsByClassName('nav-item nav-link ml-3')[0].hidden=false-->
 <!--        document.getElementById('reset-password').hidden=false-->
 
-        <a [hidden]="!isAdmin" class="nav-item nav-link ml-3" (click)="changeTitle('Settings')" data-bs-toggle="tab" href="#reset-password">
+        <a *ngIf="isAdmin" class="nav-item nav-link ml-3" (click)="changeTitle('Settings')" data-bs-toggle="tab" href="#reset-password">
           <i class="fa fa-cogs"></i>
           Settings
         </a>
@@ -52,7 +52,7 @@
                    ngModel (ngModelChange)="searchUsers(searchTerm.value)">
           </form>
 
-          <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addUserModal">
+          <button *ngIf="isManager" type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addUserModal">
             <i class="fa fa-plus"></i>New User
           </button>
         </div>
@@ -94,7 +94,7 @@
           <td class="">
             <div class="btn-group">
               <button class="btn btn-outline-info" (click)="onEditUser(appUser)"><i class="fas fa-edit"></i></button>
-              <button class="btn btn-outline-danger" (click)="onDeleteUser(appUser)"><i class="fas fa-trash"></i>
+              <button *ngIf="isAdmin" class="btn btn-outline-danger" (click)="onDeleteUser(appUser)"><i class="fas fa-trash"></i>
               </button>
             </div>
           </td>
@@ -109,7 +109,7 @@
     </button>
 
     <!-- change password  -->
-    <div [hidden]="!isAdmin" class="tab-pane fade" id="reset-password">
+    <div *ngIf="isAdmin" class="tab-pane fade" id="reset-password">
       <form #resetPasswordForm="ngForm" (ngSubmit)="onResetPassword(resetPasswordForm)">
         <fieldset>
           <legend>User Password Management</legend>
@@ -371,7 +371,7 @@
     </div>
 
     <!-- modal add user -->
-    <div class="modal draggable fade bd-example-modal-lg" id="addUserModal" tabindex="-1" role="dialog"
+    <div *ngIf="isAdmin" class="modal draggable fade bd-example-modal-lg" id="addUserModal" tabindex="-1" role="dialog"
          aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
