@@ -242,15 +242,22 @@ export class UserComponent implements OnInit, OnDestroy {
     let subscription = this.userService.updateProfileImage(user.username, formData)
       .subscribe(
         (event: HttpEvent<any>) => {
-          this.notificationService.notify(NotificationType.SUCCESS, `Profile image updated successfully: ${event}`);
-          this.refreshing = false;
-          this.getUsers(false);
+          this.reportUploadProgress(event);
         },
         (errorResponse: HttpErrorResponse) => {
           this.sendErrorNotification(errorResponse.error.message);
           this.refreshing = false;
+        },
+        () => {
+          this.notificationService.notify(NotificationType.SUCCESS, `Profile image updated successfully: ${event}`);
+          this.refreshing = false;
+          this.getUsers(false);
         }
       );
     this.subscriptions.push(subscription);
+  }
+
+  private reportUploadProgress(event: HttpEvent<any>): void {
+
   }
 }
