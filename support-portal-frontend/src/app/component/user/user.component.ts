@@ -4,7 +4,7 @@ import {User} from "../../model/user";
 import {UserService} from "../../service/user.service";
 import {NotificationService} from "../../service/notification.service";
 import {NotificationType} from "../../notification/notification-type";
-import {HttpErrorResponse} from "@angular/common/http";
+import {HttpErrorResponse, HttpEvent} from "@angular/common/http";
 import {NgForm} from "@angular/forms";
 import {CustomHttpResponse} from "../../dto/custom-http-response";
 import {AuthenticationService} from "../../service/authentication.service";
@@ -234,6 +234,23 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   public onUpdateProfileImage(): void {
-
+    if (!this.profileImage) return;
+    this.refreshing = true;
+    const formData = new FormData();
+    formData.append("profileImage", this.profileImage);
+    let user = this.authenticationService.getUserFromLocalStorage();
+    let subscription = this.userService.updateProfileImage(user.username, formData)
+      .subscribe(
+        (event: HttpEvent<any>) => {
+          this.notificationService.notify(NotificationType.SUCCESS, `Profile image updated successfully: ${event}`);
+          this.refreshing = false;
+          this.getUsers(false);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendErrorNotification(errorResponse.error.message);
+          this.refreshing = false;
+        }
+      );
+    this.subscriptions.push(subscription);
   }
 }

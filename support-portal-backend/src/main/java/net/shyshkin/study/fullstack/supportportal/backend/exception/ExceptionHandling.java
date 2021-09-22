@@ -18,6 +18,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import javax.persistence.NoResultException;
 import java.io.IOException;
@@ -65,7 +66,8 @@ public class ExceptionHandling {
 
     @ExceptionHandler({
             EmailExistsException.class, UsernameExistsException.class,
-            EmailNotFoundException.class, UserNotFoundException.class
+            EmailNotFoundException.class, UserNotFoundException.class,
+            MaxUploadSizeExceededException.class
     })
     public ResponseEntity<HttpResponse> badRequestExceptionHandler(Exception exception) {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());

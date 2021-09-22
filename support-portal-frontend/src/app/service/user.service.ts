@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {environment} from "../../environments/environment";
-import {HttpClient, HttpErrorResponse, HttpEvent} from "@angular/common/http";
+import {HttpClient, HttpEvent} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {User} from "../model/user";
 import {CustomHttpResponse} from "../dto/custom-http-response";
@@ -37,9 +37,9 @@ export class UserService {
       .post<CustomHttpResponse>(`${this.host}/user/resetPassword/${email}`, null);
   }
 
-  public updateProfileImage(username: string, formData: FormData): Observable<HttpEvent<User | HttpErrorResponse>> {
+  public updateProfileImage(username: string, formData: FormData): Observable<HttpEvent<User>> {
     return this.httpClient
-      .put<User | HttpErrorResponse>(`${this.host}/user/${username}/profileImage`, formData,
+      .put<User>(`${this.host}/user/${username}/profileImage`, formData,
         {
           reportProgress: true,
           observe: 'events'
