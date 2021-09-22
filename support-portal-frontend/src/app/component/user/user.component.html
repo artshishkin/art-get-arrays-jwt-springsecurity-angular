@@ -168,9 +168,8 @@
                       </div>
                       <div class="tab-content pt-3">
                         <div class="tab-pane active">
-                          <form #profileUserForm="ngForm" (ngSubmit)="onUpdateCurrentUser(profileUserForm)"
-                                class="form"
-                                novalidate>
+                          <form #profileUserForm="ngForm" (ngSubmit)="onUpdateCurrentUser(profileUserForm.value)"
+                                class="form" novalidate>
                             <div class="row">
                               <div class="col">
                                 <div class="row">

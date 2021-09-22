@@ -200,8 +200,25 @@ export class UserComponent implements OnInit, OnDestroy {
     this.subscriptions.push(subscription);
   }
 
-  onUpdateCurrentUser(profileUserForm: any) {
-
+  onUpdateCurrentUser(user: User) {
+    this.currentUsername = this.authenticationService.getUserFromLocalStorage().username;
+    this.refreshing = true;
+    const formData = this.userService.createUserFormData(this.currentUsername, user, this.profileImage);
+    let subscription = this.userService.updateUser(formData)
+      .subscribe(
+        (user: User) => {
+          this.authenticationService.addUserToLocalStorage(user);
+          this.getUsers(false);
+          this.invalidateVariables();
+          this.notificationService.notify(NotificationType.SUCCESS, `User ${user.username} updated successfully`);
+          this.refreshing = false;
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.sendErrorNotification(errorResponse.error.message);
+          this.refreshing = false;
+        }
+      );
+    this.subscriptions.push(subscription);
   }
 
   onLogOut() {
