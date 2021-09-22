@@ -535,8 +535,8 @@ class UserResourceTest extends BaseUserTest {
         //given
         UserDto userDto = createRandomUserDto();
 
-        MultipartFile profileImage = new MockMultipartFile("profileImage", "test.txt",
-                "text/plain", ("Spring Framework" + UUID.randomUUID()).getBytes());
+        MultipartFile profileImage = new MockMultipartFile("profileImage", "test.gif",
+                "image/gif", ("Spring Framework" + UUID.randomUUID()).getBytes());
 
         MultiValueMap<String, Object> body
                 = new LinkedMultiValueMap<>();
@@ -593,8 +593,8 @@ class UserResourceTest extends BaseUserTest {
 
         UserDto userDto = createRandomUserDto();
 
-        MultipartFile profileImage = new MockMultipartFile("profileImage", "test.txt",
-                "text/plain", ("Spring Framework" + UUID.randomUUID()).getBytes());
+        MultipartFile profileImage = new MockMultipartFile("profileImage", "test.jpeg",
+                "image/jpeg", ("Spring Framework" + UUID.randomUUID()).getBytes());
 
         MultiValueMap<String, Object> body
                 = new LinkedMultiValueMap<>();

@@ -3,10 +3,7 @@ package net.shyshkin.study.fullstack.supportportal.backend.exception;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.extern.slf4j.Slf4j;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.HttpResponse;
-import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.EmailExistsException;
-import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.EmailNotFoundException;
-import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.UserNotFoundException;
-import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.UsernameExistsException;
+import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.*;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -67,7 +64,7 @@ public class ExceptionHandling {
     @ExceptionHandler({
             EmailExistsException.class, UsernameExistsException.class,
             EmailNotFoundException.class, UserNotFoundException.class,
-            MaxUploadSizeExceededException.class
+            MaxUploadSizeExceededException.class, NotAnImageFileException.class
     })
     public ResponseEntity<HttpResponse> badRequestExceptionHandler(Exception exception) {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());

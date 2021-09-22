@@ -120,8 +120,8 @@ class UserServiceTest extends BaseUserTest {
         String username = user.getUsername();
 
         //when
-        MockMultipartFile multipartFile = new MockMultipartFile("file", "test.txt",
-                "text/plain", ("Spring Framework" + UUID.randomUUID()).getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile("file", "test.jpg",
+                "image/jpeg", ("Spring Framework" + UUID.randomUUID()).getBytes());
         userService.updateProfileImage(username, multipartFile);
 
         //then

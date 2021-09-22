@@ -565,8 +565,8 @@ class UserResourceUnSecureTest extends BaseUserTest {
             //given
             String username = user.getUsername();
 
-            MultipartFile profileImage = new MockMultipartFile("profileImage", "test.txt",
-                    "text/plain", ("Spring Framework" + UUID.randomUUID()).getBytes());
+            MultipartFile profileImage = new MockMultipartFile("profileImage", "test.png",
+                    "image/png", ("Spring Framework" + UUID.randomUUID()).getBytes());
 
             MultiValueMap<String, Object> body
                     = new LinkedMultiValueMap<>();
@@ -756,8 +756,8 @@ class UserResourceUnSecureTest extends BaseUserTest {
 
         private void uploadProfileImage(String username) throws IOException {
 
-            MultipartFile profileImage = new MockMultipartFile("profileImage", "test.txt",
-                    "text/plain", ("Spring Framework" + UUID.randomUUID()).getBytes());
+            MultipartFile profileImage = new MockMultipartFile("profileImage", "test.jpg",
+                    MediaType.IMAGE_JPEG_VALUE, ("Spring Framework" + UUID.randomUUID()).getBytes());
 
             MultiValueMap<String, Object> body
                     = new LinkedMultiValueMap<>();

@@ -6,10 +6,7 @@ import net.shyshkin.study.fullstack.supportportal.backend.domain.Role;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.UserPrincipal;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
-import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.EmailExistsException;
-import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.EmailNotFoundException;
-import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.UserNotFoundException;
-import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.UsernameExistsException;
+import net.shyshkin.study.fullstack.supportportal.backend.exception.domain.*;
 import net.shyshkin.study.fullstack.supportportal.backend.mapper.UserMapper;
 import net.shyshkin.study.fullstack.supportportal.backend.repository.UserRepository;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -17,7 +14,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,10 +31,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 import static net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant.*;
+import static org.springframework.http.MediaType.*;
 
 @Slf4j
 @Service
@@ -179,6 +177,10 @@ public class UserServiceImpl implements UserService {
     private void saveProfileImage(User user, MultipartFile profileImage) {
         if (profileImage == null) return;
 
+        if (!List.of(IMAGE_JPEG_VALUE, IMAGE_GIF_VALUE, IMAGE_PNG_VALUE).contains(profileImage.getContentType())){
+            throw new NotAnImageFileException(profileImage.getOriginalFilename()+ " is not an image file. Please upload an image");
+        }
+
         Path userFolder = Paths.get(USER_FOLDER, user.getUserId());
         try {
             if (Files.notExists(userFolder)) {
@@ -278,7 +280,7 @@ public class UserServiceImpl implements UserService {
 //        "https://robohash.org/11951691-d373-4126-bef2-84d157a6546b"
         RequestEntity<Void> requestEntity = RequestEntity
                 .get("/{userId}", userId)
-                .accept(MediaType.IMAGE_JPEG)
+                .accept(IMAGE_JPEG)
                 .build();
         var responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<byte[]>() {
         });
