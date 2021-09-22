@@ -7,6 +7,7 @@ import {NotificationType} from "../../notification/notification-type";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NgForm} from "@angular/forms";
 import {CustomHttpResponse} from "../../dto/custom-http-response";
+import {AuthenticationService} from "../../service/authentication.service";
 
 @Component({
   selector: 'app-user',
@@ -19,6 +20,9 @@ export class UserComponent implements OnInit, OnDestroy {
   public titleAction$ = this.titleSubject.asObservable();
 
   public users: User[] = [];
+
+  public loggedInUser: User;
+
   public refreshing: boolean;
   private subscriptions: Subscription[] = [];
   public selectedUser: User;
@@ -28,11 +32,13 @@ export class UserComponent implements OnInit, OnDestroy {
   private currentUsername: string;
 
   constructor(private userService: UserService,
-              private notificationService: NotificationService) {
+              private notificationService: NotificationService,
+              private authenticationService: AuthenticationService) {
   }
 
   ngOnInit(): void {
     this.getUsers(true);
+    this.loggedInUser = this.authenticationService.getUserFromLocalStorage();
   }
 
   ngOnDestroy(): void {
@@ -192,5 +198,13 @@ export class UserComponent implements OnInit, OnDestroy {
         }
       );
     this.subscriptions.push(subscription);
+  }
+
+  onUpdateCurrentUser(profileUserForm: any) {
+
+  }
+
+  onLogOut() {
+
   }
 }
