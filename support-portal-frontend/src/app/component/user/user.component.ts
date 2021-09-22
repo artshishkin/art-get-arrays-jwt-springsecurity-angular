@@ -10,6 +10,7 @@ import {CustomHttpResponse} from "../../dto/custom-http-response";
 import {AuthenticationService} from "../../service/authentication.service";
 import {Router} from "@angular/router";
 import {FileUploadStatus} from "../../model/file-upload.status";
+import {Role} from "../../enum/role.enum";
 
 @Component({
   selector: 'app-user',
@@ -278,8 +279,16 @@ export class UserComponent implements OnInit, OnDestroy {
         }
         break;
       default:
-        this.fileUploadStatus.status='default';
+        this.fileUploadStatus.status = 'default';
 
     }
+  }
+
+  public get isAdmin(): boolean {
+    return this.loggedInUser.role === Role.ADMIN || this.loggedInUser.role === Role.SUPER_ADMIN;
+  }
+
+  public get isManager(): boolean {
+    return this.isAdmin || this.loggedInUser.role === Role.MANAGER;
   }
 }
