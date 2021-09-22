@@ -23,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -194,6 +195,16 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    private void deleteProfileImageFolder(User user) {
+
+        Path userFolder = Paths.get(USER_FOLDER, user.getUserId());
+        try {
+            FileSystemUtils.deleteRecursively(userFolder);
+        } catch (IOException exception) {
+            log.error("Can't delete folder", exception);
+        }
+    }
+
     @Override
     public User updateUser(String username, UserDto userDto) {
 
@@ -222,6 +233,8 @@ public class UserServiceImpl implements UserService {
         User userToBeDeleted = userRepository
                 .findByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException("User was not found"));
+
+        deleteProfileImageFolder(userToBeDeleted);
         userRepository.delete(userToBeDeleted);
     }
 

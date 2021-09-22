@@ -110,23 +110,17 @@ public class UserResource {
 
     @GetMapping(path = "{username}/image/profile", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getProfileImage(@PathVariable String username) throws IOException {
-        byte[] profileImage = userService.getProfileImage(username);
-        log.debug("File size: {}", profileImage.length);
-        return profileImage;
+        return userService.getProfileImage(username);
     }
 
     @GetMapping(path = "image/profile/{userId}/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getProfileImageByUserId(@PathVariable String userId, @PathVariable String filename) throws IOException {
-        byte[] profileImage = userService.getImageByUserId(userId, filename);
-        log.debug("File size: {}", profileImage.length);
-        return profileImage;
+        return userService.getImageByUserId(userId, filename);
     }
 
     @GetMapping(path = "image/profile/{userId}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getDefaultProfileImage(@PathVariable String userId) {
-        byte[] profileImage = userService.getDefaultProfileImage(userId);
-        log.debug("File size: {}", profileImage.length);
-        return profileImage;
+        return userService.getDefaultProfileImage(userId);
     }
 
     private void authenticate(String username, String password) {
