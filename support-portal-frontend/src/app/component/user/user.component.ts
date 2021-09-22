@@ -8,6 +8,7 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {NgForm} from "@angular/forms";
 import {CustomHttpResponse} from "../../dto/custom-http-response";
 import {AuthenticationService} from "../../service/authentication.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-user',
@@ -33,7 +34,8 @@ export class UserComponent implements OnInit, OnDestroy {
 
   constructor(private userService: UserService,
               private notificationService: NotificationService,
-              private authenticationService: AuthenticationService) {
+              private authenticationService: AuthenticationService,
+              private router: Router) {
   }
 
   ngOnInit(): void {
@@ -222,6 +224,8 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   onLogOut() {
-
+    this.authenticationService.logout();
+    this.router.navigate(['/login']);
+    this.sendNotification(NotificationType.SUCCESS, 'You have been successfully logged out');
   }
 }
