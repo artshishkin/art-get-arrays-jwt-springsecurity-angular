@@ -4,11 +4,12 @@ import {User} from "../../model/user";
 import {UserService} from "../../service/user.service";
 import {NotificationService} from "../../service/notification.service";
 import {NotificationType} from "../../notification/notification-type";
-import {HttpErrorResponse, HttpEvent} from "@angular/common/http";
+import {HttpErrorResponse, HttpEvent, HttpEventType} from "@angular/common/http";
 import {NgForm} from "@angular/forms";
 import {CustomHttpResponse} from "../../dto/custom-http-response";
 import {AuthenticationService} from "../../service/authentication.service";
 import {Router} from "@angular/router";
+import {FileUploadStatus} from "../../model/file-upload.status";
 
 @Component({
   selector: 'app-user',
@@ -31,6 +32,8 @@ export class UserComponent implements OnInit, OnDestroy {
   public profileImage: File | null;
   public editUser: User = new User();
   private currentUsername: string;
+
+  public fileUploadStatus: FileUploadStatus = new FileUploadStatus();
 
   constructor(private userService: UserService,
               private notificationService: NotificationService,
@@ -249,7 +252,6 @@ export class UserComponent implements OnInit, OnDestroy {
           this.refreshing = false;
         },
         () => {
-          this.notificationService.notify(NotificationType.SUCCESS, `Profile image updated successfully: ${event}`);
           this.refreshing = false;
           this.getUsers(false);
         }
@@ -259,5 +261,21 @@ export class UserComponent implements OnInit, OnDestroy {
 
   private reportUploadProgress(event: HttpEvent<any>): void {
 
+    switch (event.type) {
+      case HttpEventType.UploadProgress:
+        this.fileUploadStatus.percentage = Math.round(100 * event.loaded / event.total!);
+        this.fileUploadStatus.status = 'progress';
+        break;
+      case HttpEventType.Response:
+        if (event.status === 200) {
+          //for browser to fetch image when updating (because name left the same)
+          this.loggedInUser.profileImageUrl = `${event.body.profileImageUrl}?time=${new Date().getTime()}`;
+          this.notificationService.notify(NotificationType.SUCCESS, `${event.body.firstName}'s image updated successfully`);
+          this.fileUploadStatus.status = 'done';
+        } else {
+          this.sendErrorNotification('Unable to upload image. Please try again');
+        }
+        break;
+    }
   }
 }
