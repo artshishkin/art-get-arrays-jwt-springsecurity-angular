@@ -228,4 +228,12 @@ export class UserComponent implements OnInit, OnDestroy {
     this.router.navigate(['/login']);
     this.sendNotification(NotificationType.SUCCESS, 'You have been successfully logged out');
   }
+
+  public updateProfileImage(): void {
+    this.clickButton('profile-image-input');
+  }
+
+  public onUpdateProfileImage(): void {
+
+  }
 }
