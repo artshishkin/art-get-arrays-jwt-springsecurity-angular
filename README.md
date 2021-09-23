@@ -26,5 +26,23 @@
 Create EC2 instance with custom security rules
 -  open port 80, 5000, 443(ssh) for everyone 
 
+##### 203. Configure EC2 instance
+
+1.  Install apache web server
+    -  `sudo service httpd start` -> service not found
+    -  `sudo yum -y install httpd` -> OK
+    -  `sudo service httpd status` -> running
+    -  Go to EC2 public URL -> Apache Server Default Page
+2.  Test work  
+    -  Navigate to server content
+        -  `cd /var/www/html`
+    -  create sample html file
+        -  `sudo nano index.html`
+        -  `<h1>Welcome to AWS Apache server</h1>`
+        -  Ctrl+O
+        -  Ctrl+X
+    -  Go to EC2 public URL -> Our web page
+
+        
 
 
