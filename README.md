@@ -42,7 +42,26 @@ Create EC2 instance with custom security rules
         -  Ctrl+O
         -  Ctrl+X
     -  Go to EC2 public URL -> Our web page
-
-        
-
+3.  Install Java
+    -  `sudo amazon-linux-extras install java-openjdk11`
+4.  Install MySQL
+    -  `sudo wget https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm`
+    -  `sudo wget https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm`
+    -  `sudo yum localinstall mysql57-community-release-el7-11.noarch.rpm` 
+    -  `sudo yum install mysql-community-server`
+5.  Start MySQL    
+    -  `sudo systemctl start mysqld.service`    
+    -  `sudo systemctl status mysqld.service`    
+    -  Check for temporarily root password
+        -  `sudo grep 'temporary password' /var/log/mysqld.log`    
+        -  `A temporary password is generated for root@localhost: idy7c#>jEetF`
+    -  `sudo mysql_secure_installation`
+        -  new password: `Supp0rtP0rta!`
+        -  No for other questions
+6.  Configure mysql
+    -  `sudo mysql -u root -p` -> enter password
+    -  `show databases;`
+    -  `create database support_portal;`
+    -  `create user 'support_portal_user'@'localhost' identified by 'Supp0rt_Porta!_P@ssword';`
+    -  `grant all privileges on support_portal.* to 'support_portal_user'@'localhost'; `       
 
