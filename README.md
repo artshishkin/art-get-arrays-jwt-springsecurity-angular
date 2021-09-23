@@ -18,3 +18,13 @@
 1.  Install [SubSink](https://www.npmjs.com/package/subsink)
     -  `npm install subsink --save`
 2.  Use it
+
+####  Section 30: Deployment
+
+#####  202. Creating EC2 instance
+
+Create EC2 instance with custom security rules
+-  open port 80, 5000, 443(ssh) for everyone 
+
+
+
