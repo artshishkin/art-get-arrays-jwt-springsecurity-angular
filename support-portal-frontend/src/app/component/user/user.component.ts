@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {BehaviorSubject, Subscription} from "rxjs";
+import {BehaviorSubject} from "rxjs";
 import {User} from "../../model/user";
 import {UserService} from "../../service/user.service";
 import {NotificationService} from "../../service/notification.service";
@@ -11,6 +11,7 @@ import {AuthenticationService} from "../../service/authentication.service";
 import {Router} from "@angular/router";
 import {FileUploadStatus} from "../../model/file-upload.status";
 import {Role} from "../../enum/role.enum";
+import {SubSink} from "subsink";
 
 @Component({
   selector: 'app-user',
@@ -27,7 +28,7 @@ export class UserComponent implements OnInit, OnDestroy {
   public loggedInUser: User;
 
   public refreshing: boolean;
-  private subscriptions: Subscription[] = [];
+  private subs = new SubSink();
   public selectedUser: User;
   public profileImageFileName: string | null;
   public profileImage: File | null;
@@ -48,7 +49,7 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.subs.unsubscribe();
   }
 
   public changeTitle(title: string): void {
@@ -58,7 +59,7 @@ export class UserComponent implements OnInit, OnDestroy {
   public getUsers(showNotification: boolean) {
     this.refreshing = true;
 
-    let subscription = this.userService.getAllUsers()
+    this.subs.sink = this.userService.getAllUsers()
       .subscribe(
         usersPage => {
           this.users = usersPage.content;
@@ -73,7 +74,6 @@ export class UserComponent implements OnInit, OnDestroy {
           this.refreshing = false;
         }
       );
-    this.subscriptions.push(subscription);
 
   }
 
@@ -88,7 +88,7 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   private sendErrorNotification(message: string) {
-    this, this.sendNotification(NotificationType.ERROR, message);
+    this.sendNotification(NotificationType.ERROR, message);
   }
 
   private sendNotification(type: NotificationType, message: string) {
@@ -97,7 +97,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
   public onAddNewUser(userForm: NgForm): void {
     let formData = this.userService.createUserFormData(null, userForm.value, this.profileImage);
-    let subscription = this.userService.addUser(formData)
+    this.subs.sink = this.userService.addUser(formData)
       .subscribe(
         (user: User) => {
           this.clickButton('new-user-close');
@@ -110,7 +110,6 @@ export class UserComponent implements OnInit, OnDestroy {
           this.sendErrorNotification(errorResponse.error.message);
         }
       );
-    this.subscriptions.push(subscription);
   }
 
   private invalidateVariables(): void {
@@ -156,7 +155,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
   public onUpdateUser(): void {
     const formData = this.userService.createUserFormData(this.currentUsername, this.editUser, this.profileImage);
-    let subscription = this.userService.updateUser(formData)
+    this.subs.sink = this.userService.updateUser(formData)
       .subscribe(
         (user: User) => {
           this.clickButton('closeEditUserButton');
@@ -168,11 +167,10 @@ export class UserComponent implements OnInit, OnDestroy {
           this.sendErrorNotification(errorResponse.error.message);
         }
       );
-    this.subscriptions.push(subscription);
   }
 
   onDeleteUser(user: User) {
-    const subscription = this.userService.deleteUser(user.userId)
+    this.subs.sink = this.userService.deleteUser(user.userId)
       .subscribe(
         (response: CustomHttpResponse) => {
           this.getUsers(false);
@@ -183,13 +181,12 @@ export class UserComponent implements OnInit, OnDestroy {
           this.sendErrorNotification(errorResponse.error.message);
         }
       );
-    this.subscriptions.push(subscription);
   }
 
   public onResetPassword(emailForm: NgForm): void {
     this.refreshing = true;
     let email = emailForm.value['reset-password-email'];
-    let subscription = this.userService.resetPassword(email)
+    this.subs.sink = this.userService.resetPassword(email)
       .subscribe(
         (response: CustomHttpResponse) => {
           this.notificationService.notify(NotificationType.SUCCESS, response.message);
@@ -203,14 +200,13 @@ export class UserComponent implements OnInit, OnDestroy {
           emailForm.reset();
         }
       );
-    this.subscriptions.push(subscription);
   }
 
   onUpdateCurrentUser(user: User) {
     this.currentUsername = this.authenticationService.getUserFromLocalStorage().username;
     this.refreshing = true;
     const formData = this.userService.createUserFormData(this.currentUsername, user, this.profileImage);
-    let subscription = this.userService.updateUser(formData)
+    this.subs.sink = this.userService.updateUser(formData)
       .subscribe(
         (user: User) => {
           this.authenticationService.addUserToLocalStorage(user);
@@ -224,7 +220,6 @@ export class UserComponent implements OnInit, OnDestroy {
           this.refreshing = false;
         }
       );
-    this.subscriptions.push(subscription);
   }
 
   onLogOut() {
@@ -243,7 +238,7 @@ export class UserComponent implements OnInit, OnDestroy {
     const formData = new FormData();
     formData.append("profileImage", this.profileImage);
     let user = this.authenticationService.getUserFromLocalStorage();
-    let subscription = this.userService.updateProfileImage(user.username, formData)
+    this.subs.sink = this.userService.updateProfileImage(user.username, formData)
       .subscribe(
         (event: HttpEvent<any>) => {
           this.reportUploadProgress(event);
@@ -258,7 +253,6 @@ export class UserComponent implements OnInit, OnDestroy {
           this.getUsers(false);
         }
       );
-    this.subscriptions.push(subscription);
   }
 
   private reportUploadProgress(event: HttpEvent<any>): void {

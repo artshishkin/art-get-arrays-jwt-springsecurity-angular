@@ -10,3 +10,11 @@
 -  Generate AppRoutingModule
     -  `ng generate module app-routing --flat --module=app`
 -  Modify `app-routing.module.ts`
+
+####  Section 29: Security Management - Front End
+
+#####  199. Unsubscribe using Subsink library
+
+1.  Install [SubSink](https://www.npmjs.com/package/subsink)
+    -  `npm install subsink --save`
+2.  Use it
