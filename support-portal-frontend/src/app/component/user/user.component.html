@@ -220,8 +220,8 @@
                                 <div class="row">
                                   <div class="col mb-3">
                                     <div class="form-group">
-                                      <label>Role</label><small [hidden]="false">(read only)</small>
-                                      <select name="role" required [(ngModel)]="loggedInUser.role" class="form-control">
+                                      <label>Role</label><small [hidden]="isAdmin">(read only)</small>
+                                      <select [disabled]="!isAdmin" name="role" required [(ngModel)]="loggedInUser.role" class="form-control">
                                         <option [hidden]="false" value="ROLE_USER">USER</option>
                                         <option [hidden]="false" value="ROLE_HR">HR</option>
                                         <option [hidden]="false" value="ROLE_MANAGER">MANAGER</option>
@@ -240,12 +240,12 @@
                                   <div class="col">
                                     <div class="custom-controls-stacked px-2">
                                       <div class="custom-control custom-checkbox">
-                                        <input name="active" type="checkbox" [(ngModel)]="loggedInUser.active"
+                                        <input [disabled]="!isAdmin" name="active" type="checkbox" [(ngModel)]="loggedInUser.active"
                                                class="custom-control-input">
                                         <label class="custom-control-label">Active</label>
                                       </div>
                                       <div class="custom-control custom-checkbox">
-                                        <input name="notLocked" type="checkbox"
+                                        <input [disabled]="!isAdmin" name="notLocked" type="checkbox"
                                                [(ngModel)]="loggedInUser.notLocked" class="custom-control-input">
                                         <label class="custom-control-label">Unlocked</label>
                                       </div>
@@ -374,7 +374,7 @@
     </div>
 
     <!-- modal add user -->
-    <div *ngIf="isAdmin" class="modal draggable fade bd-example-modal-lg" id="addUserModal" tabindex="-1" role="dialog"
+    <div *ngIf="isManager" class="modal draggable fade bd-example-modal-lg" id="addUserModal" tabindex="-1" role="dialog"
          aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
