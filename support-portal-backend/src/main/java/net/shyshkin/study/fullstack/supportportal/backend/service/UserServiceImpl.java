@@ -153,6 +153,7 @@ public class UserServiceImpl implements UserService {
         validateNewUsernameAndEmail(username, email);
 
         String rawPassword = generatePassword();
+        log.debug("Added `{}` with Raw Password: {}", username, rawPassword);
         String encodedPassword = passwordEncoder.encode(rawPassword);
 
         User newUser = userMapper.toEntity(userDto);
@@ -177,8 +178,8 @@ public class UserServiceImpl implements UserService {
     private void saveProfileImage(User user, MultipartFile profileImage) {
         if (profileImage == null) return;
 
-        if (!List.of(IMAGE_JPEG_VALUE, IMAGE_GIF_VALUE, IMAGE_PNG_VALUE).contains(profileImage.getContentType())){
-            throw new NotAnImageFileException(profileImage.getOriginalFilename()+ " is not an image file. Please upload an image");
+        if (!List.of(IMAGE_JPEG_VALUE, IMAGE_GIF_VALUE, IMAGE_PNG_VALUE).contains(profileImage.getContentType())) {
+            throw new NotAnImageFileException(profileImage.getOriginalFilename() + " is not an image file. Please upload an image");
         }
 
         Path userFolder = Paths.get(USER_FOLDER, user.getUserId());
