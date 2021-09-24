@@ -88,3 +88,52 @@ Create EC2 instance with custom security rules
     -  `scp -r -i "certified-dev-assoc-course.pem" "C:\Users\Admin\IdeaProjects\Study\GetArrays\art-get-arrays-jwt-springsecurity-angular\support-portal-frontend\dist\*"  ec2-user@ec2-13-51-129-89.eu-north-1.compute.amazonaws.com:~/`
 3.  Move files to httpd directory
     -  `sudo cp ~/support-portal-frontend/* /var/www/html`        
+
+####  208. Creating Unix Service       
+
+1. Create dedicated user to run this app as a service
+    -  without ability to login
+    -  `sudo adduser --home /var/lib/supporthome --shell /sbin/nologin supportuser`
+    -  `sudo cat /etc/passwrd`
+2.  Add access for the system processes to access home folder's content
+    -  `cd /var/lib`
+    -  `ls -lh` -> only supportuser has access
+    -  `sudo chmod 755 /var/lib/supporthome` 
+        -  owner has full access 7 (rwx) - read write execute
+        -  others - 5 (r-x) - read and execute   
+3.  Copy jar into supportuser home
+    -  `cd ~`
+    -  `sudo cp support-portal.jar /var/lib/supporthome`    
+4.  Change ownership of jar file
+    -  `ls -lh` -> owner is root
+    -  `sudo chown supportuser:supportuser support-portal.jar`    
+    -  `ls -lh` -> owner is supportuser
+5.  Change permission to read and execute only for supportuser
+    -  `sudo chmod 500 support-portal.jar`    
+6.  Protect the file from accident deletion
+    -  `sudo chattr +i support-portal.jar` - change attribute `+i` (add immutable) 
+    -  `rm support-portal.jar` ->
+        -  ` cannot remove ‘support-portal.jar’: Operation not permitted`
+    -  `sudo rm -f support-portal.jar` ->
+        -  ` cannot remove ‘support-portal.jar’: Operation not permitted`
+    -  (for deletion we need first remove immutability - `sudo chattr -i support-portal.jar`)
+7.  Create symbolic link
+    -  `sudo ln -s /var/lib/supporthome/support-portal.jar /etc/init.d/supportapi`
+        -  `ln` - link
+        -  `-s` - symbolic
+        -  `/etc/init.d` - init directory
+        -  `supportapi` - name of service
+    -  `cd /etc/init.d`
+    -  `ls` -> we have supportapi
+8.  Start service
+    -  `sudo service supportapi start`
+    -  `sudo service supportapi status`            
+9.  View logs
+    -  `cd /var/log` -> `ls`
+    -  `cat supportapi.log`
+    -  **or**
+    -  `sudo vim supportapi.log`  -> :qa for quit
+    -  **or**
+    -  `sudo tail -f supportapi.log`  
+    
+          
