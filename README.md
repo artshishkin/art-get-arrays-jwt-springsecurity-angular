@@ -80,3 +80,11 @@ Create EC2 instance with custom security rules
     -  `ls -lh support-portal.jar` -> view permissions
     -  `./support-portal.jar`
          
+####  207. Deploying Angular Application
+
+1.  Build Angular Application
+    -  `ng build --prod` 
+2.  Upload dist/support-portal-frontend folder to EC2
+    -  `scp -r -i "certified-dev-assoc-course.pem" "C:\Users\Admin\IdeaProjects\Study\GetArrays\art-get-arrays-jwt-springsecurity-angular\support-portal-frontend\dist\*"  ec2-user@ec2-13-51-129-89.eu-north-1.compute.amazonaws.com:~/`
+3.  Move files to httpd directory
+    -  `sudo cp ~/support-portal-frontend/* /var/www/html`        
