@@ -29,6 +29,11 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+
 #  mvc:
 #    throw-exception-if-no-handler-found: true
 #  web:
@@ -37,7 +42,7 @@ spring:
 app:
   public-urls: /user/login,/user/register,/user/*/image/**,/user/image/**
   cors:
-    allowed-origins: http://localhost:4200,https://localhost:4200
+    allowed-origins: http://localhost:4200,https://localhost:4200,http://art-support-portal.s3-website.eu-north-1.amazonaws.com
   jwt:
     secret: VeRy_5ecretP@55W0rd!
 #    secret: ${random.value} #Does not work - every time generates new value
@@ -53,3 +58,20 @@ spring:
 logging:
   level:
     net.shyshkin: debug
+
+---
+spring:
+  config:
+    activate:
+      on-profile: aws-local
+  datasource:
+    url: jdbc:mysql://localhost:3306/support_portal
+    username: support_portal_user
+    password: Supp0rt_Porta!_P@ssword
+
+# we want to test (1) from localhost, (2) from S3 bucket Static Web Site, (3) from our EC2 instance
+app:
+  cors:
+    allowed-origins: http://localhost:4200,http://art-support-portal.s3-website.eu-north-1.amazonaws.com,http://support-portal.shyshkin.net
+server:
+  port: 5000
