@@ -65,3 +65,18 @@ Create EC2 instance with custom security rules
     -  `create user 'support_portal_user'@'localhost' identified by 'Supp0rt_Porta!_P@ssword';`
     -  `grant all privileges on support_portal.* to 'support_portal_user'@'localhost'; `       
 
+#####  206. Running in AWS
+
+1.  Copy JAR file to EC2 home folder (secured copy)
+    -  `scp -i "certified-dev-assoc-course.pem" "C:\Users\Admin\IdeaProjects\Study\GetArrays\art-get-arrays-jwt-springsecurity-angular\support-portal-backend\target\support-portal.jar"  ec2-user@ec2-13-51-129-89.eu-north-1.compute.amazonaws.com:~/`
+2.  Set Environment Variables
+    -  `export PORTAL_MAIL_USERNAME="{{your_gmail_username}}"`
+    -  `export PORTAL_MAIL_PASSWORD="{{your_gmail_password}}"`
+    -  `export SPRING_PROFILES_ACTIVE="aws-local"`
+3.  Start java app
+    -  `java -jar support-portal.jar`
+4.  Run as executable
+    -  `sudo chmod 755 support-portal.jar`   
+    -  `ls -lh support-portal.jar` -> view permissions
+    -  `./support-portal.jar`
+         
