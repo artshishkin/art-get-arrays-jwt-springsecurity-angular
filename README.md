@@ -130,10 +130,41 @@ Create EC2 instance with custom security rules
     -  `sudo service supportapi status`            
 9.  View logs
     -  `cd /var/log` -> `ls`
-    -  `cat supportapi.log`
+    -  `cat /var/log/supportapi.log`
     -  **or**
     -  `sudo vim supportapi.log`  -> :qa for quit
     -  **or**
-    -  `sudo tail -f supportapi.log`  
+    -  `sudo tail -f /var/log/supportapi.log`
+10.  Setting Permanent Global Environment Variables for All Users
+    -  `sudo nano /etc/environment`
+    -  `SPRING_PROFILES_ACTIVE=aws-local`
+
+####  208.2 Creating Unix Service - Correct Way 
+
+-  cd /etc/systemd/system
+-  Create a file named your-service.service and include the following:
+```shell script
+[Unit]
+Description=Support Portal API
+
+[Service]
+User=supportuser
+WorkingDirectory=/var/lib/supporthome
+ExecStart=/var/lib/supporthome/support-portal.jar
+Restart=always
+Environment="SPRING_PROFILES_ACTIVE=aws-local"
+
+[Install]
+WantedBy=multi-user.target
+```
+-  Reload the service files to include the new service.
+    -  `sudo systemctl daemon-reload`
+-  Start your service
+    -  `sudo systemctl start supportapi.service`
+-  To check the status of your service
+    -  `sudo systemctl status supportapi.service`
+-  To enable your service on every reboot
+    -  `sudo systemctl enable supportapi.service`
+      
     
           
