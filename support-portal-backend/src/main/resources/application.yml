@@ -42,7 +42,7 @@ spring:
 app:
   public-urls: /user/login,/user/register,/user/*/image/**,/user/image/**
   cors:
-    allowed-origins: http://localhost:4200,https://localhost:4200,http://art-support-portal.s3-website.eu-north-1.amazonaws.com
+    allowed-origins: http://localhost:4200,https://localhost:4200,http://art-support-portal.s3-website.eu-north-1.amazonaws.com,http://portal.shyshkin.net
   jwt:
     secret: VeRy_5ecretP@55W0rd!
 #    secret: ${random.value} #Does not work - every time generates new value
@@ -80,7 +80,7 @@ app:
     from: d.art.shishkin@gmail.com
     carbon-copy: d.art.shishkin@gmail.com
   cors:
-    allowed-origins: http://localhost:4200,http://art-support-portal.s3-website.eu-north-1.amazonaws.com,http://support-portal.shyshkin.net
+    allowed-origins: http://localhost:4200,http://art-support-portal.s3-website.eu-north-1.amazonaws.com,http://support-portal.shyshkin.net,http://portal.shyshkin.net
 server:
   port: 5000
 logging:

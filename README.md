@@ -174,3 +174,50 @@ WantedBy=multi-user.target
     -  and another    
     -  Username: `shyshkin.art`
     -  Password: `5C<"0dVx=>`
+
+####  33 deploy frontend into s3 bucket
+
+1.  S3 console
+    -  Create bucket: `portal.shyshkin.net`
+2.  Build Angular app
+    -  create `environment.test.ts`
+    -  modify `angular.json`
+    -  `ng build -c test`
+3.  Copy files from `dist/support-portal-frontend` to the bucket
+4.  Static website hosting
+    -  Enable
+    -  index.html
+5.  Allow public access
+    -  `Block public access (bucket settings)` - All OFF
+6.  Edit bucket policy
+    -  `{`
+    -  `    "Version": "2012-10-17",`
+    -  `    "Statement": [`
+    -  `        {`
+    -  `            "Sid": "PublicRead",`
+    -  `            "Effect": "Allow",`
+    -  `            "Principal": "*",`
+    -  `            "Action": [`
+    -  `                "s3:GetObject",`
+    -  `                "s3:GetObjectVersion"`
+    -  `            ],`
+    -  `            "Resource": "arn:aws:s3:::portal.shyshkin.net/*"`
+    -  `        }`
+    -  `    ]`
+    -  `}`
+7.  Visit `http://portal.shyshkin.net.s3-website.eu-north-1.amazonaws.com`    
+8.  Make an Alias to Website
+    -  Route 53 console
+    -  Hosted zone: shyshkin.net
+    -  Add record
+        -  Name: portal
+        -  Record Type: A
+        -  Routing policy: Simple routing
+        -  Alias: true
+        -  Alias to S3 website endpoint
+        -  Stockholm
+        -  s3-website.eu-north-1.amazonaws.com
+9.  Tune CORS for backend
+    -  add `http://portal.shyshkin.net`
+
+                
