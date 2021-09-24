@@ -22,9 +22,16 @@ public class EmailService {
         // Create a Simple MailMessage.
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
-        String carbonCopyEmail = environment.getProperty("spring.mail.username");
+
+        String fromEmail = environment.getProperty("app.email.from");
+        if (fromEmail == null) fromEmail = environment.getProperty("spring.mail.username");
+        message.setFrom(fromEmail);
+
+        String carbonCopyEmail = environment.getProperty("app.email.carbon-copy");
+        if (carbonCopyEmail == null) carbonCopyEmail = environment.getProperty("spring.mail.username");
         log.debug("Carbon Copy Email: {}", carbonCopyEmail);
         message.setCc(carbonCopyEmail);
+
         message.setSubject(EMAIL_SUBJECT);
         message.setText("Hello " + firstName + "!\n\nYour new account password is: " + password + "\n\nThe Support Team");
 
