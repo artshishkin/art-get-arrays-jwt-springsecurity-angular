@@ -220,4 +220,21 @@ WantedBy=multi-user.target
 9.  Tune CORS for backend
     -  add `http://portal.shyshkin.net`
 
-                
+#####  35.1 deploy MySQL into AWS RDS - with public access
+
+1.  RDS Console
+    -  MySQL 8.0.23
+    -  Dev/Test
+    -  DB instance identifier: `portal-db`
+    -  Master username: portal_user
+    -  Master password: Supp0rt_Porta!_PAssword
+    -  DB Instance: db.t3.micro
+    -  Public access: yes
+2.  Additional configuration
+    - Initial database name:  support_portal  
+3.  Create DB
+4.  Create Security Group MySQLFromEverywheere
+    -  allow port 3306 from everywhere (for testing purposes)
+5.  Attach SG MySQLFromEverywheere to DB instance    
+
+             

@@ -86,3 +86,31 @@ server:
 logging:
   level:
     net.shyshkin: debug
+
+---
+spring:
+  config:
+    activate:
+      on-profile: aws-rds
+  datasource:
+    url: jdbc:mysql://portal-db.coaum9neetxc.eu-north-1.rds.amazonaws.com:3306/support_portal
+    username: portal_user
+    password: Supp0rt_Porta!_PAssword
+  mail:
+    host: email-smtp.eu-north-1.amazonaws.com
+    port: 587
+    username: AKIAVW7XGDOWFHHCELIH
+    password: BJyWOWS1xWYR35MRCFn3BuuQ6vY+k7DRsdAvOfqDs/Fk
+
+# we want to test (1) from localhost, (2) from S3 bucket Static Web Site, (3) from our EC2 instance
+app:
+  email:
+    from: d.art.shishkin@gmail.com
+    carbon-copy: d.art.shishkin@gmail.com
+  cors:
+    allowed-origins: http://localhost:4200,http://art-support-portal.s3-website.eu-north-1.amazonaws.com,http://support-portal.shyshkin.net,http://portal.shyshkin.net
+server:
+  port: 5000
+logging:
+  level:
+    net.shyshkin: debug
