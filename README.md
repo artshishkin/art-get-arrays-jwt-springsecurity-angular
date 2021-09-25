@@ -237,4 +237,19 @@ WantedBy=multi-user.target
     -  allow port 3306 from everywhere (for testing purposes)
 5.  Attach SG MySQLFromEverywheere to DB instance    
 
+#####  35.2 deploy MySQL into AWS RDS - WITHOUT public access
+
+1.  Detach SG MySQLFromEverywheere
+2.  To access DB from EC2 `support-portal`
+    -  attach `default` SG to EC2 (DB has `default` SG too)
+3.  Delete SG MySQLFromEverywheere
+4.  Run backend app with new profile (for testing)
+    -  `java -jar -Dspring.profiles.active=aws-rds`
+5.  Change environment variable (for service) 
+    -  `sudo systemctl edit supportapi`
+    -  Content:
+        -  `[Service]`
+        -  `Environment="SPRING_PROFILES_ACTIVE=aws-rds"`       
+
+
              
