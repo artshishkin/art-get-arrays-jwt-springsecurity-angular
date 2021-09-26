@@ -281,6 +281,8 @@ systemctl restart docker
     -  Allow port 3306 from `docker-security-group`
 -  Attach SG to database in RDS `portal-db` 
 
+####  34.3 Build and Run Docker image in Docker EC2
 
+-  `mvn clean package docker:build docker:start`
 
             

@@ -18,6 +18,9 @@
 
         <mapstruct.version>1.4.2.Final</mapstruct.version>
 
+        <docker.image.prefix>artarkatesoft</docker.image.prefix>
+        <docker.image.name>angular-${project.artifactId}</docker.image.name>
+
     </properties>
     <dependencies>
         <dependency>
@@ -122,7 +125,7 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                    <executable>true</executable>
+<!--                    <executable>true</executable>-->
                     <finalName>support-portal</finalName>
                 </configuration>
             </plugin>
@@ -154,6 +157,44 @@
                             -Amapstruct.defaultComponentModel=spring
                         </compilerArg>
                     </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.33.0</version>
+                <configuration>
+                    <dockerHost>http://dockerapp.shyshkin.net:2375</dockerHost>
+                    <verbose>true</verbose>
+                    <containerNamePattern>%a</containerNamePattern>
+                    <images>
+                        <image>
+                            <name>${docker.image.prefix}/${docker.image.name}</name>
+                            <alias>${docker.image.name}</alias>
+                            <build>
+                                <assembly>
+                                    <descriptorRef>artifact</descriptorRef>
+                                </assembly>
+                                <dockerFile>Dockerfile</dockerFile>
+                                <tags>
+                                    <tag>latest</tag>
+                                    <tag>${project.version}</tag>
+                                </tags>
+                            </build>
+                            <run>
+                                <ports>
+                                    <post>8080:8080</post>
+                                </ports>
+                                <env>
+                                    <SPRING_PROFILES_ACTIVE>aws-rds</SPRING_PROFILES_ACTIVE>
+                                </env>
+                                <restartPolicy>
+                                    <name>always</name>
+                                </restartPolicy>
+                            </run>
+                        </image>
+                    </images>
                 </configuration>
             </plugin>
 
