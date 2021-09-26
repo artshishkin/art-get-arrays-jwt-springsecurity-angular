@@ -285,4 +285,9 @@ systemctl restart docker
 
 -  `mvn clean package docker:build docker:start`
 
+####  34.4 Configure frontend to call new backend
+
+-  `ng build`
+-  upload `dist/support-portal-frontend` to S3
+
             
