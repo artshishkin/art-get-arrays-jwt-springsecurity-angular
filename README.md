@@ -295,5 +295,28 @@ systemctl restart docker
 -  `mvn docker:logs`            
 -  `mvn docker:logs -Ddocker.follow`            
 
+####  34.6 Persisting images to EC2 filesystem
 
+1.  Initial state
+    -  `docker container exec -it b36 bash`
+    -  `pwd` -> /application
+    -  `cd ~` -> `pwd` -> /root
+    -  `ls` -> supportportal
+    -  `ls supportportal/user` -> folders of users like `{UUID}`
+2.  State after rebooting EC2 instance 
+    -  same docker container
+    -  `docker container exec -it b36 bash`
+    -  `ls /root/supportportal/user` -> all left the same
+3.  State after recreating container (or new image)
+    -  `mvn docker:stop docker:start`
+    -  other container
+    -  `docker container exec -it bc7 bash`
+    -  **or**
+    -  `docker container exec -it angular-support-portal-backend bash`
+    -  `ls /root/supportportal/user` -> **No such file or directory**
+4.  Adding volume to store images between rebuilds
+    -  add `<volume>/root/supportportal</volume>` - not successful
+    -  add `<volume>~/supportportal:/root/supportportal</volume>` - Error
+        -  `'~/supportportal' cannot be relativized, cannot resolve arbitrary user home paths.`
+    -  add `<volume>/home/ec2-user/supportportal:/root/supportportal</volume>` - success
 

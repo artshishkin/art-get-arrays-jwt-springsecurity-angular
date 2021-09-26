@@ -192,6 +192,11 @@
                                 <restartPolicy>
                                     <name>always</name>
                                 </restartPolicy>
+                                <volumes>
+                                    <bind>
+                                        <volume>/home/ec2-user/supportportal:/root/supportportal</volume>
+                                    </bind>
+                                </volumes>
                             </run>
                         </image>
                     </images>
