@@ -290,4 +290,10 @@ systemctl restart docker
 -  `ng build`
 -  upload `dist/support-portal-frontend` to S3
 
-            
+####  34.5 Logging remote docker
+
+-  `mvn docker:logs`            
+-  `mvn docker:logs -Ddocker.follow`            
+
+
+
