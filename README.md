@@ -251,7 +251,7 @@ WantedBy=multi-user.target
         -  `[Service]`
         -  `Environment="SPRING_PROFILES_ACTIVE=aws-rds"`       
 
-####  Create EC2 instance for Docker
+#### 34.1 Create EC2 instance for Docker
 
 -  Create EC2 instance
 -  User Data:
@@ -275,5 +275,12 @@ systemctl restart docker
 -  Associate `docker-elastic-ip` with `docker-ec2`
 -  In Route 53 create record `dockerapp` with `docker-ec2` public IP 
  
+####  34.2 Allow Docker EC2 to Access RDS
 
-             
+-  Create `mysql-vpc-security-group`
+    -  Allow port 3306 from `docker-security-group`
+-  Attach SG to database in RDS `portal-db` 
+
+
+
+            
