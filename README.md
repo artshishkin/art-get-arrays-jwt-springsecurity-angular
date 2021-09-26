@@ -251,5 +251,29 @@ WantedBy=multi-user.target
         -  `[Service]`
         -  `Environment="SPRING_PROFILES_ACTIVE=aws-rds"`       
 
+####  Create EC2 instance for Docker
+
+-  Create EC2 instance
+-  User Data:
+```shell script
+#!/bin/bash
+yum update -y
+amazon-linux-extras install -y docker
+service docker start
+usermod -a -G docker ec2-user
+chkconfig docker on
+mkdir -p /etc/systemd/system/docker.service.d
+echo "[Service]
+        ExecStart=
+        ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375" > /etc/systemd/system/docker.service.d/options.conf
+systemctl daemon-reload
+systemctl restart docker
+``` 
+-  Security group: `docker-security-group`
+    -  Allow 8080 (tomcat), 2375 (from my PC), 22 (SSH)
+-  Allocate Elastic IP: `docker-elastic-ip`
+-  Associate `docker-elastic-ip` with `docker-ec2`
+-  In Route 53 create record `dockerapp` with `docker-ec2` public IP 
+ 
 
              
