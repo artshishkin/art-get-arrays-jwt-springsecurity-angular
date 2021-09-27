@@ -205,6 +205,14 @@ export class UserComponent implements OnInit, OnDestroy {
   onUpdateCurrentUser(user: User) {
     this.currentUsername = this.authenticationService.getUserFromLocalStorage().username;
     this.refreshing = true;
+
+    if (user.role == undefined) user.role = this.loggedInUser.role;
+    if (user.active == undefined) user.active = this.loggedInUser.active;
+    if (user.notLocked == undefined) user.notLocked = this.loggedInUser.notLocked;
+
+    console.log(user);
+    console.log(this.loggedInUser);
+
     const formData = this.userService.createUserFormData(this.currentUsername, user, this.profileImage);
     this.subs.sink = this.userService.updateUser(formData)
       .subscribe(
