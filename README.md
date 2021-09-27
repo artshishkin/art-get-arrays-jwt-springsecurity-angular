@@ -320,3 +320,46 @@ systemctl restart docker
         -  `'~/supportportal' cannot be relativized, cannot resolve arbitrary user home paths.`
     -  add `<volume>/home/ec2-user/supportportal:/root/supportportal</volume>` - success
 
+####  36 Deplay  Spring Boot JAR file on AWS Elastic Beanstalk
+
+1.  Info about deployment Spring Boot app on AWS
+    -  AWS EBS expects for your apps to listen on port 5000
+    -  Update your Spring Boot application.properties to use: server.port=5000
+    -  Select Web App > Platform Java
+    -  Upload the JAR file
+2.  Modify RDS security
+    -  create SG `mysql-marker-sg` with no inbound riles
+    -  modify SG `mysql-vpc-security-group` to allow 3306 from `mysql-marker-sg` 
+3.  Deploy Spring Boot App to AWS
+    -  Log into to AWS
+    -  Navigate to Elastic Beanstalk
+    -  Create a new application
+    -  Select app type: Web Application
+    -  Give it the name: `support-portal-backend`
+    -  Create a new environment
+    -  For platform, select: Java
+    -  Select option to Upload your JAR file.
+        -  Note: the screen says only WAR and ZIP files, but it does in fact accept JAR files
+    -  Upload your JAR file: target/support-portal.jar (directly or though S3)
+        -  I choose `https://art-sources.s3.eu-north-1.amazonaws.com/support-portal.jar`
+    -  Configure More Options
+        -  Single instance
+        -  Instances
+            -  EC2 Security Groups: `mysql-marker-sg`
+        -  Software -> Environment properties
+        -  SPRING_PROFILES_ACTIVE: aws-rds
+        -  SERVER_PORT: 5000 (not necessary because we set it in application.yml)
+    -  Create the application
+4.  View logs
+    -  Supportportalbackend-env -> Logs -> Last 100 Lines    
+5.  Once the app is created, then visit the app URL.
+    -  Go to environment
+    -  `http://supportportalbackend-env.eba-wfr5wya3.eu-north-1.elasticbeanstalk.com/`
+    -  `{"timestamp":"2021-09-27T06:49:46.181755","httpStatusCode":403,"httpStatus":"FORBIDDEN","reason":"FORBIDDEN","message":"You need to log in to access this page"}`
+    -  OK - it is working
+6.  Test work with frontend
+    -  modify `environment.ts`
+    -  `ng serve`
+    -  `localhost:4200` -> OK    
+    
+
