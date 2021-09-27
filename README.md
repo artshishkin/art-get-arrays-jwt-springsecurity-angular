@@ -480,3 +480,9 @@ systemctl restart docker
 -  `mvn docker:stop`
 -  `mvn clean package docker:build docker:start -DskipTests`
 -  Visit `https://dockerapp.shyshkin.net` -> allow unsecure
+
+#####  40.5 Testing frontend
+
+-  `ng build -c production`
+-  upload to S3
+-  visit `http://portal.shyshkin.net`

@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://portal-back-secure.shyshkin.net',
+  apiUrl: 'https://dockerapp.shyshkin.net',
+  // apiUrl: 'https://portal-back-secure.shyshkin.net',
   // apiUrl: 'http://portal-bean.shyshkin.net',
   // apiUrl: 'http://supportportalbackend-env.eba-wfr5wya3.eu-north-1.elasticbeanstalk.com',
   // apiUrl: 'http://support-portal.shyshkin.net:5000',
