@@ -455,4 +455,7 @@ systemctl restart docker
 10.  But now visiting direct LoadBalancer gave an error
     -  `https://supportportalbackend-secured.eba-wfr5wya3.eu-north-1.elasticbeanstalk.com`
     -  `NET::ERR_CERT_COMMON_NAME_INVALID`                              
-
+11.  Test with Frontend
+    -  Using **HTTP** `http://portal-back-secure.shyshkin.net` -> ERROR
+    -  `Access to XMLHttpRequest at 'http://portal-back-secure.shyshkin.net/user?size=2147483647' from origin 'http://localhost:4200' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: Redirect is not allowed for a preflight request.`
+    -  Using **HTTPS** `https://portal-back-secure.shyshkin.net` -> OK
