@@ -320,7 +320,7 @@ systemctl restart docker
         -  `'~/supportportal' cannot be relativized, cannot resolve arbitrary user home paths.`
     -  add `<volume>/home/ec2-user/supportportal:/root/supportportal</volume>` - success
 
-####  36 Deplay  Spring Boot JAR file on AWS Elastic Beanstalk
+####  36 Deploy  Spring Boot JAR file on AWS Elastic Beanstalk
 
 1.  Info about deployment Spring Boot app on AWS
     -  AWS EBS expects for your apps to listen on port 5000
@@ -361,5 +361,15 @@ systemctl restart docker
     -  modify `environment.ts`
     -  `ng serve`
     -  `localhost:4200` -> OK    
+7.  Create subdomain for beanstalk environment
+    -  Route 53 console
+    -  Create new Record for hosted zone `shyshkin.net`
+    -  Record name: `portal-bean`
+    -  Record type A
+    -  Route traffic to `Alias to Elastic Beanstalk`
+    -  `Supportportalbackend-env.eba-wfr5wya3.eu-north-1.elasticbeanstalk.com`
+    -  Visit `http://portal-bean.shyshkin.net` -> have a response from spring boot app -> OK
+    -  Test with Angular App: `localhost:4200`      
+
     
 
