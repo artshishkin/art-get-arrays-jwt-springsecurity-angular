@@ -114,3 +114,18 @@ server:
 logging:
   level:
     net.shyshkin: debug
+
+#####
+#
+# HTTPS configuration
+#
+#####
+
+server.ssl:
+  enabled: true               # Enable HTTPS support (only accept HTTPS requests)
+  key-alias: securedPortal         # Alias that identifies the key in the key store
+  key-store: classpath:securedPortal-keystore.p12  # Keystore location
+  key-store-password: secret  # Keystore password
+  key-store-type: PKCS12      # Keystore format
+
+
