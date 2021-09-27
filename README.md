@@ -470,6 +470,9 @@ systemctl restart docker
 -  Verify Results
     -  `keytool -list -v -alias securedPortal -keystore src/main/resources/securedPortal-keystore.p12 -storepass secret`    
 
+#####  40.3. Modify Security Group for EC2 instance
 
+-  Allow 443 port from anywhere
+-  Attach `https-443` SG to `docker-ec2` instance
 
 
