@@ -124,7 +124,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
-                    .hasFieldOrPropertyWithValue("message", "ERROR(S) IN PARAMETERS: [FIRSTNAME:SHOULD NOT BE EMPTY]");
+                    .hasFieldOrPropertyWithValue("message", "Error(s) in parameters: [firstName:Should not be empty]");
         }
 
         @Test
@@ -160,7 +160,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
-                    .hasFieldOrPropertyWithValue("message", "ERROR(S) IN PARAMETERS: [ROLE:FAILED TO CONVERT PROPERTY VALUE OF TYPE 'JAVA.LANG.STRING' TO REQUIRED TYPE 'NET.SHYSHKIN.STUDY.FULLSTACK.SUPPORTPORTAL.BACKEND.DOMAIN.ROLE' FOR PROPERTY 'ROLE'; NESTED EXCEPTION IS ORG.SPRINGFRAMEWORK.CORE.CONVERT.CONVERSIONFAILEDEXCEPTION: FAILED TO CONVERT FROM TYPE [JAVA.LANG.STRING] TO TYPE [@JAVAX.VALIDATION.CONSTRAINTS.NOTNULL NET.SHYSHKIN.STUDY.FULLSTACK.SUPPORTPORTAL.BACKEND.DOMAIN.ROLE] FOR VALUE 'ROLE_FAKE'; NESTED EXCEPTION IS JAVA.LANG.ILLEGALARGUMENTEXCEPTION: NO ENUM CONSTANT NET.SHYSHKIN.STUDY.FULLSTACK.SUPPORTPORTAL.BACKEND.DOMAIN.ROLE.ROLE_FAKE]");
+                    .hasFieldOrPropertyWithValue("message", "Error(s) in parameters: [role:Failed to convert property value of type 'java.lang.String' to required type 'net.shyshkin.study.fullstack.supportportal.backend.domain.Role' for property 'role'; nested exception is org.springframework.core.convert.ConversionFailedException: Failed to convert from type [java.lang.String] to type [@javax.validation.constraints.NotNull net.shyshkin.study.fullstack.supportportal.backend.domain.Role] for value 'ROLE_FAKE'; nested exception is java.lang.IllegalArgumentException: No enum constant net.shyshkin.study.fullstack.supportportal.backend.domain.Role.ROLE_FAKE]");
         }
 
         @Test
@@ -196,7 +196,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
-                    .hasFieldOrPropertyWithValue("message", "ERROR(S) IN PARAMETERS: [EMAIL:MUST MATCH EMAIL FORMAT]");
+                    .hasFieldOrPropertyWithValue("message", "Error(s) in parameters: [email:Must match email format]");
         }
 
         @Test
@@ -232,7 +232,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
-                    .hasFieldOrPropertyWithValue("message", "ERROR(S) IN PARAMETERS: [NOTLOCKED:FAILED TO CONVERT PROPERTY VALUE OF TYPE 'JAVA.LANG.STRING' TO REQUIRED TYPE 'BOOLEAN' FOR PROPERTY 'NOTLOCKED'; NESTED EXCEPTION IS JAVA.LANG.ILLEGALARGUMENTEXCEPTION: INVALID BOOLEAN VALUE [NOT_A_BOOLEAN]]");
+                    .hasFieldOrPropertyWithValue("message", "Error(s) in parameters: [notLocked:Failed to convert property value of type 'java.lang.String' to required type 'boolean' for property 'notLocked'; nested exception is java.lang.IllegalArgumentException: Invalid boolean value [not_a_boolean]]");
         }
     }
 
@@ -381,7 +381,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
-                    .hasFieldOrPropertyWithValue("message", "ERROR(S) IN PARAMETERS: [LASTNAME:SHOULD NOT BE EMPTY]");
+                    .hasFieldOrPropertyWithValue("message", "Error(s) in parameters: [lastName:Should not be empty]");
         }
 
         @Test
@@ -423,7 +423,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
-                    .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", currentUsername).toUpperCase());
+                    .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", currentUsername));
         }
 
     }
@@ -480,7 +480,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
-                    .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", username).toUpperCase());
+                    .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", username));
         }
     }
 
@@ -628,7 +628,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
-                    .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", username).toUpperCase());
+                    .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", username));
         }
     }
 
@@ -685,7 +685,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
-                    .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", absentUsername).toUpperCase());
+                    .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", absentUsername));
         }
 
         @Test
@@ -708,7 +708,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", INTERNAL_SERVER_ERROR)
-                    .hasFieldOrPropertyWithValue("message", "Error occurred while processing file".toUpperCase());
+                    .hasFieldOrPropertyWithValue("message", "Error occurred while processing file");
         }
 
         @Test

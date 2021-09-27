@@ -99,7 +99,7 @@ public class UserResource {
                 .httpStatusCode(OK.value())
                 .httpStatus(OK)
                 .reason(OK.getReasonPhrase())
-                .message("User deleted successfully".toUpperCase())
+                .message("User deleted successfully")
                 .build();
     }
 

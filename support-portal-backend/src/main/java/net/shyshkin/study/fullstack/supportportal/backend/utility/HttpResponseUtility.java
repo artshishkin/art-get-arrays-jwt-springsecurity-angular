@@ -11,7 +11,7 @@ public class HttpResponseUtility {
                 .httpStatus(httpStatus)
                 .httpStatusCode(httpStatus.value())
                 .reason(httpStatus.getReasonPhrase().toUpperCase())
-                .message(message.toUpperCase())
+                .message(message)
                 .build();
         return new ResponseEntity<>(httpResponse, httpStatus);
     }

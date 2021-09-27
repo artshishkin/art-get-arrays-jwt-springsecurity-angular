@@ -31,8 +31,8 @@ class ExceptionsControllerTest {
 
     @ParameterizedTest
     @CsvSource({
-            "emailExists,THIS EMAIL IS ALREADY TAKEN",
-            "userNotFound,THE USER WAS NOT FOUND"
+            "emailExists,This email is already taken",
+            "userNotFound,The user was not found"
     })
     void badRequestException(String endpoint, String expectedMessage) {
 

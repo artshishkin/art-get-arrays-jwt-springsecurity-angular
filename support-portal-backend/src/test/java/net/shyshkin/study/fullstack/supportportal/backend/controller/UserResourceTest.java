@@ -140,7 +140,7 @@ class UserResourceTest extends BaseUserTest {
         User fakeUser = createRandomUser();
         String username = user.getUsername();
         fakeUser.setUsername(username);
-        String expectedMessage = ("Username `" + username + "` is already taken. Please select another one").toUpperCase();
+        String expectedMessage = ("Username `" + username + "` is already taken. Please select another one");
 
         //when
         ResponseEntity<HttpResponse> responseEntity = restTemplate.postForEntity("/user/register", fakeUser, HttpResponse.class);
@@ -167,7 +167,7 @@ class UserResourceTest extends BaseUserTest {
         User fakeUser = createRandomUser();
         String email = user.getEmail();
         fakeUser.setEmail(email);
-        String expectedMessage = ("User with email `" + email + "` is already registered").toUpperCase();
+        String expectedMessage = ("User with email `" + email + "` is already registered");
 
         //when
         ResponseEntity<HttpResponse> responseEntity = restTemplate.postForEntity("/user/register", fakeUser, HttpResponse.class);
@@ -232,7 +232,7 @@ class UserResourceTest extends BaseUserTest {
         //given
         String password = "absentUserPass";
         String username = FAKER.name().username();
-        String expectedMessage = "USERNAME / PASSWORD INCORRECT. PLEASE TRY AGAIN";
+        String expectedMessage = "Username / password incorrect. Please try again";
 
         //when
         var userLogin = UserLoginDto.builder()
@@ -265,7 +265,7 @@ class UserResourceTest extends BaseUserTest {
         //given
         String password = "wrongPass";
         String username = user.getUsername();
-        String expectedMessage = "USERNAME / PASSWORD INCORRECT. PLEASE TRY AGAIN";
+        String expectedMessage = "Username / password incorrect. Please try again";
 
         //when
         var userLogin = UserLoginDto.builder()
@@ -321,7 +321,7 @@ class UserResourceTest extends BaseUserTest {
                     .hasFieldOrPropertyWithValue("httpStatusCode", 400)
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
                     .hasFieldOrPropertyWithValue("reason", "BAD REQUEST")
-                    .hasFieldOrPropertyWithValue("message", "USERNAME / PASSWORD INCORRECT. PLEASE TRY AGAIN");
+                    .hasFieldOrPropertyWithValue("message", "Username / password incorrect. Please try again");
         }
 
         for (int i = 0; i < 5; i++) {
@@ -345,7 +345,7 @@ class UserResourceTest extends BaseUserTest {
                     .hasFieldOrPropertyWithValue("httpStatusCode", 401)
                     .hasFieldOrPropertyWithValue("httpStatus", UNAUTHORIZED)
                     .hasFieldOrPropertyWithValue("reason", "UNAUTHORIZED")
-                    .hasFieldOrPropertyWithValue("message", "YOUR ACCOUNT HAS BEEN LOCKED. PLEASE CONTACT ADMINISTRATION");
+                    .hasFieldOrPropertyWithValue("message", "Your account has been locked. Please contact administration");
         }
 
 
@@ -672,7 +672,7 @@ class UserResourceTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", OK)
-                    .hasFieldOrPropertyWithValue("message", "USER DELETED SUCCESSFULLY");
+                    .hasFieldOrPropertyWithValue("message", "User deleted successfully");
         }
 
         @Test
@@ -697,7 +697,7 @@ class UserResourceTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", FORBIDDEN)
-                    .hasFieldOrPropertyWithValue("message", "YOU DO NOT HAVE ENOUGH PERMISSION");
+                    .hasFieldOrPropertyWithValue("message", "You do not have enough permission");
         }
 
         @Test
@@ -724,7 +724,7 @@ class UserResourceTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
-                    .hasFieldOrPropertyWithValue("message", "USER WAS NOT FOUND");
+                    .hasFieldOrPropertyWithValue("message", "User was not found");
         }
     }
 
