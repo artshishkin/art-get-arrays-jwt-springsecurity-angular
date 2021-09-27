@@ -184,7 +184,7 @@
                             </build>
                             <run>
                                 <ports>
-                                    <post>8080:8080</post>
+                                    <port>443:8080</port>
                                 </ports>
                                 <env>
                                     <SPRING_PROFILES_ACTIVE>aws-rds</SPRING_PROFILES_ACTIVE>

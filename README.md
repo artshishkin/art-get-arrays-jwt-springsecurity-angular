@@ -475,4 +475,8 @@ systemctl restart docker
 -  Allow 443 port from anywhere
 -  Attach `https-443` SG to `docker-ec2` instance
 
+#####  40.4 Deploy Application to `docker-ec2`
 
+-  `mvn docker:stop`
+-  `mvn clean package docker:build docker:start -DskipTests`
+-  Visit `https://dockerapp.shyshkin.net` -> allow unsecure
