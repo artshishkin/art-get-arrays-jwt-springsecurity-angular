@@ -80,7 +80,7 @@ Create EC2 instance with custom security rules
     -  `ls -lh support-portal.jar` -> view permissions
     -  `./support-portal.jar`
          
-####  207. Deploying Angular Application
+#####  207. Deploying Angular Application
 
 1.  Build Angular Application
     -  `ng build --prod` 
@@ -89,7 +89,7 @@ Create EC2 instance with custom security rules
 3.  Move files to httpd directory
     -  `sudo cp ~/support-portal-frontend/* /var/www/html`        
 
-####  208. Creating Unix Service       
+#####  208. Creating Unix Service       
 
 1. Create dedicated user to run this app as a service
     -  without ability to login
@@ -139,7 +139,7 @@ Create EC2 instance with custom security rules
     -  `sudo nano /etc/environment`
     -  `SPRING_PROFILES_ACTIVE=aws-local`
 
-####  208.2 Creating Unix Service - Correct Way 
+#####  208.2 Creating Unix Service - Correct Way 
 
 -  cd /etc/systemd/system
 -  Create a file named your-service.service and include the following:
@@ -166,7 +166,7 @@ WantedBy=multi-user.target
 -  To enable your service on every reboot
     -  `sudo systemctl enable supportapi.service`
           
-####  209. Testing in Production 
+#####  209. Testing in Production 
 
 -  Test with: 
     -  Username: `art.shyshkin`
@@ -175,7 +175,7 @@ WantedBy=multi-user.target
     -  Username: `shyshkin.art`
     -  Password: `5C<"0dVx=>`
 
-####  33 deploy frontend into s3 bucket
+#####  33 deploy frontend into s3 bucket
 
 1.  S3 console
     -  Create bucket: `portal.shyshkin.net`
@@ -251,7 +251,7 @@ WantedBy=multi-user.target
         -  `[Service]`
         -  `Environment="SPRING_PROFILES_ACTIVE=aws-rds"`       
 
-#### 34.1 Create EC2 instance for Docker
+##### 34.1 Create EC2 instance for Docker
 
 -  Create EC2 instance
 -  User Data:
@@ -281,21 +281,21 @@ systemctl restart docker
     -  Allow port 3306 from `docker-security-group`
 -  Attach SG to database in RDS `portal-db` 
 
-####  34.3 Build and Run Docker image in Docker EC2
+#####  34.3 Build and Run Docker image in Docker EC2
 
 -  `mvn clean package docker:build docker:start`
 
-####  34.4 Configure frontend to call new backend
+#####  34.4 Configure frontend to call new backend
 
 -  `ng build`
 -  upload `dist/support-portal-frontend` to S3
 
-####  34.5 Logging remote docker
+#####  34.5 Logging remote docker
 
 -  `mvn docker:logs`            
 -  `mvn docker:logs -Ddocker.follow`            
 
-####  34.6 Persisting images to EC2 filesystem
+#####  34.6 Persisting images to EC2 filesystem
 
 1.  Initial state
     -  `docker container exec -it b36 bash`
@@ -320,7 +320,7 @@ systemctl restart docker
         -  `'~/supportportal' cannot be relativized, cannot resolve arbitrary user home paths.`
     -  add `<volume>/home/ec2-user/supportportal:/root/supportportal</volume>` - success
 
-####  36 Deploy  Spring Boot JAR file on AWS Elastic Beanstalk
+#####  36.1 Deploy  Spring Boot JAR file on AWS Elastic Beanstalk
 
 1.  Info about deployment Spring Boot app on AWS
     -  AWS EBS expects for your apps to listen on port 5000
@@ -371,5 +371,88 @@ systemctl restart docker
     -  Visit `http://portal-bean.shyshkin.net` -> have a response from spring boot app -> OK
     -  Test with Angular App: `localhost:4200`      
 
-    
+#####  36.2 Providing HTTPS access to the backend through Elastic LoadBalancer (ELB) and Amazon Certificate Manager (ACM)
+
+1.  Provision certificate
+    -  ACM console
+    -  Provision certificates
+    -  Request a public certificate
+    -  Domain name: `portal-back-secure.shyshkin.net`
+    -  DNS validation
+    -  Create record in Route53
+    -  About 30 minutes -> Pending validation (it took about a minute for me)
+    -  Certificate issued
+2.  Create environment
+    -  Beanstalk console
+    -  Application -> `support-portal-backend`
+    -  Create environment -> Web server environment -> Supportportalbackend-secured
+    -  Domain -> Leave blank
+    -  Java
+    -  Application code -> Existing version 
+    -  Configure more options
+        -  High Availability (with Load Balancer)
+        -  Software -> Environment properties
+            -  SPRING_PROFILES_ACTIVE: aws-rds
+        -  Instances
+            -  EC2 Security Groups: `mysql-marker-sg`            
+        -  Load Balancer -> Edit
+        -  Listeners -> Add Listener
+            -  Port: 443
+            -  Protocol: HTTPS
+            -  Certificate: `portal-back-secure.shyshkin.net - e0c...`
+            -  SSL policy:  ELBSecurityPolicy-TLS-1-2-Ext-2018-06 (how strong security policy will be)
+            -  Add
+        -  We may disable HTTP (80), but just keep it for now
+        -  Save
+        -  This is `custom configuration`
+        -  Create environment
+3.  Create CNAME for load balancer URL
+    -  Route53 console
+    -  Hosted zone -> shyshkin.net
+    -  Add Record
+        -  Simple routing
+        -  Record name: `portal-back-secure`.shyshkin.net
+        -  Record type: CNAME
+        -  Value: `supportportalbackend-secured.eba-wfr5wya3.eu-north-1.elasticbeanstalk.com`
+4.  Wait some time
+5.  Visit HTTP and HTTPS
+    -  `http://portal-back-secure.shyshkin.net/` -> OK                  
+    -  `https://portal-back-secure.shyshkin.net/` -> OK                  
+6.  View certificate info
+    -  Chrome -> Lock sign
+    -  Certificate
+    -  Publisher
+        -  CN = Amazon
+        -  OU = Server CA 1B
+        -  O = Amazon
+        -  C = US
+7.  Verify Certificate in use
+    -  ACM console - certificate for `portal-back-secure.shyshkin.net`
+    -  In Use -> Yes
+    -  Associated resources:
+        -  `arn:aws:elasticloadbalancing:eu-north-1:392971033516:loadbalancer/app/awseb-AWSEB-1OGG0G42RZOR2/f2dec1e6adf1a4de`
+8.  Disable HTTP
+    -  Beanstalk
+    -  Environment: Supportportalbackend-secured
+    -  Configuration
+    -  Load Balancer -> Edit
+    -  Listeners -> HTTP -> Disable -> Apply
+    -  Test it:
+        -  `http://portal-back-secure.shyshkin.net` -> Timeout
+        -  `https://portal-back-secure.shyshkin.net` -> OK
+9.  Apply redirection HTTP -> HTTPS
+    -  Enable HTTP back (like in step 8)
+    -  Follow [How can I redirect HTTP requests to HTTPS using an Application Load Balancer?](https://aws.amazon.com/premiumsupport/knowledge-center/elb-redirect-http-to-https-using-alb/)
+    -  EC2 console -> Load Balancer
+    -  Find our ALB
+    -  Listeners -> HTTP -> View/Edit Rules
+    -  Edit -> DEFAULT -> Then -> Edit to 
+    -  `Redirect to` -> HTTPS -> 443
+    -  Update
+    -  Test it
+        -  `https://portal-back-secure.shyshkin.net/` -> OK         
+        -  `http://portal-back-secure.shyshkin.net/` -> redirect to `https://portal-back-secure.shyshkin.net/` -> OK          
+10.  But now visiting direct LoadBalancer gave an error
+    -  `https://supportportalbackend-secured.eba-wfr5wya3.eu-north-1.elasticbeanstalk.com`
+    -  `NET::ERR_CERT_COMMON_NAME_INVALID`                              
 
