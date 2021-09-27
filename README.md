@@ -459,3 +459,17 @@ systemctl restart docker
     -  Using **HTTP** `http://portal-back-secure.shyshkin.net` -> ERROR
     -  `Access to XMLHttpRequest at 'http://portal-back-secure.shyshkin.net/user?size=2147483647' from origin 'http://localhost:4200' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: Redirect is not allowed for a preflight request.`
     -  Using **HTTPS** `https://portal-back-secure.shyshkin.net` -> OK
+
+####  40. Secure Communication with HTTPS - Spring Boot Backend - SelfSigned certificate
+
+#####  40.1. Generate SelfSigned certificate
+
+-  Follow the steps in [instruction](www.luv2code.com/keytool-steps)
+-  Generate Key and Self-Signed Certificate
+    -  `keytool -genkeypair -alias securedPortal -keystore src/main/resources/securedPortal-keystore.p12 -keypass secret -storeType PKCS12 -storepass secret -keyalg RSA -keysize 2048 -validity 365 -dname "C=US, ST=Pennsylvania, L=Philadelphia, O=securedPortal, OU=Training Backend, CN=dockerapp.shyshkin.net" -ext "SAN=dns:dockerapp.shyshkin.net"`
+-  Verify Results
+    -  `keytool -list -v -alias securedPortal -keystore src/main/resources/securedPortal-keystore.p12 -storepass secret`    
+
+
+
+
