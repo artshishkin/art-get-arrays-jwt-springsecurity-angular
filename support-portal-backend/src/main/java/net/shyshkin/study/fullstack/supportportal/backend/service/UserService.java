@@ -30,9 +30,7 @@ public interface UserService extends UserDetailsService {
 
     void resetPassword(String email);
 
-    User updateProfileImage(String username, MultipartFile profileImage);
-
-    byte[] getProfileImage(String username) throws IOException;
+    User updateProfileImage(UUID userId, MultipartFile profileImage);
 
     byte[] getImageByUserId(UUID userId, String filename) throws IOException;
 

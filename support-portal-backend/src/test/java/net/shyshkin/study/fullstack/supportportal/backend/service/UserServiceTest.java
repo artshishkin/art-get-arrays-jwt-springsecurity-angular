@@ -117,12 +117,12 @@ class UserServiceTest extends BaseUserTest {
         //given
         User fakeUser = createRandomUser();
         user = userRepository.save(fakeUser);
-        String username = user.getUsername();
+        UUID userId = user.getUserId();
 
         //when
         MockMultipartFile multipartFile = new MockMultipartFile("file", "test.jpg",
                 "image/jpeg", ("Spring Framework" + UUID.randomUUID()).getBytes());
-        userService.updateProfileImage(username, multipartFile);
+        userService.updateProfileImage(userId, multipartFile);
 
         //then
         Path path = Path.of(FileConstant.USER_FOLDER, user.getUserId().toString(), FileConstant.USER_IMAGE_FILENAME);

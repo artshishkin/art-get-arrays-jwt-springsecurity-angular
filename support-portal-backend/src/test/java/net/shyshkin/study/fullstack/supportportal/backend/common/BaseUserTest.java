@@ -12,7 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant.DEFAULT_USER_IMAGE_PATH;
+import static net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant.DEFAULT_USER_IMAGE_URI_PATTERN;
 import static net.shyshkin.study.fullstack.supportportal.backend.domain.Role.ROLE_ADMIN;
 
 @SpringBootTest
@@ -61,8 +61,7 @@ public abstract class BaseUserTest {
     private String generateProfileImageUrl(UUID userId) {
         return UriComponentsBuilder
                 .fromUriString("http://localhost:8080")
-                .path(DEFAULT_USER_IMAGE_PATH)
-                .pathSegment(userId.toString())
+                .path(String.format(DEFAULT_USER_IMAGE_URI_PATTERN, userId))
 //                .pathSegment(USER_IMAGE_FILENAME)
                 .toUriString();
     }

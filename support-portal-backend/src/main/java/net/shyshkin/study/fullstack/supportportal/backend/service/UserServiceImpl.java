@@ -105,15 +105,13 @@ public class UserServiceImpl implements UserService {
 
     private String generateDefaultProfileImageUrl(UUID userId) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(DEFAULT_USER_IMAGE_PATH)
-                .pathSegment(userId.toString())
+                .path(String.format(DEFAULT_USER_IMAGE_URI_PATTERN, userId))
                 .toUriString();
     }
 
     private String generateProfileImageUrl(UUID userId) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(DEFAULT_USER_IMAGE_PATH)
-                .pathSegment(userId.toString())
+                .path(String.format(DEFAULT_USER_IMAGE_URI_PATTERN, userId))
                 .pathSegment(USER_IMAGE_FILENAME)
                 .toUriString();
     }
@@ -265,20 +263,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateProfileImage(String username, MultipartFile profileImage) {
-        User user = findByUsername(username);
+    public User updateProfileImage(UUID userId, MultipartFile profileImage) {
+        User user = findByUserId(userId);
         saveProfileImage(user, profileImage);
         return user;
     }
 
     @Override
-    public byte[] getProfileImage(String username) throws IOException {
-        User user = findByUsername(username);
-        return getImageByUserId(user.getUserId(), USER_IMAGE_FILENAME);
-    }
-
-    @Override
     public byte[] getImageByUserId(UUID userId, String filename) throws IOException {
+
+        if (!userRepository.existsByUserId(userId)) {
+            throw new UserNotFoundException(USER_NOT_FOUND_MSG);
+        }
+
         Path userProfileImagePath = Paths
                 .get(USER_FOLDER, userId.toString(), filename);
         return Files.readAllBytes(userProfileImagePath);

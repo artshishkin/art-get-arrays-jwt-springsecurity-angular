@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.shyshkin.study.fullstack.supportportal.backend.common.BaseUserTest;
-import net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.HttpResponse;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.Role;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
@@ -36,6 +35,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.UUID;
 
+import static net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant.*;
 import static net.shyshkin.study.fullstack.supportportal.backend.constant.SecurityConstants.JWT_TOKEN_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
@@ -216,7 +216,7 @@ class UserResourceTest extends BaseUserTest {
                 .hasFieldOrPropertyWithValue("isActive", true)
                 .hasFieldOrPropertyWithValue("isNotLocked", true)
                 .hasFieldOrPropertyWithValue("role", "ROLE_ADMIN")
-                .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s", u.getUserId())));
+                .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format(DEFAULT_USER_IMAGE_URI_PATTERN, u.getUserId())));
 
         String token = responseEntity.getHeaders().getFirst(JWT_TOKEN_HEADER);
         log.debug("Token: {}", token);
@@ -573,10 +573,10 @@ class UserResourceTest extends BaseUserTest {
                 .hasFieldOrPropertyWithValue("isActive", true)
                 .hasFieldOrPropertyWithValue("isNotLocked", true)
                 .hasFieldOrPropertyWithValue("role", "ROLE_ADMIN")
-                .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s/avatar.jpg", u.getUserId())));
+                .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format(DEFAULT_USER_IMAGE_URI_PATTERN.concat("/avatar.jpg"), u.getUserId())));
 
         User createdUser = responseEntity.getBody();
-        Path path = Path.of(FileConstant.USER_FOLDER, createdUser.getUserId().toString(), FileConstant.USER_IMAGE_FILENAME);
+        Path path = Path.of(USER_FOLDER, createdUser.getUserId().toString(), USER_IMAGE_FILENAME);
         log.debug("Path of created file: {}", path);
         assertThat(Files.exists(path)).isTrue();
         assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(1, ChronoUnit.SECONDS));
@@ -632,10 +632,10 @@ class UserResourceTest extends BaseUserTest {
                 .hasFieldOrPropertyWithValue("isActive", true)
                 .hasFieldOrPropertyWithValue("isNotLocked", true)
                 .hasFieldOrPropertyWithValue("role", "ROLE_ADMIN")
-                .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s/avatar.jpg", u.getUserId())));
+                .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format(DEFAULT_USER_IMAGE_URI_PATTERN.concat("/avatar.jpg"), user.getUserId())));
 
         User createdUser = responseEntity.getBody();
-        Path path = Path.of(FileConstant.USER_FOLDER, createdUser.getUserId().toString(), FileConstant.USER_IMAGE_FILENAME);
+        Path path = Path.of(USER_FOLDER, createdUser.getUserId().toString(), USER_IMAGE_FILENAME);
         log.debug("Path of created file: {}", path);
         assertThat(Files.exists(path)).isTrue();
         assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(1, ChronoUnit.SECONDS));

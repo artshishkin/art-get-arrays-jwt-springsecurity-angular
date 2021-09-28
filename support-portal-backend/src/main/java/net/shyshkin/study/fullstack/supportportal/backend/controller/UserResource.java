@@ -104,22 +104,17 @@ public class UserResource {
                 .build();
     }
 
-    @PutMapping("{username}/profileImage")
-    public User updateProfileImage(@PathVariable String username, MultipartFile profileImage) {
-        return userService.updateProfileImage(username, profileImage);
+    @PutMapping("{userId}/profile-image")
+    public User updateProfileImage(@PathVariable UUID userId, MultipartFile profileImage) {
+        return userService.updateProfileImage(userId, profileImage);
     }
 
-    @GetMapping(path = "{username}/image/profile", produces = MediaType.IMAGE_JPEG_VALUE)
-    public byte[] getProfileImage(@PathVariable String username) throws IOException {
-        return userService.getProfileImage(username);
-    }
-
-    @GetMapping(path = "image/profile/{userId}/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(path = "{userId}/profile-image/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getProfileImageByUserId(@PathVariable UUID userId, @PathVariable String filename) throws IOException {
         return userService.getImageByUserId(userId, filename);
     }
 
-    @GetMapping(path = "image/profile/{userId}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(path = "{userId}/profile-image", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getDefaultProfileImage(@PathVariable UUID userId) {
         return userService.getDefaultProfileImage(userId);
     }

@@ -3,7 +3,6 @@ package net.shyshkin.study.fullstack.supportportal.backend.controller;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import net.shyshkin.study.fullstack.supportportal.backend.common.BaseUserTest;
-import net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.HttpResponse;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.Role;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
@@ -34,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static net.shyshkin.study.fullstack.supportportal.backend.constant.FileConstant.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import static org.springframework.http.HttpStatus.*;
@@ -51,6 +51,10 @@ class UserResourceUnSecureTest extends BaseUserTest {
 
     @Autowired
     UserRepository userRepository;
+
+    public static final String USER_IMAGE_ENDPOINT_TEMPLATE = "/user/{userId}/profile-image";
+    public static final String USER_DEFAULT_IMAGE_URI_TEMPLATE = USER_IMAGE_ENDPOINT_TEMPLATE;
+    public static final String USER_CUSTOM_IMAGE_URI_TEMPLATE = "/user/{userId}/profile-image/{filename}";
 
     @Nested
     class AddNewUserTests {
@@ -575,7 +579,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
         void updateProfileImage_correct() throws IOException {
 
             //given
-            String username = user.getUsername();
+            UUID userId = user.getUserId();
 
             MultipartFile profileImage = new MockMultipartFile("profileImage", "test.png",
                     "image/png", ("Spring Framework" + UUID.randomUUID()).getBytes());
@@ -585,7 +589,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             body.add("profileImage", profileImage.getResource());
 
             //when
-            var requestEntity = RequestEntity.put("/user/{username}/profileImage", username)
+            var requestEntity = RequestEntity.put(USER_IMAGE_ENDPOINT_TEMPLATE, userId)
                     .contentType(MULTIPART_FORM_DATA)
                     .body(body);
             var responseEntity = restTemplate
@@ -597,16 +601,16 @@ class UserResourceUnSecureTest extends BaseUserTest {
             assertThat(responseEntity.getBody())
                     .isNotNull()
                     .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password", "id")
-                    .hasFieldOrPropertyWithValue("username", username)
+                    .hasFieldOrPropertyWithValue("username", user.getUsername())
                     .hasFieldOrPropertyWithValue("email", user.getEmail())
                     .hasFieldOrPropertyWithValue("firstName", user.getFirstName())
                     .hasFieldOrPropertyWithValue("lastName", user.getLastName())
                     .hasFieldOrPropertyWithValue("isActive", user.isActive())
                     .hasFieldOrPropertyWithValue("isNotLocked", user.isNotLocked())
                     .hasFieldOrPropertyWithValue("role", user.getRole())
-                    .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s/avatar.jpg", user.getUserId())));
+                    .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format(DEFAULT_USER_IMAGE_URI_PATTERN.concat("/avatar.jpg"), user.getUserId())));
 
-            Path path = Path.of(FileConstant.USER_FOLDER, user.getUserId().toString(), FileConstant.USER_IMAGE_FILENAME);
+            Path path = Path.of(USER_FOLDER, user.getUserId().toString(), USER_IMAGE_FILENAME);
             log.debug("Path of created file: {}", path);
             assertThat(Files.exists(path)).isTrue();
             assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(100, ChronoUnit.MILLIS));
@@ -616,8 +620,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
         void updateProfileImage_absentUser() {
 
             //given
-            String username = FAKER.name().username();
-
+            UUID userId = UUID.randomUUID();
 
             MultipartFile profileImage = new MockMultipartFile("profileImage", "test.txt",
                     "text/plain", ("Spring Framework" + UUID.randomUUID()).getBytes());
@@ -627,7 +630,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             body.add("profileImage", profileImage.getResource());
 
             //when
-            var requestEntity = RequestEntity.put("/user/{username}/profileImage", username)
+            var requestEntity = RequestEntity.put(USER_IMAGE_ENDPOINT_TEMPLATE, userId)
                     .contentType(MULTIPART_FORM_DATA)
                     .body(body);
             var responseEntity = restTemplate
@@ -640,7 +643,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
-                    .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", username));
+                    .hasFieldOrPropertyWithValue("message", "User not found");
         }
     }
 
@@ -660,11 +663,11 @@ class UserResourceUnSecureTest extends BaseUserTest {
         void getProfileImage_correct() throws IOException {
 
             //given
-            String username = user.getUsername();
-            uploadProfileImage(username);
+            UUID userId = user.getUserId();
+            uploadProfileImage(userId);
 
             //when
-            RequestEntity<Void> requestEntity = RequestEntity.get("/user/{username}/image/profile", username)
+            RequestEntity<Void> requestEntity = RequestEntity.get(USER_CUSTOM_IMAGE_URI_TEMPLATE, userId, USER_IMAGE_FILENAME)
                     .accept(IMAGE_JPEG)
                     .build();
             var responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<byte[]>() {
@@ -680,12 +683,12 @@ class UserResourceUnSecureTest extends BaseUserTest {
         void getProfileImage_absentUser() throws IOException {
 
             //given
-            String username = user.getUsername();
-            uploadProfileImage(username);
-            String absentUsername = FAKER.name().username();
+            UUID userId = user.getUserId();
+            uploadProfileImage(userId);
+            UUID absentUserId = UUID.randomUUID();
 
             //when
-            RequestEntity<Void> requestEntity = RequestEntity.get("/user/{username}/image/profile", absentUsername)
+            RequestEntity<Void> requestEntity = RequestEntity.get(USER_DEFAULT_IMAGE_URI_TEMPLATE, absentUserId)
                     .accept(IMAGE_JPEG, APPLICATION_JSON)
                     .build();
             var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
@@ -697,7 +700,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
-                    .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", absentUsername));
+                    .hasFieldOrPropertyWithValue("message", "User not found");
         }
 
         @Test
@@ -705,10 +708,10 @@ class UserResourceUnSecureTest extends BaseUserTest {
 
             //given
             user = userRepository.save(createRandomUser());
-            String username = user.getUsername();
+            UUID userId = user.getUserId();
 
             //when
-            RequestEntity<Void> requestEntity = RequestEntity.get("/user/{username}/image/profile", username)
+            RequestEntity<Void> requestEntity = RequestEntity.get(USER_CUSTOM_IMAGE_URI_TEMPLATE, userId, USER_IMAGE_FILENAME)
                     .accept(IMAGE_JPEG, APPLICATION_JSON)
                     .build();
             var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
@@ -727,10 +730,10 @@ class UserResourceUnSecureTest extends BaseUserTest {
         void getImageById_correct() throws IOException {
 
             //given
-            String username = user.getUsername();
-            uploadProfileImage(username);
+            UUID userId = user.getUserId();
+            uploadProfileImage(userId);
             String profileImageUrlFull = user.getProfileImageUrl();
-            String profileImageUrl = profileImageUrlFull.substring(profileImageUrlFull.indexOf("/user/image/profile"));
+            String profileImageUrl = profileImageUrlFull.substring(profileImageUrlFull.indexOf("/user/"));
             log.debug("Image URL: {}", profileImageUrl);
 
             //when
@@ -754,7 +757,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             UUID userId = user.getUserId();
 
             //when
-            RequestEntity<Void> requestEntity = RequestEntity.get("/user/image/profile/{userId}", userId)
+            RequestEntity<Void> requestEntity = RequestEntity.get(USER_DEFAULT_IMAGE_URI_TEMPLATE, userId)
                     .accept(IMAGE_JPEG)
                     .build();
             var responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<byte[]>() {
@@ -773,7 +776,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             UUID userId = UUID.randomUUID();
 
             //when
-            RequestEntity<Void> requestEntity = RequestEntity.get("/user/image/profile/{userId}", userId)
+            RequestEntity<Void> requestEntity = RequestEntity.get(USER_DEFAULT_IMAGE_URI_TEMPLATE, userId)
                     .accept(IMAGE_JPEG, APPLICATION_JSON)
                     .build();
             var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
@@ -795,7 +798,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             String userId = "not_a_UUID";
 
             //when
-            RequestEntity<Void> requestEntity = RequestEntity.get("/user/image/profile/{userId}", userId)
+            RequestEntity<Void> requestEntity = RequestEntity.get(USER_DEFAULT_IMAGE_URI_TEMPLATE, userId)
                     .accept(IMAGE_JPEG, APPLICATION_JSON)
                     .build();
             var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
@@ -810,7 +813,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .hasFieldOrPropertyWithValue("message", "Invalid UUID string: " + userId);
         }
 
-        private void uploadProfileImage(String username) throws IOException {
+        private void uploadProfileImage(UUID userId) throws IOException {
 
             MultipartFile profileImage = new MockMultipartFile("profileImage", "test.jpg",
                     IMAGE_JPEG_VALUE, ("Spring Framework" + UUID.randomUUID()).getBytes());
@@ -820,7 +823,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             body.add("profileImage", profileImage.getResource());
 
             //when
-            var requestEntity = RequestEntity.put("/user/{username}/profileImage", username)
+            var requestEntity = RequestEntity.put(USER_IMAGE_ENDPOINT_TEMPLATE, userId)
                     .contentType(MULTIPART_FORM_DATA)
                     .body(body);
             var responseEntity = restTemplate
@@ -832,16 +835,17 @@ class UserResourceUnSecureTest extends BaseUserTest {
             assertThat(responseEntity.getBody())
                     .isNotNull()
                     .hasNoNullFieldsOrPropertiesExcept("lastLoginDate", "lastLoginDateDisplay", "password", "id")
-                    .hasFieldOrPropertyWithValue("username", username)
+                    .hasFieldOrPropertyWithValue("userId", userId)
+                    .hasFieldOrPropertyWithValue("username", user.getUsername())
                     .hasFieldOrPropertyWithValue("email", user.getEmail())
                     .hasFieldOrPropertyWithValue("firstName", user.getFirstName())
                     .hasFieldOrPropertyWithValue("lastName", user.getLastName())
                     .hasFieldOrPropertyWithValue("isActive", user.isActive())
                     .hasFieldOrPropertyWithValue("isNotLocked", user.isNotLocked())
                     .hasFieldOrPropertyWithValue("role", user.getRole())
-                    .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s/avatar.jpg", user.getUserId())));
+                    .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format(DEFAULT_USER_IMAGE_URI_PATTERN.concat("/avatar.jpg"), user.getUserId())));
 
-            Path path = Path.of(FileConstant.USER_FOLDER, user.getUserId().toString(), FileConstant.USER_IMAGE_FILENAME);
+            Path path = Path.of(USER_FOLDER, user.getUserId().toString(), USER_IMAGE_FILENAME);
             log.debug("Path of created file: {}", path);
             assertThat(Files.exists(path)).isTrue();
             assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(200, ChronoUnit.MILLIS));
