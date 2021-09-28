@@ -69,6 +69,7 @@ export class UserComponent implements OnInit, OnDestroy {
         },
         (errorResponse: HttpErrorResponse) => {
           this.sendErrorNotification(errorResponse.error.message);
+          this.refreshing = false;
         },
         () => {
           this.refreshing = false;
