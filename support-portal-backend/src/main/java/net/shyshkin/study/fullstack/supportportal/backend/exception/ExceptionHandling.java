@@ -16,6 +16,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.persistence.NoResultException;
 import java.io.IOException;
@@ -83,10 +84,10 @@ public class ExceptionHandling {
         return createHttpResponse(METHOD_NOT_ALLOWED, String.format(METHOD_IS_NOT_ALLOWED, supportedMethod));
     }
 
-//    @ExceptionHandler(NoHandlerFoundException.class)
-//    public ResponseEntity<HttpResponse> noHandlerFoundException(NoHandlerFoundException exception) {
-//        return createHttpResponse(BAD_REQUEST, "This page was not found");
-//    }
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<HttpResponse> noHandlerFoundException(NoHandlerFoundException exception) {
+        return createHttpResponse(NOT_FOUND, "Resource not found");
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpResponse> internalServerErrorException(Exception exception) {
