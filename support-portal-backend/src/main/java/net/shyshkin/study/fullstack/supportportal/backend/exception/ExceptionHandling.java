@@ -15,6 +15,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -65,7 +66,8 @@ public class ExceptionHandling {
     @ExceptionHandler({
             EmailExistsException.class, UsernameExistsException.class,
             EmailNotFoundException.class, UserNotFoundException.class,
-            MaxUploadSizeExceededException.class, NotAnImageFileException.class
+            MaxUploadSizeExceededException.class, NotAnImageFileException.class,
+            IllegalArgumentException.class
     })
     public ResponseEntity<HttpResponse> badRequestExceptionHandler(Exception exception) {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
@@ -102,6 +104,11 @@ public class ExceptionHandling {
                 .collect(Collectors.joining(","));
         String message = "Error(s) in parameters: [" + fieldsWithErrors + "]";
         return createHttpResponse(BAD_REQUEST, message);
+    }
+
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<HttpResponse> validationExceptionHandler(MethodArgumentTypeMismatchException exception) {
+        return createHttpResponse(BAD_REQUEST, exception.getCause().getMessage());
     }
 
     @ExceptionHandler(NoResultException.class)

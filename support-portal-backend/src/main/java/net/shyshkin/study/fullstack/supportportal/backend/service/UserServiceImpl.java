@@ -44,6 +44,7 @@ import static org.springframework.http.MediaType.*;
 public class UserServiceImpl implements UserService {
 
     public static final String USERNAME_NOT_FOUND_MSG = "User with username `%s` not found";
+    public static final String USER_NOT_FOUND_MSG = "User not found";
     public static final String USERNAME_EXISTS_MSG = "Username `%s` is already taken. Please select another one";
     public static final String EMAIL_NOT_FOUND_MSG = "User with email `%s` not found";
     public static final String EMAIL_EXISTS_MSG = "User with email `%s` is already registered";
@@ -278,6 +279,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public byte[] getDefaultProfileImage(UUID userId) {
+
+        if (!userRepository.existsByUserId(userId)) {
+            throw new UserNotFoundException(USER_NOT_FOUND_MSG);
+        }
+
 //        "https://robohash.org/11951691-d373-4126-bef2-84d157a6546b"
         RequestEntity<Void> requestEntity = RequestEntity
                 .get("/{userId}", userId)

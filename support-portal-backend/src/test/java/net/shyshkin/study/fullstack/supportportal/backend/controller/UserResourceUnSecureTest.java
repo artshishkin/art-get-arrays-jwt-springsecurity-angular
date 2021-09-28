@@ -17,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
@@ -38,6 +37,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.MediaType.*;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -496,6 +496,8 @@ class UserResourceUnSecureTest extends BaseUserTest {
 
             //given
             long usersCount = userRepository.count();
+            long DEFAULT_PAGEABLE_SIZE = 20;
+            usersCount = Math.min(DEFAULT_PAGEABLE_SIZE, usersCount);
 
             //when
             var responseEntity = restTemplate.exchange("/user", HttpMethod.GET, null, UserPage.class);
@@ -581,7 +583,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
 
             //when
             var requestEntity = RequestEntity.put("/user/{username}/profileImage", username)
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .contentType(MULTIPART_FORM_DATA)
                     .body(body);
             var responseEntity = restTemplate
                     .exchange(requestEntity, User.class);
@@ -623,7 +625,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
 
             //when
             var requestEntity = RequestEntity.put("/user/{username}/profileImage", username)
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .contentType(MULTIPART_FORM_DATA)
                     .body(body);
             var responseEntity = restTemplate
                     .exchange(requestEntity, HttpResponse.class);
@@ -660,7 +662,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
 
             //when
             RequestEntity<Void> requestEntity = RequestEntity.get("/user/{username}/image/profile", username)
-                    .accept(MediaType.IMAGE_JPEG)
+                    .accept(IMAGE_JPEG)
                     .build();
             var responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<byte[]>() {
             });
@@ -681,7 +683,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
 
             //when
             RequestEntity<Void> requestEntity = RequestEntity.get("/user/{username}/image/profile", absentUsername)
-                    .accept(MediaType.IMAGE_JPEG, MediaType.APPLICATION_JSON)
+                    .accept(IMAGE_JPEG, APPLICATION_JSON)
                     .build();
             var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
 
@@ -704,7 +706,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
 
             //when
             RequestEntity<Void> requestEntity = RequestEntity.get("/user/{username}/image/profile", username)
-                    .accept(MediaType.IMAGE_JPEG, MediaType.APPLICATION_JSON)
+                    .accept(IMAGE_JPEG, APPLICATION_JSON)
                     .build();
             var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
 
@@ -730,7 +732,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
 
             //when
             RequestEntity<Void> requestEntity = RequestEntity.get(profileImageUrl)
-                    .accept(MediaType.IMAGE_JPEG)
+                    .accept(IMAGE_JPEG)
                     .build();
             var responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<byte[]>() {
             });
@@ -750,7 +752,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
 
             //when
             RequestEntity<Void> requestEntity = RequestEntity.get("/user/image/profile/{userId}", userId)
-                    .accept(MediaType.IMAGE_JPEG)
+                    .accept(IMAGE_JPEG)
                     .build();
             var responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<byte[]>() {
             });
@@ -761,10 +763,54 @@ class UserResourceUnSecureTest extends BaseUserTest {
             assertThat(responseEntity.getBody()).hasSizeGreaterThan(52);
         }
 
+        @Test
+        void getDefaultProfileImage_absentUUID() {
+
+            //given
+            UUID userId = UUID.randomUUID();
+
+            //when
+            RequestEntity<Void> requestEntity = RequestEntity.get("/user/image/profile/{userId}", userId)
+                    .accept(IMAGE_JPEG, APPLICATION_JSON)
+                    .build();
+            var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasNoNullFieldsOrProperties()
+                    .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
+                    .hasFieldOrPropertyWithValue("message", "User not found");
+        }
+
+        @Test
+        void getDefaultProfileImage_not_a_UUID() {
+
+            //given
+            String userId = "not_a_UUID";
+
+            //when
+            RequestEntity<Void> requestEntity = RequestEntity.get("/user/image/profile/{userId}", userId)
+                    .accept(IMAGE_JPEG, APPLICATION_JSON)
+                    .build();
+            var responseEntity = restTemplate.exchange(requestEntity, HttpResponse.class);
+
+            //then
+            log.debug("Response Entity: {}", responseEntity);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
+            assertThat(responseEntity.getBody())
+                    .isNotNull()
+                    .hasNoNullFieldsOrProperties()
+                    .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
+                    .hasFieldOrPropertyWithValue("message", "Invalid UUID string: " + userId);
+        }
+
         private void uploadProfileImage(String username) throws IOException {
 
             MultipartFile profileImage = new MockMultipartFile("profileImage", "test.jpg",
-                    MediaType.IMAGE_JPEG_VALUE, ("Spring Framework" + UUID.randomUUID()).getBytes());
+                    IMAGE_JPEG_VALUE, ("Spring Framework" + UUID.randomUUID()).getBytes());
 
             MultiValueMap<String, Object> body
                     = new LinkedMultiValueMap<>();
@@ -772,7 +818,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
 
             //when
             var requestEntity = RequestEntity.put("/user/{username}/profileImage", username)
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .contentType(MULTIPART_FORM_DATA)
                     .body(body);
             var responseEntity = restTemplate
                     .exchange(requestEntity, User.class);
