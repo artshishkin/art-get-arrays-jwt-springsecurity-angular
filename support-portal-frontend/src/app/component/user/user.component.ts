@@ -247,7 +247,7 @@ export class UserComponent implements OnInit, OnDestroy {
     const formData = new FormData();
     formData.append("profileImage", this.profileImage);
     let user = this.authenticationService.getUserFromLocalStorage();
-    this.subs.sink = this.userService.updateProfileImage(user.username, formData)
+    this.subs.sink = this.userService.updateProfileImage(user.userId, formData)
       .subscribe(
         (event: HttpEvent<any>) => {
           this.reportUploadProgress(event);
