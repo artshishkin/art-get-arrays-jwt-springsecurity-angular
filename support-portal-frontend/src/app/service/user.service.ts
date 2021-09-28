@@ -62,12 +62,10 @@ export class UserService {
     return [];
   }
 
-  public createUserFormData(loggedInUsername: string | null, user: User, profileImage: File | null): FormData {
+  public createUserFormData(user: User, profileImage: File | null): FormData {
 
     const formData = new FormData();
 
-    if (loggedInUsername)
-      formData.append('currentUsername', loggedInUsername);
     formData.append('firstName', user.firstName);
     formData.append('lastName', user.lastName);
     formData.append("username", user.username);
