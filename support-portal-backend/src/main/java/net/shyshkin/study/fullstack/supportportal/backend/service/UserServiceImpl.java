@@ -19,17 +19,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileSystemUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -55,6 +50,7 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final UserMapper userMapper;
     private final RestTemplateBuilder restTemplateBuilder;
+    private final ProfileImageService profileImageService;
 
     private RestTemplate restTemplate;
 
@@ -188,30 +184,17 @@ public class UserServiceImpl implements UserService {
             throw new NotAnImageFileException(profileImage.getOriginalFilename() + " is not an image file. Please upload an image");
         }
 
-        Path userFolder = Paths.get(USER_FOLDER, user.getUserId().toString());
-        try {
-            if (Files.notExists(userFolder)) {
-                Files.createDirectories(userFolder);
-                log.debug(DIRECTORY_CREATED);
-            }
-            profileImage.transferTo(userFolder.resolve(USER_IMAGE_FILENAME));
-            log.debug(FILE_SAVED_IN_FILE_SYSTEM + profileImage.getOriginalFilename());
-            user.setProfileImageUrl(generateProfileImageUrl(user.getUserId()));
-            userRepository.save(user);
+        String imageUrl = profileImageService.persistProfileImage(user.getUserId(), profileImage, USER_IMAGE_FILENAME);
 
-        } catch (IOException exception) {
-            log.error("Can't save to file", exception);
-        }
+        if (imageUrl == null)
+            imageUrl = generateProfileImageUrl(user.getUserId());
+
+        user.setProfileImageUrl(imageUrl);
+        userRepository.save(user);
     }
 
-    private void deleteProfileImageFolder(User user) {
-
-        Path userFolder = Paths.get(USER_FOLDER, user.getUserId().toString());
-        try {
-            FileSystemUtils.deleteRecursively(userFolder);
-        } catch (IOException exception) {
-            log.error("Can't delete folder", exception);
-        }
+    private void clearUserStorage(User user) {
+        profileImageService.clearUserStorage(user.getUserId());
     }
 
     @Override
@@ -243,7 +226,7 @@ public class UserServiceImpl implements UserService {
                 .findByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException("User was not found"));
 
-        deleteProfileImageFolder(userToBeDeleted);
+        clearUserStorage(userToBeDeleted);
         userRepository.delete(userToBeDeleted);
     }
 
@@ -270,15 +253,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public byte[] getImageByUserId(UUID userId, String filename) throws IOException {
+    public byte[] getImageByUserId(UUID userId, String filename) {
 
         if (!userRepository.existsByUserId(userId)) {
             throw new UserNotFoundException(USER_NOT_FOUND_MSG);
         }
-
-        Path userProfileImagePath = Paths
-                .get(USER_FOLDER, userId.toString(), filename);
-        return Files.readAllBytes(userProfileImagePath);
+        return profileImageService.retrieveProfileImage(userId, filename);
     }
 
     @Override

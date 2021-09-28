@@ -117,8 +117,8 @@ public class ExceptionHandling {
         return createHttpResponse(NOT_FOUND, exception.getMessage());
     }
 
-    @ExceptionHandler(IOException.class)
-    public ResponseEntity<HttpResponse> iOException(IOException exception) {
+    @ExceptionHandler({IOException.class, ImageStorageException.class})
+    public ResponseEntity<HttpResponse> fileRelatedException(Exception exception) {
         log.error(exception.getMessage());
         return createHttpResponse(INTERNAL_SERVER_ERROR, ERROR_PROCESSING_FILE);
     }

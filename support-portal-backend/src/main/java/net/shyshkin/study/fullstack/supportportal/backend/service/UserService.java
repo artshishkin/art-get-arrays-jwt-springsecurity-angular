@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.UUID;
 
 public interface UserService extends UserDetailsService {
@@ -32,7 +31,7 @@ public interface UserService extends UserDetailsService {
 
     User updateProfileImage(UUID userId, MultipartFile profileImage);
 
-    byte[] getImageByUserId(UUID userId, String filename) throws IOException;
+    byte[] getImageByUserId(UUID userId, String filename);
 
     byte[] getDefaultProfileImage(UUID userId);
 }

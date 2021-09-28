@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -110,7 +109,7 @@ public class UserResource {
     }
 
     @GetMapping(path = "{userId}/profile-image/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public byte[] getProfileImageByUserId(@PathVariable UUID userId, @PathVariable String filename) throws IOException {
+    public byte[] getProfileImageByUserId(@PathVariable UUID userId, @PathVariable String filename) {
         return userService.getImageByUserId(userId, filename);
     }
 
