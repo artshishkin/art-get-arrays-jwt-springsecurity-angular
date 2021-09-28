@@ -590,6 +590,7 @@ class UserResourceTest extends BaseUserTest {
         User user = createRandomUser();
         userRepository.save(user);
         String currentUsername = user.getUsername();
+        UUID userId = user.getUserId();
 
         UserDto userDto = createRandomUserDto();
 
@@ -610,7 +611,7 @@ class UserResourceTest extends BaseUserTest {
 
         //when
         var requestEntity = RequestEntity
-                .put("/user/{currentUsername}", currentUsername)
+                .put("/user/{userId}", userId)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .headers(httpHeaders -> httpHeaders.setBearerAuth(correctToken))
                 .body(body);

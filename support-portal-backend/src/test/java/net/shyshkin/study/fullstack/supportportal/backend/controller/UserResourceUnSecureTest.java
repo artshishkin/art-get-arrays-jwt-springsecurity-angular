@@ -258,11 +258,12 @@ class UserResourceUnSecureTest extends BaseUserTest {
             //given
             UserDto userDto = createRandomUserDto();
             String currentUsername = user.getUsername();
+            UUID userId = user.getUserId();
             userDto.setUsername(currentUsername);
             userDto.setRole(Role.ROLE_MANAGER);
 
             Map<String, ?> paramMap = Map.of(
-                    "currentUsername", currentUsername,
+                    "userId", userId,
                     "firstName", userDto.getFirstName(),
                     "lastName", userDto.getLastName(),
                     "username", userDto.getUsername(),
@@ -275,7 +276,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             //when
             ResponseEntity<User> responseEntity = restTemplate
                     .exchange(
-                            "/user/{currentUsername}?username={username}&email={email}" +
+                            "/user/{userId}?username={username}&email={email}" +
                                     "&firstName={firstName}&lastName={lastName}" +
                                     "&role={role}&active={isActive}&notLocked={isNotLocked}",
                             HttpMethod.PUT,
@@ -304,12 +305,12 @@ class UserResourceUnSecureTest extends BaseUserTest {
 
             //given
             UserDto userDto = createRandomUserDto();
-            String currentUsername = user.getUsername();
+            UUID userId = user.getUserId();
 
             userDto.setRole(Role.ROLE_HR);
 
             Map<String, ?> paramMap = Map.of(
-                    "currentUsername", currentUsername,
+                    "userId", userId,
                     "firstName", userDto.getFirstName(),
                     "lastName", userDto.getLastName(),
                     "username", userDto.getUsername(),
@@ -322,7 +323,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             //when
             ResponseEntity<User> responseEntity = restTemplate
                     .exchange(
-                            "/user/{currentUsername}?username={username}&email={email}" +
+                            "/user/{userId}?username={username}&email={email}" +
                                     "&firstName={firstName}&lastName={lastName}" +
                                     "&role={role}&active={isActive}&notLocked={isNotLocked}",
                             HttpMethod.PUT,
@@ -353,11 +354,12 @@ class UserResourceUnSecureTest extends BaseUserTest {
             //given
             UserDto userDto = createRandomUserDto();
             String currentUsername = user.getUsername();
+            UUID userId = user.getUserId();
 
             userDto.setRole(Role.ROLE_USER);
 
             Map<String, ?> paramMap = Map.of(
-                    "currentUsername", currentUsername,
+                    "userId", userId,
                     "firstName", userDto.getFirstName(),
                     "username", userDto.getUsername(),
                     "email", userDto.getEmail(),
@@ -369,7 +371,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             //when
             var responseEntity = restTemplate
                     .exchange(
-                            "/user/{currentUsername}?username={username}&email={email}" +
+                            "/user/{userId}?username={username}&email={email}" +
                                     "&firstName={firstName}" +
                                     "&role={role}&active={isActive}&notLocked={isNotLocked}",
                             HttpMethod.PUT,
@@ -394,11 +396,12 @@ class UserResourceUnSecureTest extends BaseUserTest {
             //given
             UserDto userDto = createRandomUserDto();
             String currentUsername = FAKER.name().username();
+            UUID userId = UUID.randomUUID();
             userDto.setUsername(currentUsername);
             userDto.setRole(Role.ROLE_MANAGER);
 
             Map<String, ?> paramMap = Map.of(
-                    "currentUsername", currentUsername,
+                    "userId", userId,
                     "firstName", userDto.getFirstName(),
                     "lastName", userDto.getLastName(),
                     "username", userDto.getUsername(),
@@ -411,7 +414,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             //when
             var responseEntity = restTemplate
                     .exchange(
-                            "/user/{currentUsername}?username={username}&email={email}" +
+                            "/user/{userId}?username={username}&email={email}" +
                                     "&firstName={firstName}&lastName={lastName}" +
                                     "&role={role}&active={isActive}&notLocked={isNotLocked}",
                             HttpMethod.PUT,
@@ -427,7 +430,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .isNotNull()
                     .hasNoNullFieldsOrProperties()
                     .hasFieldOrPropertyWithValue("httpStatus", BAD_REQUEST)
-                    .hasFieldOrPropertyWithValue("message", String.format("User with username `%s` not found", currentUsername));
+                    .hasFieldOrPropertyWithValue("message", "User not found");
         }
 
     }

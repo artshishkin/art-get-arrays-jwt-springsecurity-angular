@@ -146,6 +146,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByUserId(UUID userId) {
+        return userRepository
+                .findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MSG));
+    }
+
+    @Override
     public User addNewUser(UserDto userDto) {
 
         String username = userDto.getUsername();
@@ -210,12 +217,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(String username, UserDto userDto) {
+    public User updateUser(UUID userId, UserDto userDto) {
 
         String newUsername = userDto.getUsername();
         String email = userDto.getEmail();
 
-        User user = validateUpdateUsernameAndEmail(username, newUsername, email);
+        User user = validateUpdateUsernameAndEmail(userId, newUsername, email);
 
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
@@ -303,13 +310,13 @@ public class UserServiceImpl implements UserService {
             throwEmailExistsException(email);
     }
 
-    private User validateUpdateUsernameAndEmail(String currentUsername, String username, String email) {
+    private User validateUpdateUsernameAndEmail(UUID userId, String username, String email) {
 
-        Objects.requireNonNull(currentUsername);
+        Objects.requireNonNull(userId);
 
-        User currentUser = findByUsername(currentUsername);
+        User currentUser = findByUserId(userId);
 
-        if (!Objects.equals(currentUsername, username) && userRepository.existsByUsername(username))
+        if (!Objects.equals(currentUser.getUsername(), username) && userRepository.existsByUsername(username))
             throwUsernameExistsException(username);
 
         if (!Objects.equals(currentUser.getEmail(), email) && userRepository.existsByEmail(email))

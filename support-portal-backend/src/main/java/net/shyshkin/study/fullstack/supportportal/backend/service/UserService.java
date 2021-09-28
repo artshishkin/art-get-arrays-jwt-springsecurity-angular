@@ -20,9 +20,11 @@ public interface UserService extends UserDetailsService {
 
     User findByEmail(String email);
 
+    User findByUserId(UUID userId);
+
     User addNewUser(UserDto userDto);
 
-    User updateUser(String username, UserDto userDto);
+    User updateUser(UUID userId, UserDto userDto);
 
     void deleteUser(UUID userId);
 

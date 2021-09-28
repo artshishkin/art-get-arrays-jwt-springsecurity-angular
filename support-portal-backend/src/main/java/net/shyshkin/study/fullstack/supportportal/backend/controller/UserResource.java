@@ -65,10 +65,10 @@ public class UserResource {
         return userService.addNewUser(userDto);
     }
 
-    @PutMapping("{currentUsername}")
-    public User updateUser(@PathVariable String currentUsername, @Valid UserDto userDto) {
+    @PutMapping("{userId}")
+    public User updateUser(@PathVariable UUID userId, @Valid UserDto userDto) {
         log.debug("User DTO: {}", userDto);
-        return userService.updateUser(currentUsername, userDto);
+        return userService.updateUser(userId, userDto);
     }
 
     @GetMapping("{username}")
