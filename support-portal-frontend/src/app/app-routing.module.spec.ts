@@ -2,6 +2,7 @@ import {routes} from './app-routing.module';
 import {UserComponent} from "./component/user/user.component";
 import {LoginComponent} from "./component/login/login.component";
 import {RegisterComponent} from "./component/register/register.component";
+import {AuthenticationGuard} from "./guard/authentication.guard";
 
 describe('routes', () => {
 
@@ -14,7 +15,7 @@ describe('routes', () => {
   });
 
   it('should contain a route for /user/management', () => {
-    expect(routes).toContain({path: "user/management", component: UserComponent});
+    expect(routes).toContain({path: 'user/management', component: UserComponent, canActivate: [AuthenticationGuard]});
   });
 
   it('should redirect to /login endpoint if no route found', () => {
