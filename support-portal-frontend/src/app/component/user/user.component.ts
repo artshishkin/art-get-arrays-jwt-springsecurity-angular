@@ -155,7 +155,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
   public onUpdateUser(): void {
     const formData = this.userService.createUserFormData(this.currentUsername, this.editUser, this.profileImage);
-    this.subs.sink = this.userService.updateUser(formData)
+    this.subs.sink = this.userService.updateUser(this.editUser.userId, formData)
       .subscribe(
         (user: User) => {
           this.clickButton('closeEditUserButton');
@@ -204,6 +204,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
   onUpdateCurrentUser(user: User) {
     this.currentUsername = this.authenticationService.getUserFromLocalStorage().username;
+    const userId = this.authenticationService.getUserFromLocalStorage().userId;
     this.refreshing = true;
 
     if (user.role == undefined) user.role = this.loggedInUser.role;
@@ -214,7 +215,7 @@ export class UserComponent implements OnInit, OnDestroy {
     console.log(this.loggedInUser);
 
     const formData = this.userService.createUserFormData(this.currentUsername, user, this.profileImage);
-    this.subs.sink = this.userService.updateUser(formData)
+    this.subs.sink = this.userService.updateUser(userId, formData)
       .subscribe(
         (user: User) => {
           this.authenticationService.addUserToLocalStorage(user);
