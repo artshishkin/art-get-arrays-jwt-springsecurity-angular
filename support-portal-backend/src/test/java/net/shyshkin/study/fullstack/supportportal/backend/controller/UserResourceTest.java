@@ -576,7 +576,7 @@ class UserResourceTest extends BaseUserTest {
                 .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s/avatar.jpg", u.getUserId())));
 
         User createdUser = responseEntity.getBody();
-        Path path = Path.of(FileConstant.USER_FOLDER, createdUser.getUserId(), FileConstant.USER_IMAGE_FILENAME);
+        Path path = Path.of(FileConstant.USER_FOLDER, createdUser.getUserId().toString(), FileConstant.USER_IMAGE_FILENAME);
         log.debug("Path of created file: {}", path);
         assertThat(Files.exists(path)).isTrue();
         assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(1, ChronoUnit.SECONDS));
@@ -634,7 +634,7 @@ class UserResourceTest extends BaseUserTest {
                 .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s/avatar.jpg", u.getUserId())));
 
         User createdUser = responseEntity.getBody();
-        Path path = Path.of(FileConstant.USER_FOLDER, createdUser.getUserId(), FileConstant.USER_IMAGE_FILENAME);
+        Path path = Path.of(FileConstant.USER_FOLDER, createdUser.getUserId().toString(), FileConstant.USER_IMAGE_FILENAME);
         log.debug("Path of created file: {}", path);
         assertThat(Files.exists(path)).isTrue();
         assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(1, ChronoUnit.SECONDS));
@@ -657,7 +657,7 @@ class UserResourceTest extends BaseUserTest {
             superAdmin.setAuthorities(Role.ROLE_SUPER_ADMIN.getAuthorities());
             String token = jwtTokenProvider.generateJwtToken(new UserPrincipal(superAdmin));
 
-            String userId = user.getUserId();
+            UUID userId = user.getUserId();
 
             //when
             var requestEntity = RequestEntity.delete("/user/{userId}", userId)
@@ -682,7 +682,7 @@ class UserResourceTest extends BaseUserTest {
             User roleUser = createRandomUser();
             String token = jwtTokenProvider.generateJwtToken(new UserPrincipal(roleUser));
 
-            String userId = user.getUserId();
+            UUID userId = user.getUserId();
 
             //when
             var requestEntity = RequestEntity.delete("/user/{userId}", userId)

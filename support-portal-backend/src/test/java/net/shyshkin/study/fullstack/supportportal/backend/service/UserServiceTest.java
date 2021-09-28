@@ -125,7 +125,7 @@ class UserServiceTest extends BaseUserTest {
         userService.updateProfileImage(username, multipartFile);
 
         //then
-        Path path = Path.of(FileConstant.USER_FOLDER, user.getUserId(), FileConstant.USER_IMAGE_FILENAME);
+        Path path = Path.of(FileConstant.USER_FOLDER, user.getUserId().toString(), FileConstant.USER_IMAGE_FILENAME);
         log.debug("Path of created file: {}", path);
         assertThat(Files.exists(path)).isTrue();
         assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(100, ChronoUnit.MILLIS));

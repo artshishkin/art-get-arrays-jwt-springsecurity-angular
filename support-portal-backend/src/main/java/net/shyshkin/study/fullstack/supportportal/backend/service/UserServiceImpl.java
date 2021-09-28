@@ -102,17 +102,17 @@ public class UserServiceImpl implements UserService {
         return addNewUser(newUserDto);
     }
 
-    private String generateDefaultProfileImageUrl(String userId) {
+    private String generateDefaultProfileImageUrl(UUID userId) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(DEFAULT_USER_IMAGE_PATH)
-                .pathSegment(userId)
+                .pathSegment(userId.toString())
                 .toUriString();
     }
 
-    private String generateProfileImageUrl(String userId) {
+    private String generateProfileImageUrl(UUID userId) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(DEFAULT_USER_IMAGE_PATH)
-                .pathSegment(userId)
+                .pathSegment(userId.toString())
                 .pathSegment(USER_IMAGE_FILENAME)
                 .toUriString();
     }
@@ -121,8 +121,8 @@ public class UserServiceImpl implements UserService {
         return RandomStringUtils.randomAscii(10);
     }
 
-    private String generateUserId() {
-        return UUID.randomUUID().toString();
+    private UUID generateUserId() {
+        return UUID.randomUUID();
     }
 
     @Override
@@ -182,7 +182,7 @@ public class UserServiceImpl implements UserService {
             throw new NotAnImageFileException(profileImage.getOriginalFilename() + " is not an image file. Please upload an image");
         }
 
-        Path userFolder = Paths.get(USER_FOLDER, user.getUserId());
+        Path userFolder = Paths.get(USER_FOLDER, user.getUserId().toString());
         try {
             if (Files.notExists(userFolder)) {
                 Files.createDirectories(userFolder);
@@ -200,7 +200,7 @@ public class UserServiceImpl implements UserService {
 
     private void deleteProfileImageFolder(User user) {
 
-        Path userFolder = Paths.get(USER_FOLDER, user.getUserId());
+        Path userFolder = Paths.get(USER_FOLDER, user.getUserId().toString());
         try {
             FileSystemUtils.deleteRecursively(userFolder);
         } catch (IOException exception) {
@@ -232,7 +232,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(String userId) {
+    public void deleteUser(UUID userId) {
         User userToBeDeleted = userRepository
                 .findByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException("User was not found"));
@@ -270,14 +270,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public byte[] getImageByUserId(String userId, String filename) throws IOException {
+    public byte[] getImageByUserId(UUID userId, String filename) throws IOException {
         Path userProfileImagePath = Paths
-                .get(USER_FOLDER, userId, filename);
+                .get(USER_FOLDER, userId.toString(), filename);
         return Files.readAllBytes(userProfileImagePath);
     }
 
     @Override
-    public byte[] getDefaultProfileImage(String userId) {
+    public byte[] getDefaultProfileImage(UUID userId) {
 //        "https://robohash.org/11951691-d373-4126-bef2-84d157a6546b"
         RequestEntity<Void> requestEntity = RequestEntity
                 .get("/{userId}", userId)

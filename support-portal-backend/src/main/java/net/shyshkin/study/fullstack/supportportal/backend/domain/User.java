@@ -2,13 +2,12 @@ package net.shyshkin.study.fullstack.supportportal.backend.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 @Entity
@@ -27,7 +26,9 @@ public class User implements Serializable {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long id;
 
-    private String userId;
+    @Type(type="org.hibernate.type.UUIDCharType")
+    @Column(length = 36, columnDefinition = "varchar(255)", updatable = false, nullable = false )
+    private UUID userId;
     private String firstName;
     private String lastName;
     private String username;

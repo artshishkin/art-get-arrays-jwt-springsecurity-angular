@@ -27,7 +27,7 @@ public abstract class BaseUserTest {
     protected static User user;
 
     protected User createRandomUser() {
-        String userId = UUID.randomUUID().toString();
+        UUID userId = UUID.randomUUID();
         return User.builder()
                 .email(FAKER.bothify("????##@example.com"))
                 .firstName(FAKER.name().firstName())
@@ -58,11 +58,11 @@ public abstract class BaseUserTest {
                 .build();
     }
 
-    private String generateProfileImageUrl(String userId) {
+    private String generateProfileImageUrl(UUID userId) {
         return UriComponentsBuilder
                 .fromUriString("http://localhost:8080")
                 .path(DEFAULT_USER_IMAGE_PATH)
-                .pathSegment(userId)
+                .pathSegment(userId.toString())
 //                .pathSegment(USER_IMAGE_FILENAME)
                 .toUriString();
     }

@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -93,7 +94,7 @@ public class UserResource {
 
     @DeleteMapping("{userId}")
     @PreAuthorize("hasAuthority('user:delete')")
-    public HttpResponse deleteUser(@PathVariable String userId) {
+    public HttpResponse deleteUser(@PathVariable UUID userId) {
         userService.deleteUser(userId);
         return HttpResponse.builder()
                 .httpStatusCode(OK.value())
@@ -114,12 +115,12 @@ public class UserResource {
     }
 
     @GetMapping(path = "image/profile/{userId}/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public byte[] getProfileImageByUserId(@PathVariable String userId, @PathVariable String filename) throws IOException {
+    public byte[] getProfileImageByUserId(@PathVariable UUID userId, @PathVariable String filename) throws IOException {
         return userService.getImageByUserId(userId, filename);
     }
 
     @GetMapping(path = "image/profile/{userId}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public byte[] getDefaultProfileImage(@PathVariable String userId) {
+    public byte[] getDefaultProfileImage(@PathVariable UUID userId) {
         return userService.getDefaultProfileImage(userId);
     }
 

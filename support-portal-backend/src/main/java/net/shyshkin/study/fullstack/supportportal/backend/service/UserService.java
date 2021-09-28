@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public interface UserService extends UserDetailsService {
 
@@ -23,7 +24,7 @@ public interface UserService extends UserDetailsService {
 
     User updateUser(String username, UserDto userDto);
 
-    void deleteUser(String userId);
+    void deleteUser(UUID userId);
 
     void resetPassword(String email);
 
@@ -31,7 +32,7 @@ public interface UserService extends UserDetailsService {
 
     byte[] getProfileImage(String username) throws IOException;
 
-    byte[] getImageByUserId(String userId, String filename) throws IOException;
+    byte[] getImageByUserId(UUID userId, String filename) throws IOException;
 
-    byte[] getDefaultProfileImage(String userId);
+    byte[] getDefaultProfileImage(UUID userId);
 }

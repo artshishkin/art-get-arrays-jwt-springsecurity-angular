@@ -8,6 +8,7 @@ import net.shyshkin.study.fullstack.supportportal.backend.domain.HttpResponse;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.Role;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.User;
 import net.shyshkin.study.fullstack.supportportal.backend.domain.dto.UserDto;
+import net.shyshkin.study.fullstack.supportportal.backend.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -47,6 +48,9 @@ class UserResourceUnSecureTest extends BaseUserTest {
 
     @Autowired
     TestRestTemplate restTemplate;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Nested
     class AddNewUserTests {
@@ -490,6 +494,9 @@ class UserResourceUnSecureTest extends BaseUserTest {
         @Test
         void getAllUsers() {
 
+            //given
+            long usersCount = userRepository.count();
+
             //when
             var responseEntity = restTemplate.exchange("/user", HttpMethod.GET, null, UserPage.class);
 
@@ -499,7 +506,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
             assertThat(responseEntity.getBody())
                     .isNotNull();
             assertThat(responseEntity.getBody().getContent())
-                    .hasSizeGreaterThan(2);
+                    .hasSize(Math.toIntExact(usersCount));
         }
     }
 
@@ -594,7 +601,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .hasFieldOrPropertyWithValue("role", user.getRole())
                     .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s/avatar.jpg", user.getUserId())));
 
-            Path path = Path.of(FileConstant.USER_FOLDER, user.getUserId(), FileConstant.USER_IMAGE_FILENAME);
+            Path path = Path.of(FileConstant.USER_FOLDER, user.getUserId().toString(), FileConstant.USER_IMAGE_FILENAME);
             log.debug("Path of created file: {}", path);
             assertThat(Files.exists(path)).isTrue();
             assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(100, ChronoUnit.MILLIS));
@@ -739,7 +746,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
         void getDefaultProfileImage_correct() throws IOException {
 
             //given
-            String userId = user.getUserId();
+            UUID userId = user.getUserId();
 
             //when
             RequestEntity<Void> requestEntity = RequestEntity.get("/user/image/profile/{userId}", userId)
@@ -785,7 +792,7 @@ class UserResourceUnSecureTest extends BaseUserTest {
                     .hasFieldOrPropertyWithValue("role", user.getRole())
                     .satisfies(u -> assertThat(u.getProfileImageUrl()).endsWith(String.format("/user/image/profile/%s/avatar.jpg", user.getUserId())));
 
-            Path path = Path.of(FileConstant.USER_FOLDER, user.getUserId(), FileConstant.USER_IMAGE_FILENAME);
+            Path path = Path.of(FileConstant.USER_FOLDER, user.getUserId().toString(), FileConstant.USER_IMAGE_FILENAME);
             log.debug("Path of created file: {}", path);
             assertThat(Files.exists(path)).isTrue();
             assertThat(Files.getLastModifiedTime(path).toInstant()).isCloseTo(Instant.now(), within(200, ChronoUnit.MILLIS));
