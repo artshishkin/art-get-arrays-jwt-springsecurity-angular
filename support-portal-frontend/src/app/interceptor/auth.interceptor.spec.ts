@@ -28,9 +28,8 @@ describe('AuthInterceptor', () => {
     expect(interceptor.isRequestUrlMatches('http://example.com:8080/user')).toBeFalsy();
     expect(interceptor.isRequestUrlMatches('http://localhost:8080/user/login')).toBeFalsy();
     expect(interceptor.isRequestUrlMatches('http://localhost:8080/user/register')).toBeFalsy();
-    expect(interceptor.isRequestUrlMatches('http://localhost:8080/user/image/profile/1234567/avatar.jpg')).toBeFalsy();
-    expect(interceptor.isRequestUrlMatches('http://localhost:8080/user/image/profile/1234567')).toBeFalsy();
-    expect(interceptor.isRequestUrlMatches('http://localhost:8080/user/art.shyshkin/image/profile')).toBeFalsy();
+    expect(interceptor.isRequestUrlMatches('http://localhost:8080/user/d470296c-97fb-44ce-9253-69f3331d7b77/profile-image/avatar.jpg')).toBeFalsy();
+    expect(interceptor.isRequestUrlMatches('http://localhost:8080/user/d470296c-97fb-44ce-9253-69f3331d7b77/profile-image')).toBeFalsy();
   });
 
   it('should intercept NON-public URLs', () => {

@@ -10,7 +10,7 @@ export const environment = {
   // apiUrl: 'http://supportportalbackend-env.eba-wfr5wya3.eu-north-1.elasticbeanstalk.com',
   // apiUrl: 'http://support-portal.shyshkin.net:5000',
   apiUrl: 'http://localhost:8080',
-  publicUrls: ['/user/login', '/user/register', '/user/*/image/**', '/user/image/**']
+  publicUrls: ['/user/login', '/user/register', '/user/*/profile-image', '/user/*/profile-image/**']
 };
 
 /*
