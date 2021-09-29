@@ -128,4 +128,17 @@ server.ssl:
   key-store-password: secret  # Keystore password
   key-store-type: PKCS12      # Keystore format
 
+---
+spring:
+  config:
+    activate:
+      on-profile: image-s3
+app:
+  amazon-s3:
+    access-key: ${AMAZON_S3_ACCESS_KEY}
+    secret-key: ${AMAZON_S3_SECRET_KEY}
+    region: eu-north-1
+    bucket-name: portal-user-profile-images
+
+
 

@@ -486,3 +486,27 @@ systemctl restart docker
 -  `ng build -c production`
 -  upload to S3
 -  visit `http://portal.shyshkin.net`
+
+####  38 Save Profile Images to S3
+
+#####  38.2 Working with S3 (tutorial) 
+
+1.  Follow Tutorial
+    -  [How to Upload Files to Amazon S3 in Spring Boot](https://www.section.io/engineering-education/spring-boot-amazon-s3/)
+2.  Create S3 Bucket
+    -  `portal-user-profile-images`
+3.  Access and secret keys
+    -  My Security Credentials
+        -  will redirect to `https://console.aws.amazon.com/iam/home?region=eu-north-1#/security_credentials`
+    -  Create Access Key
+        -  Access key ID: `AKIA...2GBJ`
+        -  Secret access key: `LUS...H+yuAW`
+4.  Adding Amazon SDK dependency
+    -  `<dependency>`
+    -  `    <groupId>com.amazonaws</groupId>`
+    -  `    <artifactId>aws-java-sdk</artifactId>`
+    -  `    <version>1.12.75</version>`
+    -  `</dependency>`
+5.  Create configuration
+6.  Create ProfileImageService implementation
+
