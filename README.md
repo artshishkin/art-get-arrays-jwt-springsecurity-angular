@@ -529,4 +529,30 @@ systemctl restart docker
 3.  Create ApplicationListener<ApplicationPreparedEvent>    
 4.  Add the new application listener to the `spring.factories` file in the folder `src/main/resources/META-INF`    
 5.  Test locally -> works    
+ 
+#####  38.5 Refactoring Configuration to run in EC2 and PC with configured AWS credentials
+
+1.  Get rid of `Access key ID` and `Secret access key`
+    -  on PC we have configured credentials for AWS-CLI
+    -  ~/.aws/credentials -> 
+        -  `[default]`
+        -  `aws_access_key_id = AK...CY`
+        -  `aws_secret_access_key = Fk...30`
+2.  For EC2 attach IAM Role that allow access to S3 and Security Manager
+    -  EC2 -> Instances -> `docker-ec2` -> Actions -> Security -> Modify IAM Role
+    -  Create New IAM Role
+        -  Use Case:
+            -  EC2
+            -  Allows EC2 instances to call AWS services on your behalf.
+        -  Attach permissions policies
+            -  SecretsManagerReadWrite
+            -  AmazonS3FullAccess
+        -  Name:  `ec2-services-role`                 
+    -  Save
+3.  Deploy
+4.  Test -> OK
+
+
+
+
     
