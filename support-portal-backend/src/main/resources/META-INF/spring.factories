@@ -1,0 +1,2 @@
+# file src/main/resources/META-INF/spring.factories
+org.springframework.context.ApplicationListener=net.shyshkin.study.fullstack.supportportal.backend.config.S3PropertiesListener

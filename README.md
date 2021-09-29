@@ -510,3 +510,23 @@ systemctl restart docker
 5.  Create configuration
 6.  Create ProfileImageService implementation
 
+#####  38.4 Using Secrets Manager to store access keys
+
+1.  Use this tutorial
+    -  [Using AWS Secrets Manager to manage secrets in Spring Boot Applications](https://raymondhlee.wordpress.com/2019/10/11/using-aws-secrets-manager-to-manage-secrets-in-spring-boot-applications/)
+2.  Create secrets for API calls
+    -  Secrets Manager console
+    -  Create new secret    
+    -  Other type of secrets
+        -  AMAZON_S3_ACCESS_KEY: {provide value}
+        -  AMAZON_S3_SECRET_KEY: {provide value}
+    -  Select the encryption key
+        -  DefaultEncryptionKey
+    -  Secret Name: `/image-s3/portal-api`
+    -  Disable automatic rotation
+    -  Next -> view Sample code
+    -  Store    
+3.  Create ApplicationListener<ApplicationPreparedEvent>    
+4.  Add the new application listener to the `spring.factories` file in the folder `src/main/resources/META-INF`    
+5.  Test locally -> works    
+    
