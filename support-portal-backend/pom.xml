@@ -192,7 +192,9 @@
                                     <port>443:8080</port>
                                 </ports>
                                 <env>
-                                    <SPRING_PROFILES_ACTIVE>aws-rds</SPRING_PROFILES_ACTIVE>
+                                    <SPRING_PROFILES_ACTIVE>aws-rds,image-s3</SPRING_PROFILES_ACTIVE>
+                                    <AMAZON_S3_ACCESS_KEY>AKI...{THIS IS NOT SECURE TO STORE ACCESS_KEY in GitHub Repo}...BJ</AMAZON_S3_ACCESS_KEY>
+                                    <AMAZON_S3_SECRET_KEY>LUS...{THIS IS NOT SECURE TO STORE SECRET_KEY in GitHub Repo}...AW</AMAZON_S3_SECRET_KEY>
                                 </env>
                                 <restartPolicy>
                                     <name>always</name>
