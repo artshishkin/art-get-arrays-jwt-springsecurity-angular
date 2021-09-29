@@ -16,23 +16,30 @@ import java.util.Base64;
 import java.util.Properties;
 
 @Slf4j
-public class S3PropertiesListener implements ApplicationListener<ApplicationPreparedEvent> {
+public class SecretsManagerPropertiesListener implements ApplicationListener<ApplicationPreparedEvent> {
 
     private ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public void onApplicationEvent(ApplicationPreparedEvent event) {
-        System.out.println("onApplicationEvent");
+
+        String activeProfiles = event.getApplicationContext().getEnvironment().getProperty("spring.profiles.active");
+        if (activeProfiles == null || !activeProfiles.contains("aws-rds")) return;
+
         String secretJson = getSecret();
-        log.info("Retrieved secretJson from Secret Manager: {}", secretJson);
-        System.out.println("Retrieved secretJson from Secret Manager: " + secretJson);
-        String accessKey = getString(secretJson, "AMAZON_S3_ACCESS_KEY");
-        String secretKey = getString(secretJson, "AMAZON_S3_SECRET_KEY");
+
+        log.debug("Retrieved secretJson from Secret Manager: {}", secretJson);
+
+        String jwtSecret = getString(secretJson, "app_jwt_secret");
+        String springDatasourceUsername = getString(secretJson, "spring_datasource_username");
+        String springDatasourcePassword = getString(secretJson, "spring_datasource_password");
 
         ConfigurableEnvironment environment = event.getApplicationContext().getEnvironment();
         Properties props = new Properties();
-        props.put("app.amazon-s3.access-key", accessKey);
-        props.put("app.amazon-s3.secret-key", secretKey);
+        props.put("app.jwt.secret", jwtSecret);
+        props.put("spring.datasource.username", springDatasourceUsername);
+        props.put("spring.datasource.password", springDatasourcePassword);
+
         environment.getPropertySources().addFirst(new PropertiesPropertySource("aws.secret.manager", props));
 
     }
@@ -43,7 +50,7 @@ public class S3PropertiesListener implements ApplicationListener<ApplicationPrep
 
     private String getSecret() {
 
-        String secretName = "/image-s3/portal-api";
+        String secretName = "/support-portal";
         String region = "eu-north-1";
 
         // Create a Secrets Manager client
