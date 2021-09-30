@@ -129,7 +129,7 @@ server.ssl:
   enabled: true               # Enable HTTPS support (only accept HTTPS requests)
   key-alias: securedPortal         # Alias that identifies the key in the key store
   key-store: classpath:securedPortal-keystore.p12  # Keystore location
-  key-store-password: secret  # Keystore password
+  key-store-password: ENC(WNuqkduFC9d7bjWwv+KqKA==)  # Keystore password
   key-store-type: PKCS12      # Keystore format
 
 ---
