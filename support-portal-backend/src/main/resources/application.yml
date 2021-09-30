@@ -21,8 +21,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://mysql:3306/support-portal
-    username: ENC(bGNdXu0n1sQxtHpAQy8E/fegT25zKbk6iTZoqg8ddaU=)
-    password: ENC(hZarzMkUMf97sQ07tD58A2HOhbdoPdZtcpkif4vR9jY=)
+    username: ENC(criE3etnc/EVZbizNgNdmj+8F0BYC3bSVBK1VT/xJ7WMoNvSfdEGsqWfCpaX5lEWvXLOO8pzgjdB5zIOBcTikw==)
+    password: ENC(OTG4nZfio2dHHxV0Ey/Nmb4XeEfaD1YMsRVQxOwF59Q1JSBZPUKLWXORJXPz2RysKRngcdk2SgioAMw166DoqA==)
   jpa:
     hibernate:
       ddl-auto: update
@@ -44,13 +44,13 @@ app:
   cors:
     allowed-origins: http://localhost:4200,https://localhost:4200,http://art-support-portal.s3-website.eu-north-1.amazonaws.com,http://portal.shyshkin.net
   jwt:
-    secret: ENC(VAMFn7FEkahKbzf+99EzkajMeLjE/WvJLCadLVZXSE8=)
+    secret: ENC(EfWSJqncgjSJ0g/tMzLoO9PlrjmpQf8Eb+q51SUXlh3AzwMHJyTF1gV0VpuNEQkNb9Lsw62xOBnxDNe73BsPDQ==)
 #    secret: ${random.value} #Does not work - every time generates new value
 jasypt:
   encryptor:
     password: ${JASYPT_PASSWORD}
-    algorithm: PBEWithMD5AndDES
-    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+    algorithm: PBEWITHHMACSHA512ANDAES_256
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
 
 ---
 spring:
@@ -100,13 +100,13 @@ spring:
       on-profile: aws-rds
   datasource:
     url: jdbc:mysql://portal-db.coaum9neetxc.eu-north-1.rds.amazonaws.com:3306/support_portal
-    username: ENC(35q85d0/Lei1FAWM5zvqUyfnOxvUYqWG)
-    password: ENC(IN86fPa4xxATIP1S5fV94fos3drWXOTCurStNvQYM9s=)
+    username: ENC(MPap/iQmyyLSeulVzLLq4nQ5dcwMyJ1cbW+bW7MOU4pN7CHQULbaDn8/5VszOP9F)
+    password: ENC(nC0PV+0wPW+73o2uOh4Zg7EA34vdwZKpkPD4CIKvjDDXQ+dGXjykTuHUl3jlxkRC/00IpFurk/UJ9hTpZ6QqGA==)
   mail:
     host: email-smtp.eu-north-1.amazonaws.com
     port: 587
-    username: ENC(WWVCoLPOjjNlfepTKeRFF4wep6onc3LnbkoPGh+Xwqc=)
-    password: ENC(VTO/7U6tFHSzMs6UtTusUXSWAUkgLaTbsqvsVphIvCS9VfdEd9nx8+919i7usoKwvuzWZPFx4/8=)
+    username: ENC(CgaSXOMqTmswes1PgAYp3ICcoIVVXyKUlDR1Se963Vja02cBIor/2884e2OEFKW4XhBClTbuZCVdHK0vRRNqYg==)
+    password: ENC(GA8XsfU8vmat/7A8qEhrVz0Y47THxNT8jQ29wSg035fozwW7m+fKhJMQd4tgxL9dPfOzSXYzkffL0fG1AihWiHl99H9iBeXndDSvOhskvh4=)
 
 # we want to test (1) from localhost, (2) from S3 bucket Static Web Site, (3) from our EC2 instance
 app:
@@ -131,7 +131,7 @@ server.ssl:
   enabled: true               # Enable HTTPS support (only accept HTTPS requests)
   key-alias: securedPortal         # Alias that identifies the key in the key store
   key-store: classpath:securedPortal-keystore.p12  # Keystore location
-  key-store-password: ENC(WNuqkduFC9d7bjWwv+KqKA==)  # Keystore password
+  key-store-password: ENC(nqDHyVFmySdbaCOZfj4EiQLRYyLSPLRLq/OzncqlsFIuWvh8caiOapAb+zrKR1+A)  # Keystore password
   key-store-type: PKCS12      # Keystore format
 
 ---

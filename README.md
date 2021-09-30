@@ -603,7 +603,13 @@ systemctl restart docker
     -  Attach `SupportPortalSecretsAccessPolicy`
 -  Change `docker-ec2` IAM role from `ec2-service-role` from to `support-portal-backend-role`
 
+####  44 Encrypt passwords using jasypt
 
+#####  44.4  Improve security by using more secure algorithm 
+
+-  Jasypt Command Line 
+    -  Download cli from official site
+    -  `.\encrypt.bat input="sup...word" password="<insert your password>" algorithm=PBEWITHHMACSHA512ANDAES_256 ivGeneratorClassName=org.jasypt.iv.RandomIvGenerator`
 
 
 
