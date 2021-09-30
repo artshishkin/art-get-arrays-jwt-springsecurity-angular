@@ -49,6 +49,8 @@ app:
 jasypt:
   encryptor:
     password: ${JASYPT_PASSWORD}
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
 
 ---
 spring:
