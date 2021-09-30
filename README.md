@@ -552,6 +552,61 @@ systemctl restart docker
 3.  Deploy
 4.  Test -> OK
 
+#####  43 Adjust ec2 iam role to have less permissions
+
+-  Create policy to access to S3 bucket `portal-user-profile-images` 
+    -  SupportPortalS3AccessPolicy
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:ListBucket",
+                "s3:DeleteObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::portal-user-profile-images/*",
+                "arn:aws:s3:::portal-user-profile-images"
+            ]
+        }
+    ]
+}
+```
+-  Detach `AmazonS3FullAccess` and attach `SupportPortalS3AccessPolicy` to the role `ec2-service-role`
+-  Create policy to access to Secrets Manager secret `/support-portal` 
+    -  SupportPortalSecretsAccessPolicy
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret"
+            ],
+            "Resource": "arn:aws:secretsmanager:eu-north-1:392971033516:secret:/support-portal*"
+        }
+    ]
+}
+```    
+-  Detach `SecretsManagerReadWrite` and attach `SupportPortalSecretsAccessPolicy` to the role `ec2-service-role`
+-  Test it -> OK
+-  Create Role `support-portal-backend-role`
+    -  Attach `SupportPortalS3AccessPolicy`
+    -  Attach `SupportPortalSecretsAccessPolicy`
+-  Change `docker-ec2` IAM role from `ec2-service-role` from to `support-portal-backend-role`
+
+
+
+
+
 
 
 
