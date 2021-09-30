@@ -21,8 +21,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://mysql:3306/support-portal
-    username: support_portal_user
-    password: support_portal_password
+    username: ENC(bGNdXu0n1sQxtHpAQy8E/fegT25zKbk6iTZoqg8ddaU=)
+    password: ENC(hZarzMkUMf97sQ07tD58A2HOhbdoPdZtcpkif4vR9jY=)
   jpa:
     hibernate:
       ddl-auto: update
@@ -44,8 +44,12 @@ app:
   cors:
     allowed-origins: http://localhost:4200,https://localhost:4200,http://art-support-portal.s3-website.eu-north-1.amazonaws.com,http://portal.shyshkin.net
   jwt:
-    secret: VeRy_5ecretP@55W0rd!
+    secret: ENC(VAMFn7FEkahKbzf+99EzkajMeLjE/WvJLCadLVZXSE8=)
 #    secret: ${random.value} #Does not work - every time generates new value
+jasypt:
+  encryptor:
+    password: ${JASYPT_PASSWORD}
+
 ---
 spring:
   config:
@@ -94,13 +98,13 @@ spring:
       on-profile: aws-rds
   datasource:
     url: jdbc:mysql://portal-db.coaum9neetxc.eu-north-1.rds.amazonaws.com:3306/support_portal
-    username: portal_user
-    password: Supp0rt_Porta!_PAssword
+    username: ENC(35q85d0/Lei1FAWM5zvqUyfnOxvUYqWG)
+    password: ENC(IN86fPa4xxATIP1S5fV94fos3drWXOTCurStNvQYM9s=)
   mail:
     host: email-smtp.eu-north-1.amazonaws.com
     port: 587
-    username: AKIAVW7XGDOWFHHCELIH
-    password: BJyWOWS1xWYR35MRCFn3BuuQ6vY+k7DRsdAvOfqDs/Fk
+    username: ENC(WWVCoLPOjjNlfepTKeRFF4wep6onc3LnbkoPGh+Xwqc=)
+    password: ENC(VTO/7U6tFHSzMs6UtTusUXSWAUkgLaTbsqvsVphIvCS9VfdEd9nx8+919i7usoKwvuzWZPFx4/8=)
 
 # we want to test (1) from localhost, (2) from S3 bucket Static Web Site, (3) from our EC2 instance
 app:

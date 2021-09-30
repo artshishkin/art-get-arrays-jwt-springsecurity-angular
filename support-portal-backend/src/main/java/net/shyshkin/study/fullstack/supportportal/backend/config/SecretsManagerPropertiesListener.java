@@ -6,7 +6,7 @@ import com.amazonaws.services.secretsmanager.model.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.event.ApplicationPreparedEvent;
+import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -16,29 +16,37 @@ import java.util.Base64;
 import java.util.Properties;
 
 @Slf4j
-public class SecretsManagerPropertiesListener implements ApplicationListener<ApplicationPreparedEvent> {
+public class SecretsManagerPropertiesListener implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
 
     private ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public void onApplicationEvent(ApplicationPreparedEvent event) {
+    public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
 
-        String activeProfiles = event.getApplicationContext().getEnvironment().getProperty("spring.profiles.active");
-        if (activeProfiles == null || !activeProfiles.contains("aws-rds")) return;
+        System.out.println("ApplicationListener<ApplicationEnvironmentPreparedEvent> invoked");
+        log.info("ApplicationListener<ApplicationEnvironmentPreparedEvent> invoked");
+
+        ConfigurableEnvironment environment = event.getEnvironment();
+        String activeProfiles = environment.getProperty("spring.profiles.active");
+//        if (activeProfiles == null || !activeProfiles.contains("aws-rds")) return;
 
         String secretJson = getSecret();
 
         log.debug("Retrieved secretJson from Secret Manager: {}", secretJson);
+        System.out.println("Retrieved secretJson from Secret Manager: " + secretJson);
 
-        String jwtSecret = getString(secretJson, "app_jwt_secret");
-        String springDatasourceUsername = getString(secretJson, "spring_datasource_username");
-        String springDatasourcePassword = getString(secretJson, "spring_datasource_password");
+        String jasyptPassword = getString(secretJson, "jasypt_password");
+//        String jwtSecret = getString(secretJson, "app_jwt_secret");
+//        String springDatasourceUsername = getString(secretJson, "spring_datasource_username");
+//        String springDatasourcePassword = getString(secretJson, "spring_datasource_password");
 
-        ConfigurableEnvironment environment = event.getApplicationContext().getEnvironment();
         Properties props = new Properties();
-        props.put("app.jwt.secret", jwtSecret);
-        props.put("spring.datasource.username", springDatasourceUsername);
-        props.put("spring.datasource.password", springDatasourcePassword);
+        System.setProperty("JASYPT_PASSWORD", jasyptPassword);
+        props.put("jasypt.encryptor.password", jasyptPassword);
+
+//        props.put("app.jwt.secret", jwtSecret);
+//        props.put("spring.datasource.username", springDatasourceUsername);
+//        props.put("spring.datasource.password", springDatasourcePassword);
 
         environment.getPropertySources().addFirst(new PropertiesPropertySource("aws.secret.manager", props));
 
