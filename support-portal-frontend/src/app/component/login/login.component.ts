@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.authenticationService.isUserLoggedIn()) {
-      this.router.navigateByUrl("/user/management");
+      this.router.navigate(["/management", "users"]);
       this.notificationService.notify(NotificationType.INFO, "You are already logged in");
     }
   }
@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
           this.authenticationService.addUserToLocalStorage(response.body!);
 
-          this.router.navigateByUrl('/user/management');
+          this.router.navigateByUrl('/management/users');
           this.showLoading = false;
         },
         (errorResponse: HttpErrorResponse) => {
