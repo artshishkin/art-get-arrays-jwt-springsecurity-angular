@@ -1,2 +1,54 @@
-<p>management works!</p>
-<router-outlet></router-outlet>
+<div class="container">
+  <div class="row mb-2 mt-2 text-center">
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-4">
+      <h5>User Management Portal</h5>
+      <small *ngIf="titleAction$ | async as title">{{title}}</small>
+    </div>
+    <div class="col-md-4">
+    </div>
+  </div>
+
+  <!-- nav bar -->
+  <nav class="navbar navbar-expand-md breadcrumb">
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <div class="nav nav-pills">
+        <a
+          class="nav-item nav-link ml-1"
+          routerLinkActive="active"
+          (click)="changeTitle('Users')"
+          data-bs-toggle="tab"
+          [routerLink]="['users']">
+          <i class="fa fa-users"></i>
+          Users
+        </a>
+
+        <a *ngIf="isAdmin"
+           class="nav-item nav-link ml-3"
+           routerLinkActive="active"
+           (click)="changeTitle('Settings')"
+           data-bs-toggle="tab"
+           [routerLink]="['settings']">
+          <i class="fa fa-cogs"></i>
+          Settings
+        </a>
+        <a
+          class="nav-item nav-link move-right mr-3"
+          routerLinkActive="active"
+          (click)="changeTitle('Profile')"
+          data-bs-toggle="tab"
+          [routerLink]="['profile']">
+          Welcome, {{loggedInUser.firstName}} {{loggedInUser.lastName}}
+          <i class="fa fa-user"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- main content -->
+  <div class="tab-content mt-3" id="myTabContent">
+    <router-outlet></router-outlet>
+  </div>
+
+</div>
