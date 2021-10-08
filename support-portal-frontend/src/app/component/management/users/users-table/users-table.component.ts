@@ -7,6 +7,7 @@ import {UserService} from "../../../../service/user.service";
 import {NotificationService} from "../../../../service/notification.service";
 import {AuthenticationService} from "../../../../service/authentication.service";
 import {Router} from "@angular/router";
+import {CustomHttpResponse} from "../../../../dto/custom-http-response";
 
 @Component({
   selector: 'app-users-table',
@@ -69,7 +70,15 @@ export class UsersTableComponent implements OnInit, OnDestroy {
   }
 
   onDeleteUser(user: User) {
-    console.log(`User ${user.username} is clicked to be deleted`);
+    this.subs.sink = this.userService.deleteUser(user.userId)
+      .subscribe(
+        (response: CustomHttpResponse) => {
+          this.getUsers(false);
+          this.notificationService.notify(NotificationType.SUCCESS, response.message);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.notificationService.notify(NotificationType.ERROR, errorResponse.error.message);
+        }
+      );
   }
-
 }
