@@ -5,6 +5,7 @@ import {UserLogin} from "../dto/user-login";
 import {Observable} from "rxjs";
 import {User} from "../model/user";
 import {JwtHelperService} from "@auth0/angular-jwt";
+import {Role} from "../enum/role.enum";
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,8 @@ export class AuthenticationService {
 
   private host: string = environment.apiUrl;
   private token: string | null;
-  private loggedInUser: string | null;
+  private loggedInUserName: string | null;
+  private loggedInUser: User | null;
   private storage = localStorage;
 
   //first install this module: `npm install @auth0/angular-jwt`
@@ -37,7 +39,7 @@ export class AuthenticationService {
 
   public logout(): void {
     this.token = null;
-    this.loggedInUser = null;
+    this.loggedInUserName = null;
     this.storage.removeItem(this.JWT_TOKEN_STORAGE_KEY);
     this.storage.removeItem(this.USER_STORAGE_KEY);
     this.storage.removeItem("users");
@@ -71,7 +73,7 @@ export class AuthenticationService {
       let subject = this.jwtHelper.decodeToken(this.token).sub;
       if (subject != null || '') {
         if (!this.jwtHelper.isTokenExpired(this.token!)) {
-          this.loggedInUser = subject;
+          this.loggedInUserName = subject;
           return true;
         }
       }
@@ -79,5 +81,12 @@ export class AuthenticationService {
     this.logout()
     return false;
   }
+
+  public isLoggedUserHasRoleAdmin(): boolean {
+    if (!this.loggedInUser)
+      this.loggedInUser = this.getUserFromLocalStorage();
+    return this.loggedInUser.role === Role.ADMIN || this.loggedInUser.role === Role.SUPER_ADMIN;
+  }
+
 
 }
