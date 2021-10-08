@@ -6,7 +6,7 @@ import {SubSink} from "subsink";
 import {UserService} from "../../../../service/user.service";
 import {NotificationService} from "../../../../service/notification.service";
 import {AuthenticationService} from "../../../../service/authentication.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {CustomHttpResponse} from "../../../../dto/custom-http-response";
 
 @Component({
@@ -24,7 +24,8 @@ export class UsersTableComponent implements OnInit, OnDestroy {
   constructor(private userService: UserService,
               private notificationService: NotificationService,
               private authenticationService: AuthenticationService,
-              private router: Router) {
+              private router: Router,
+              private route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
@@ -63,6 +64,8 @@ export class UsersTableComponent implements OnInit, OnDestroy {
 
   onSelectUser(user: User) {
     console.log(`User ${user.username} is selected`);
+    this.userService.setSelectedUser(user);
+    this.router.navigate([user.userId, 'view'], {relativeTo: this.route});
   }
 
   onEditUser(user: User) {

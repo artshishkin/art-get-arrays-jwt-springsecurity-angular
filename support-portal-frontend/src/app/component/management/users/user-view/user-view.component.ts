@@ -1,4 +1,7 @@
 import {Component, OnInit} from '@angular/core';
+import {UserService} from "../../../../service/user.service";
+import {User} from "../../../../model/user";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-user-view',
@@ -7,9 +10,23 @@ import {Component, OnInit} from '@angular/core';
 })
 export class UserViewComponent implements OnInit {
 
-  constructor() { }
+  user: User;
 
-  ngOnInit(): void {
+  constructor(private userService: UserService,
+              private router: Router,
+              private route: ActivatedRoute) {
   }
 
+  ngOnInit(): void {
+    this.user = this.userService.getSelectedUser();
+    setTimeout(() => this.clickButton('openUserInfo'), 100);
+  }
+
+  private clickButton(buttonId: string): void {
+    document.getElementById(buttonId)?.click();
+  }
+
+  onCloseModal() {
+    this.router.navigate(['../../'], {relativeTo: this.route});
+  }
 }

@@ -1,1 +1,82 @@
-<p>user-view works!</p>
+<!-- modal user info -->
+<button [hidden]="true" type="button" id="openUserInfo" data-bs-toggle="modal" data-bs-target="#viewUserModal">
+</button>
+<div *ngIf="user" class="modal fade bd-example-modal-lg" id="viewUserModal" tabindex="-1" role="dialog"
+     aria-labelledby=""
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center"
+            id="exampleModalLongTitle">{{user.firstName}} {{user.lastName}}</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="onCloseModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-12 col-sm-auto">
+                  <div class="mx-auto" style="width: 120px;">
+                    <div class="d-flex justify-content-center align-items-center rounded">
+                      <img class="rounded" height="120" width="120" src="{{user.profileImageUrl}}"
+                           alt="{{user.username}}">
+                    </div>
+                  </div>
+                </div>
+                <div class="col d-flex flex-column flex-sm-row justify-content-between">
+                  <div class="text-center text-sm-left mb-sm-0">
+                    <h6
+                      class="pt-sm-2 pb-1 mb-0 text-nowrap">{{user.firstName}} {{user.lastName}}</h6>
+                    <p class="mb-1">{{user.username}}</p>
+                    <div class="">Status:
+                      <span class="badge"
+                            [ngClass]="{'bg-success':user.active,'bg-danger':!user.active}">
+                            {{user.active ? 'Active' : 'Inactive'}}
+                          </span>
+                    </div>
+                    <div *ngIf="user.lastLoginDateDisplay" class="text-muted">
+                      <small>Last Login: {{user.lastLoginDateDisplay | date: 'medium' }}</small>
+                    </div>
+                  </div>
+                  <div class="text-center text-sm-right">
+                    <div class="text-muted"><small>Joined {{user.joinDate | date: 'medium' }}</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"></li>
+              <li class="list-group-item"><i class="fa fa-id-badge float-end"></i>{{user.userId}}
+              </li>
+              <li class="list-group-item"><i class="fa fa-envelope float-end"></i>{{user.email}}
+              </li>
+              <li class="list-group-item"><i class="fas fa-shield-alt float-end"></i>
+                {{user?.role?.substring(5)}}
+              <li *ngIf="user.lastLoginDateDisplay" class="list-group-item">
+                <i class="fas fa-sign-in-alt float-end"></i>
+                {{ user.lastLoginDateDisplay | date: 'medium' }}
+              </li>
+              <li class="list-group-item">
+                    <span>
+                      <i class="fa float-end"
+                         [ngClass]="{'fa-unlock':user?.notLocked, 'fa-lock':!user?.notLocked}"
+                         [ngStyle]="{color: user?.notLocked ? 'green' : 'red'}"></i>
+                      Account {{user?.notLocked ? 'Unlocked' : 'Locked'}}
+                    </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="onCloseModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+

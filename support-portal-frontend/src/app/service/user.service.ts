@@ -13,6 +13,8 @@ export class UserService {
   private host: string = environment.apiUrl;
   private storage = localStorage;
 
+  private selectedUser: User;
+
   constructor(private httpClient: HttpClient) {
   }
 
@@ -77,6 +79,14 @@ export class UserService {
       formData.append("profileImage", profileImage);
 
     return formData;
+  }
+
+  public setSelectedUser(user: User): void {
+    this.selectedUser = user;
+  }
+
+  public getSelectedUser(): User {
+    return this.selectedUser;
   }
 
 }
