@@ -18,7 +18,6 @@ import {UsersComponent} from './component/management/users/users.component';
 import {SettingsComponent} from './component/management/settings/settings.component';
 import {ProfileComponent} from './component/management/profile/profile.component';
 import {UsersTableComponent} from './component/management/users/users-table/users-table.component';
-import {UserRowComponent} from './component/management/users/users-table/user-row/user-row.component';
 import {UserViewComponent} from './component/management/users/user-view/user-view.component';
 import {UserEditComponent} from './component/management/users/user-edit/user-edit.component';
 
@@ -33,7 +32,6 @@ import {UserEditComponent} from './component/management/users/user-edit/user-edi
     SettingsComponent,
     ProfileComponent,
     UsersTableComponent,
-    UserRowComponent,
     UserViewComponent,
     UserEditComponent
   ],
