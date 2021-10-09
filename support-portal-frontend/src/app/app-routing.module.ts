@@ -10,6 +10,7 @@ import {SettingsComponent} from "./component/management/settings/settings.compon
 import {ProfileComponent} from "./component/management/profile/profile.component";
 import {UserEditComponent} from "./component/management/users/user-edit/user-edit.component";
 import {UserViewComponent} from "./component/management/users/user-view/user-view.component";
+import {UserResolver} from "./component/management/users/user-resolver.service";
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -23,7 +24,7 @@ export const routes: Routes = [
       {
         path: 'users', component: UsersComponent,
         children: [
-          {path: ':id/view', component: UserViewComponent},
+          {path: ':id/view', component: UserViewComponent, resolve: {user: UserResolver}},
           {path: ':id/edit', component: UserEditComponent}
         ]
       }

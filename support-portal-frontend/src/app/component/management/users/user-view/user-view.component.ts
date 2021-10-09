@@ -18,7 +18,7 @@ export class UserViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.user = this.userService.getSelectedUser();
+    this.route.data.subscribe((data) => this.user = data['user']);
     setTimeout(() => this.clickButton('openUserInfo'), 100);
   }
 

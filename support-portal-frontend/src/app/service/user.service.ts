@@ -4,6 +4,7 @@ import {HttpClient, HttpEvent} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {User} from "../model/user";
 import {CustomHttpResponse} from "../dto/custom-http-response";
+import {map} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -87,6 +88,17 @@ export class UserService {
 
   public getSelectedUser(): User {
     return this.selectedUser;
+  }
+
+  public findUserById(id: string): User | Observable<User> {
+    let cachedUsers = this.getUsersFromLocalStorage();
+    const foundUser = cachedUsers.find((u) => u.userId === id);
+
+    if (foundUser) return foundUser;
+
+    return this.getAllUsers()
+      .pipe(map((page: UserPage, idx: number) => page.content))
+      .pipe(map(users => users.find(u => u.userId === id)!));
   }
 
 }
