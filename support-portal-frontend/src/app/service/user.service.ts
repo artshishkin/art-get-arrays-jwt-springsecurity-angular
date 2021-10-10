@@ -97,8 +97,10 @@ export class UserService {
     if (foundUser) return foundUser;
 
     return this.getAllUsers()
-      .pipe(map((page: UserPage, idx: number) => page.content))
-      .pipe(map(users => users.find(u => u.userId === id)!));
+      .pipe(
+        map((page: UserPage, idx: number) => page.content),
+        map(users => users.find(u => u.userId === id)!)
+      );
   }
 
 }
