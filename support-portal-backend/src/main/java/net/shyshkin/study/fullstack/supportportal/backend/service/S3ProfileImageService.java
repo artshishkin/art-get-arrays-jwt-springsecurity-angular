@@ -21,7 +21,7 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-@Profile("image-s3")
+@Profile({"image-s3", "image-s3-localstack"})
 @RequiredArgsConstructor
 public class S3ProfileImageService implements ProfileImageService {
 

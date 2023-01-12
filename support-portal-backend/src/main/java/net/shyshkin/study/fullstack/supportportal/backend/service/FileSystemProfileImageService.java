@@ -17,7 +17,7 @@ import static net.shyshkin.study.fullstack.supportportal.backend.constant.FileCo
 
 @Slf4j
 @Service
-@Profile("!image-s3")
+@Profile("!image-s3 && !image-s3-localstack")
 public class FileSystemProfileImageService implements ProfileImageService {
 
     @Override

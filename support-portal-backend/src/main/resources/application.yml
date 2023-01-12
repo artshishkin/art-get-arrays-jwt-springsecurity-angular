@@ -143,5 +143,21 @@ app:
   amazon-s3:
     bucket-name: portal-user-profile-images
 
+---
+spring:
+  config:
+    activate:
+      on-profile: image-s3-localstack
+app:
+  amazon-s3:
+    bucket-name: portal-user-profile-images
+config:
+  aws:
+    region: eu-north-1
+    s3:
+      url: http://127.0.0.1:4566
+      bucket-name: portal-user-profile-images
+      access-key: localstack
+      secret-key: localstack
 
 
