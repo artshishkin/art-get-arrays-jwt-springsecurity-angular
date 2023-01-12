@@ -1,0 +1,40 @@
+### Login
+POST http://localhost:8080/user/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "amado.gislason",
+  "password": "bad_password"
+}
+
+> {%
+  client.global.set("access_token", response.headers.valueOf("Jwt-Token"));
+  client.global.set("userId", response.body.userId);
+%}
+
+### Update profile image
+PUT http://localhost:8080/user/{{userId}}/profile-image
+Authorization: Bearer {{access_token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="profileImage"; filename="1.png"
+Content-Type: image/png
+
+< ./src/test/resources/images/1.png
+
+--WebAppBoundary--
+
+### Get default profile image
+GET http://localhost:8080/user/{{userId}}/profile-image
+Accept: image/jpeg
+
+### Get updated profile image
+GET http://localhost:8080/user/{{userId}}/profile-image/avatar.jpg
+Accept: image/jpeg
+
+
+
+
+

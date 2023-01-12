@@ -39,7 +39,7 @@ node_modules/
 # Log file
 *.log
 
-# BlueJ files
+# BlueJ fileshttp
 *.ctxt
 
 # Mobile Tools for Java (J2ME)
@@ -61,3 +61,4 @@ hs_err_pid*
 
 # JMeter
 *.jtl
+/.run/
