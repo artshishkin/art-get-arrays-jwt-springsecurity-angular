@@ -19,6 +19,28 @@ services:
     ports:
       - 8081:8080
 
+#https://medium.com/dandelion-tutorials/using-s3-localstack-with-spring-boot-and-r2dbc-5ea201a18aea
+
+  localstack:
+    container_name: localstack
+    image: localstack/localstack:latest
+    environment:
+      - DEBUG=1
+      - USE_SSL=0
+      - AWS_CBOR_DISABLE=1
+#      - DOCKER_HOST=unix:///var/run/docker.sock
+      - HOSTNAME=localstack
+      - SERVICES=s3
+      - AWS_DEFAULT_REGION=eu-north-1
+    ports:
+      - '4566-4583:4566-4583'
+    volumes:
+#      - ./tmp/lib/localstack:/tmp/lib/localstack
+      - ./init-s3-bucket.sh:/etc/localstack/init/ready.d/init-s3-bucket.sh
+#      - ${TEMPDIR:-/tmp/localstack}:/tmp/localstack - LEGACY (or use LEGACY_INIT_DIR=1)
+#      - ./init-s3-bucket.sh:/docker-entrypoint-initaws.d/init-s3-bucket.sh - LEGACY (or use LEGACY_INIT_DIR=1)
+#      - /var/run/docker.sock:/var/run/docker.sock
+
 volumes:
   mysql-data:
 
